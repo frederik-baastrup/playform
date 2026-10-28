@@ -10,6 +10,8 @@ add_action( 'after_switch_theme', 'playform_setup_site' );
 
 function playform_setup_site(): void {
 	update_option( 'timezone_string', 'Europe/Copenhagen' );
+	// Guides ligger under /viden/navn/
+	update_option( 'permalink_structure', '/viden/%postname%/' );
 	// WooCommerce' ordresporing sætter cookies (sourcebuster) – den bruges ikke, da der ikke handles på siden.
 	update_option( 'woocommerce_feature_order_attribution_enabled', 'no' );
 	update_option( 'date_format', 'j. F Y' );

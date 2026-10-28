@@ -54,11 +54,23 @@
 		if (f && !document.querySelector('.tags')) f.removeAttribute('open');
 	}
 
-	// Nyhedsbrev: midlertidig besked, indtil en rigtig tjeneste er koblet på
+	// Nyhedsbrev: sendes til vores endpoint, som videresender til Brevo/MailerLite (double opt-in)
 	document.querySelectorAll('[data-newsletter]').forEach(function (form) {
+		var note = form.querySelector('.news__note');
+		var btn = form.querySelector('button');
 		form.addEventListener('submit', function (e) {
 			e.preventDefault();
-			form.querySelector('.news__note').textContent = 'Tak! Tilmeldingen kobles på, når nyhedsbrevet er sat op.';
+			btn.disabled = true;
+			fetch(form.getAttribute('data-endpoint'), {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ email: form.email.value, website: form.website ? form.website.value : '' })
+			}).then(function (r) { return r.json(); }).then(function (d) {
+				note.textContent = d.message || 'Tak!';
+				if (d.ok) form.email.value = '';
+			}).catch(function () {
+				note.textContent = 'Noget gik galt. Prøv igen senere.';
+			}).finally(function () { btn.disabled = false; });
 		});
 	});
 })();

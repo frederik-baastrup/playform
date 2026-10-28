@@ -47,6 +47,17 @@ wp playform ai-texts --category=lobebaand --limit=50   # skriv tekstudkast
 
 Tekster godkendes under **Produkter › Tekster til godkendelse** eller på det enkelte produkt. Der er et loft på 200 tekster pr. døgn (`playform_ai_daily_cap`). Sæt også en udgiftsgrænse i Claude Console.
 
+## Nyhedsbrev
+
+Vælg Brevo eller MailerLite under **Værktøjer › Playform Feeds** og indsæt API-nøgle og liste-/gruppe-id. Tilmeldinger sendes direkte til tjenesten med bekræftelsesmail (double opt-in); WordPress gemmer ingen e-mails.
+
+- **Brevo:** opret en liste og en skabelon til bekræftelsesmailen (Double opt-in-skabelon) og angiv begges id.
+- **MailerLite:** opret en gruppe og slå "Double opt-in for API and integrations" til under kontoindstillinger.
+
+## Guides
+
+`content/guides.php` opretter de første fire guides som kladder: `wp eval-file content/guides.php`. Produkter vises i guides med shortcoden `[playform_produkter kategori="gaabaand" antal="4"]`.
+
 ## Andre kommandoer
 
 ```bash

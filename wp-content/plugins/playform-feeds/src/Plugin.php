@@ -10,6 +10,7 @@ final class Plugin {
 		add_action( 'init', [ Install::class, 'maybe_upgrade' ], 20 );
 		Cron::register();
 		Frontend::register();
+		Newsletter::register();
 		if ( is_admin() ) {
 			Admin::register();
 			AdminTexts::register();

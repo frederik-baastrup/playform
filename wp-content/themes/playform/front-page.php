@@ -93,13 +93,14 @@ get_template_part(
 			<h2>Få besked, når prisen falder</h2>
 			<p>Ugens bedste tilbud på fitnessudstyr og nye guides direkte i din indbakke. Ca. én mail om ugen.</p>
 		</div>
-		<form class="news__form" method="post" action="#" data-newsletter>
+		<form class="news__form" method="post" action="#" data-newsletter data-endpoint="<?php echo esc_url( rest_url( 'playform/v1/newsletter' ) ); ?>">
+			<input type="text" name="website" tabindex="-1" autocomplete="off" class="sr-only" aria-hidden="true">
 			<label for="nl-email">Din e-mail</label>
 			<div class="news__row">
 				<input id="nl-email" type="email" name="email" placeholder="navn@eksempel.dk" required>
 				<button type="submit">Tilmeld</button>
 			</div>
-			<span class="news__note">Du kan altid afmelde dig igen.</span>
+			<span class="news__note" role="status" aria-live="polite">Du får en mail, hvor du bekræfter tilmeldingen. Du kan altid afmelde dig igen. Læs vores <a href="<?php echo esc_url( home_url( '/privatlivspolitik/' ) ); ?>">privatlivspolitik</a>.</span>
 		</form>
 	</div>
 </section>

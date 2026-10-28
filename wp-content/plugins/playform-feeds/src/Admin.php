@@ -39,6 +39,14 @@ final class Admin {
 			delete_option( 'playform_anthropic_api_key' );
 		}
 		update_option( 'playform_ai_texts_per_run', max( 0, (int) ( $_POST['texts_per_run'] ?? 0 ) ) );
+		$provider = sanitize_key( $_POST['nl_provider'] ?? '' );
+		update_option( 'playform_nl_provider', in_array( $provider, [ 'brevo', 'mailerlite' ], true ) ? $provider : '' );
+		$nl_key = trim( sanitize_text_field( wp_unslash( $_POST['nl_key'] ?? '' ) ) );
+		if ( $nl_key !== '' ) {
+			update_option( 'playform_nl_key', $nl_key, false );
+		}
+		update_option( 'playform_nl_list', sanitize_text_field( wp_unslash( $_POST['nl_list'] ?? '' ) ) );
+		update_option( 'playform_nl_template', (int) ( $_POST['nl_template'] ?? 0 ) );
 		wp_safe_redirect( admin_url( 'tools.php?page=playform-feeds&saved=1' ) );
 		exit;
 	}
@@ -80,6 +88,12 @@ final class Admin {
 			}
 		}
 		echo '</td></tr><tr><th><label for="texts_per_run">Nye tekster pr. import</label></th><td><input type="number" min="0" max="500" id="texts_per_run" name="texts_per_run" value="' . (int) get_option( 'playform_ai_texts_per_run', 0 ) . '"> <span class="description">0 = kun når du selv beder om det. Teksterne skal altid godkendes.</span></td></tr></table>';
+		$prov = (string) get_option( 'playform_nl_provider', '' );
+		echo '<h2>Nyhedsbrev</h2><table class="form-table">';
+		echo '<tr><th><label for="nl_provider">Tjeneste</label></th><td><select id="nl_provider" name="nl_provider"><option value="">Ikke sat op</option><option value="brevo"' . selected( $prov, 'brevo', false ) . '>Brevo</option><option value="mailerlite"' . selected( $prov, 'mailerlite', false ) . '>MailerLite</option></select></td></tr>';
+		echo '<tr><th><label for="nl_key">API-nøgle</label></th><td>' . ( defined( 'PLAYFORM_NEWSLETTER_KEY' ) ? 'Sat i wp-config.php' : '<input type="password" id="nl_key" name="nl_key" class="regular-text" autocomplete="off" placeholder="' . ( get_option( 'playform_nl_key' ) ? 'Gemt – skriv en ny for at skifte' : '' ) . '">' ) . '</td></tr>';
+		echo '<tr><th><label for="nl_list">Liste-id (Brevo) / gruppe-id (MailerLite)</label></th><td><input type="text" id="nl_list" name="nl_list" value="' . esc_attr( (string) get_option( 'playform_nl_list', '' ) ) . '"></td></tr>';
+		echo '<tr><th><label for="nl_template">Skabelon til bekræftelsesmail (kun Brevo)</label></th><td><input type="number" id="nl_template" name="nl_template" value="' . (int) get_option( 'playform_nl_template', 0 ) . '"> <span class="description">MailerLite: slå "Double opt-in for API" til i din konto.</span></td></tr></table>';
 		echo '<p><button class="button">Gem</button></p></form>';
 		echo '<h2>Produkter pr. kategori</h2><table class="widefat striped" style="max-width:520px"><thead><tr><th>Kategori</th><th>Produkter</th><th>På lager</th></tr></thead><tbody>';
 		foreach ( $cats as $c ) {

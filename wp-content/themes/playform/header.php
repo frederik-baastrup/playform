@@ -71,4 +71,7 @@
 		</nav>
 	</div>
 </header>
+<?php if ( isset( $_GET['nyhedsbrev'] ) && $_GET['nyhedsbrev'] === 'bekraeftet' ) : // phpcs:ignore ?>
+	<div class="notice-bar" role="status"><div class="wrap">Tak – din tilmelding til nyhedsbrevet er bekræftet.</div></div>
+<?php endif; ?>
 <main id="indhold">

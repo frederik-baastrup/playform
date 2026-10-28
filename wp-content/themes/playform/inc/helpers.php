@@ -183,3 +183,19 @@ function playform_product_schema( WC_Product $product, array $offers, array $d )
 	}
 	echo '<script type="application/ld+json">' . wp_json_encode( $data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ) . '</script>';
 }
+
+/** Danske måneds- og dagnavne, også hvis WordPress' danske sprogpakke ikke er installeret. */
+add_filter(
+	'wp_date',
+	static function ( $date ) {
+		return strtr(
+			(string) $date,
+			[
+				'January' => 'januar', 'February' => 'februar', 'March' => 'marts', 'April' => 'april', 'May' => 'maj', 'June' => 'juni',
+				'July' => 'juli', 'August' => 'august', 'September' => 'september', 'October' => 'oktober', 'November' => 'november', 'December' => 'december',
+				'Jan' => 'jan.', 'Feb' => 'feb.', 'Mar' => 'mar.', 'Apr' => 'apr.', 'Jun' => 'jun.', 'Jul' => 'jul.', 'Aug' => 'aug.', 'Sep' => 'sep.', 'Oct' => 'okt.', 'Nov' => 'nov.', 'Dec' => 'dec.',
+				'Monday' => 'mandag', 'Tuesday' => 'tirsdag', 'Wednesday' => 'onsdag', 'Thursday' => 'torsdag', 'Friday' => 'fredag', 'Saturday' => 'lørdag', 'Sunday' => 'søndag',
+			]
+		);
+	}
+);
