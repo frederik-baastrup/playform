@@ -19,7 +19,11 @@ jobs:
         run: |
           set +e
           mkdir -p .ftp-debug
-          curl -s --list-only "ftp://${{ secrets.FTP_SERVER }}${{ inputs.path }}" --user "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" > /tmp/out.txt
+          if [[ "${{ inputs.path }}" == */ ]]; then
+            curl -s --list-only "ftp://${{ secrets.FTP_SERVER }}${{ inputs.path }}" --user "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" > /tmp/out.txt
+          else
+            curl -s "ftp://${{ secrets.FTP_SERVER }}${{ inputs.path }}" --user "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" > /tmp/out.txt
+          fi
           code=$?
           {
             echo "Sti: ${{ inputs.path }}"
