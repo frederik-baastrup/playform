@@ -1,0 +1,24 @@
+name: FTP-rod tjek
+
+on:
+  workflow_dispatch:
+    inputs:
+      needle:
+        description: 'Navn der skal findes i rodmappen'
+        required: true
+
+jobs:
+  list:
+    runs-on: ubuntu-latest
+    steps:
+      - name: List FTP-rod
+        run: |
+          listing=$(curl -s --list-only "ftp://${{ secrets.FTP_SERVER }}/" --user "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}")
+          echo "$listing"
+          if echo "$listing" | grep -qxF "${{ inputs.needle }}"; then
+            echo "FUNDET: ${{ inputs.needle }}"
+            exit 0
+          else
+            echo "IKKE FUNDET: ${{ inputs.needle }}"
+            exit 1
+          fi
