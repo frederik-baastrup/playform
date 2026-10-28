@@ -1,11 +1,14 @@
 # Skrifter
 
-Læg BDO Grotesk her som woff2-filer (kræver en licens, der tillader brug på web):
+BDO Grotesk ligger her som woff2-filer (licens på plads). Temaet indlæser kun
+de filer, der findes – mangler en vægt, falder den tilbage til en systemskrift.
 
-- bdo-grotesk-400.woff2
-- bdo-grotesk-500.woff2
-- bdo-grotesk-600.woff2
-- bdo-grotesk-700.woff2
+- bdo-grotesk-300.woff2 (Light)
+- bdo-grotesk-400.woff2 (Regular)
+- bdo-grotesk-500.woff2 (Medium)
+- bdo-grotesk-600.woff2 (DemiBold)
+- bdo-grotesk-700.woff2 (Bold)
+- bdo-grotesk-800.woff2 (ExtraBold)
+- bdo-grotesk-900.woff2 (Black)
 
-Temaet indlæser dem selv – der hentes ingen skrifter fra Google eller andre.
-Mangler filerne, bruges en tilsvarende systemskrift.
+Der hentes ingen skrifter fra Google eller andre tredjeparter.

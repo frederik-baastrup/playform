@@ -52,7 +52,7 @@ add_action(
 		$dir = get_template_directory() . '/assets/fonts';
 		$uri = get_template_directory_uri() . '/assets/fonts';
 		$css = '';
-		foreach ( [ 400, 500, 600, 700 ] as $w ) {
+		foreach ( [ 300, 400, 500, 600, 700, 800, 900 ] as $w ) {
 			if ( is_file( "$dir/bdo-grotesk-$w.woff2" ) ) {
 				$css .= "@font-face{font-family:'BDO Grotesk';src:url('$uri/bdo-grotesk-$w.woff2') format('woff2');font-weight:$w;font-style:normal;font-display:swap}";
 				if ( $w === 600 ) {
