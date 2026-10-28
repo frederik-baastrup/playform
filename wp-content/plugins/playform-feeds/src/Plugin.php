@@ -12,6 +12,7 @@ final class Plugin {
 		Frontend::register();
 		if ( is_admin() ) {
 			Admin::register();
+			AdminTexts::register();
 		}
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			\WP_CLI::add_command( 'playform', Cli::class );

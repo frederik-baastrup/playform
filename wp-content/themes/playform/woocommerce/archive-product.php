@@ -153,8 +153,13 @@ global $wp_query;
 				<?php endif; ?>
 			<?php else : ?>
 				<div class="empty">
-					<b>Ingen produkter matcher dine filtre</b>
-					<span>Prøv at fjerne et eller flere filtre.</span>
+					<?php if ( in_array( 'tilbud', playform_active_filters()['egenskab'] ?? [], true ) ) : ?>
+						<b>Ingen målte prisfald lige nu</b>
+						<span>Vi viser kun tilbud, som vi selv har målt i vores prishistorik. Det kræver mindst 30 dages data, så de første tilbud dukker op efter ca. en måned.</span>
+					<?php else : ?>
+						<b>Ingen produkter matcher dine filtre</b>
+						<span>Prøv at fjerne et eller flere filtre.</span>
+					<?php endif; ?>
 					<?php if ( $is_cat ) : ?><a class="btn" href="<?php echo esc_url( get_term_link( $term ) ); ?>">Nulstil filtre</a><?php endif; ?>
 				</div>
 			<?php endif; ?>

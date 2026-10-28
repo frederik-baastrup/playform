@@ -51,6 +51,48 @@ final class Cli {
 		\WP_CLI::log( "Produkter solgt af flere butikker: $multi" );
 	}
 
+	/**
+	 * Sorterer ukategoriserede produkter med AI.
+	 *
+	 * [--limit=<n>]
+	 * : Højst så mange produkter. Standard 2000.
+	 *
+	 * @subcommand ai-classify
+	 */
+	public function ai_classify( $args, $assoc ): void {
+		$s = AiClassifier::run( (int) ( $assoc['limit'] ?? 2000 ), static fn( $m ) => \WP_CLI::log( $m ) );
+		\WP_CLI::success( sprintf( '%d tjekket: %d placeret, %d fravalgt, %d stadig usikre.', $s['checked'], $s['moved'], $s['excluded'], $s['kept'] ) );
+	}
+
+	/**
+	 * Skriver AI-produkttekster (gemmes som udkast til godkendelse).
+	 *
+	 * [--limit=<n>]
+	 * : Antal produkter. Standard 20.
+	 *
+	 * [--category=<slug>]
+	 * : Kun denne kategori, fx lobebaand.
+	 *
+	 * [--id=<id>]
+	 * : Kun dette produkt.
+	 *
+	 * @subcommand ai-texts
+	 */
+	public function ai_texts( $args, $assoc ): void {
+		$ids = ! empty( $assoc['id'] ) ? [ (int) $assoc['id'] ] : AiWriter::queue( (int) ( $assoc['limit'] ?? 20 ), (string) ( $assoc['category'] ?? '' ) );
+		$ok  = 0;
+		foreach ( $ids as $id ) {
+			try {
+				AiWriter::generate( (int) $id );
+				$ok++;
+				\WP_CLI::log( '✓ ' . get_the_title( $id ) );
+			} catch ( \Throwable $e ) {
+				\WP_CLI::warning( get_the_title( $id ) . ': ' . $e->getMessage() );
+			}
+		}
+		\WP_CLI::success( "$ok tekster venter nu på godkendelse under Produkter › Tekster til godkendelse." );
+	}
+
 	/** Kører sorteringsreglerne igen på alle tilbud (efter ændringer i Config). */
 	public function reclassify(): void {
 		global $wpdb;

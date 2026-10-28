@@ -37,6 +37,17 @@ final class Cron {
 		set_transient( 'playform_feeds_running', 1, 2 * HOUR_IN_SECONDS );
 		try {
 			( new Importer() )->run();
+			if ( Ai::enabled() ) {
+				AiClassifier::run( 400 );
+				$n = (int) get_option( 'playform_ai_texts_per_run', 0 );
+				foreach ( $n > 0 ? AiWriter::queue( $n ) : [] as $id ) {
+					try {
+						AiWriter::generate( (int) $id );
+					} catch ( \Throwable $e ) {
+						break; // fx manglende kredit – prøv igen næste gang
+					}
+				}
+			}
 		} finally {
 			delete_transient( 'playform_feeds_running' );
 		}

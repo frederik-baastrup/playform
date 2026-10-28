@@ -9,6 +9,7 @@ final class Admin {
 	public static function register(): void {
 		add_action( 'admin_menu', [ self::class, 'menu' ] );
 		add_action( 'admin_post_playform_run_import', [ self::class, 'queue_import' ] );
+		add_action( 'admin_post_playform_save_ai', [ self::class, 'save_ai' ] );
 	}
 
 	public static function menu(): void {
@@ -22,6 +23,23 @@ final class Admin {
 		check_admin_referer( 'playform_run_import' );
 		wp_schedule_single_event( time(), Cron::HOOK );
 		wp_safe_redirect( admin_url( 'tools.php?page=playform-feeds&queued=1' ) );
+		exit;
+	}
+
+	public static function save_ai(): void {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( 'Ingen adgang' );
+		}
+		check_admin_referer( 'playform_save_ai' );
+		$key = isset( $_POST['api_key'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['api_key'] ) ) ) : '';
+		if ( $key !== '' ) {
+			update_option( 'playform_anthropic_api_key', $key, false );
+		}
+		if ( ! empty( $_POST['remove_key'] ) ) {
+			delete_option( 'playform_anthropic_api_key' );
+		}
+		update_option( 'playform_ai_texts_per_run', max( 0, (int) ( $_POST['texts_per_run'] ?? 0 ) ) );
+		wp_safe_redirect( admin_url( 'tools.php?page=playform-feeds&saved=1' ) );
 		exit;
 	}
 
@@ -50,6 +68,19 @@ final class Admin {
 			}
 			echo '</tbody></table>';
 		}
+		echo '<h2>AI</h2><form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
+		wp_nonce_field( 'playform_save_ai' );
+		echo '<input type="hidden" name="action" value="playform_save_ai"><table class="form-table"><tr><th><label for="api_key">Claude API-nøgle</label></th><td>';
+		if ( defined( 'PLAYFORM_ANTHROPIC_API_KEY' ) ) {
+			echo 'Sat i wp-config.php';
+		} else {
+			echo '<input type="password" id="api_key" name="api_key" class="regular-text" autocomplete="off" placeholder="' . ( Ai::enabled() ? 'Gemt – skriv en ny for at skifte' : 'sk-ant-…' ) . '">';
+			if ( Ai::enabled() ) {
+				echo ' <label><input type="checkbox" name="remove_key" value="1"> Fjern nøglen</label>';
+			}
+		}
+		echo '</td></tr><tr><th><label for="texts_per_run">Nye tekster pr. import</label></th><td><input type="number" min="0" max="500" id="texts_per_run" name="texts_per_run" value="' . (int) get_option( 'playform_ai_texts_per_run', 0 ) . '"> <span class="description">0 = kun når du selv beder om det. Teksterne skal altid godkendes.</span></td></tr></table>';
+		echo '<p><button class="button">Gem</button></p></form>';
 		echo '<h2>Produkter pr. kategori</h2><table class="widefat striped" style="max-width:520px"><thead><tr><th>Kategori</th><th>Produkter</th><th>På lager</th></tr></thead><tbody>';
 		foreach ( $cats as $c ) {
 			$label = $names[ $c['category'] ] ?? ( $c['category'] === Config::uncategorized_slug() ? 'Ukategoriseret (skjult)' : $c['category'] );

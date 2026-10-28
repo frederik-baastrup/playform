@@ -11,7 +11,7 @@ final class Frontend {
 		add_filter( 'woocommerce_product_get_image', [ self::class, 'product_image' ], 10, 5 );
 		add_filter( 'woocommerce_product_add_to_cart_url', [ self::class, 'cart_url' ], 10, 2 );
 		add_filter( 'woocommerce_loop_add_to_cart_args', [ self::class, 'loop_button_args' ], 10, 2 );
-		add_action( 'pre_get_posts', [ self::class, 'hide_uncategorized' ] );
+		add_action( 'template_redirect', [ self::class, 'hide_uncategorized' ] );
 	}
 
 	public static function image_url( int $product_id ): string {
@@ -43,12 +43,12 @@ final class Frontend {
 	}
 
 	/** Ukategoriserede produkter (kladder) vises aldrig, men skal også holdes ude af kategorisider. */
-	public static function hide_uncategorized( \WP_Query $q ): void {
-		if ( is_admin() || ! $q->is_main_query() ) {
-			return;
-		}
-		if ( $q->is_tax( 'product_cat', Config::uncategorized_slug() ) ) {
-			$q->set_404();
+	public static function hide_uncategorized(): void {
+		if ( is_tax( 'product_cat', [ Config::uncategorized_slug(), 'uncategorized' ] ) ) {
+			global $wp_query;
+			$wp_query->set_404();
+			status_header( 404 );
+			nocache_headers();
 		}
 	}
 

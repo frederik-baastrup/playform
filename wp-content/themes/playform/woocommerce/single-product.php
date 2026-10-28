@@ -161,7 +161,19 @@ while ( have_posts() ) :
 				} else {
 					echo '<p class="muted">Der er endnu ingen beskrivelse af produktet.</p>';
 				}
-				?>
+				$pros = array_filter( (array) get_post_meta( $id, '_pf_pros', true ) );
+				$cons = array_filter( (array) get_post_meta( $id, '_pf_cons', true ) );
+				if ( $pros || $cons ) :
+					?>
+					<div class="pc">
+						<?php if ( $pros ) : ?>
+							<div class="pc__box"><h3>Fordele</h3><ul><?php foreach ( $pros as $x ) : ?><li><span class="pc__plus" aria-hidden="true">+</span><?php echo esc_html( $x ); ?></li><?php endforeach; ?></ul></div>
+						<?php endif; ?>
+						<?php if ( $cons ) : ?>
+							<div class="pc__box"><h3>Ulemper</h3><ul><?php foreach ( $cons as $x ) : ?><li><span class="pc__minus" aria-hidden="true">–</span><?php echo esc_html( $x ); ?></li><?php endforeach; ?></ul></div>
+						<?php endif; ?>
+					</div>
+				<?php endif; ?>
 			</div>
 			<div>
 				<h2>Specifikationer</h2>

@@ -1,0 +1,68 @@
+# Playform
+
+Fitnessudstyr fra flere danske shops samlet ét sted. WordPress + WooCommerce med et eget importplugin og et eget tema.
+
+## Indhold
+
+| Mappe | Hvad |
+|---|---|
+| `wp-content/plugins/playform-feeds/` | Importen: Partner-ads-feeds, sortering, priser, lager, prishistorik, AI-tekster |
+| `wp-content/themes/playform/` | Temaet: forside, kategoriside, produktside |
+| `dev/` | Lokal udvikling (WordPress med SQLite) |
+| `CLAUDE.md` | Noter til Claude Code om projektets regler |
+
+## Sådan sættes siden op på hosting
+
+1. **Hosting** med PHP 8.1+, MySQL/MariaDB og SSH/WP-CLI. 7.000+ produkter kræver mindst 512 MB PHP-hukommelse og gerne objekt-cache (Redis).
+2. **Installer WordPress og WooCommerce** som normalt.
+3. **Upload** `wp-content/plugins/playform-feeds` og `wp-content/themes/playform` (fx via git eller SFTP).
+4. **Aktiver** pluginnet *Playform Feeds* og temaet *Playform*. Temaet opretter forside, "Alle produkter", "Vores butikker" m.fl. og sætter danske URL'er (`/kategori/…`, `/produkt/…`).
+5. **Indstillinger › Permalinks › Gem** én gang.
+6. **Første import** via SSH (tager ca. 15 min):
+   ```bash
+   wp playform import
+   ```
+7. **Cronjob** (i stedet for WordPress' egen cron). Tilføj `define( 'DISABLE_WP_CRON', true );` i `wp-config.php` og læg dette i serverens crontab:
+   ```
+   30 5,17 * * *  cd /sti/til/wordpress && wp playform import --quiet
+   */5 * * * *    cd /sti/til/wordpress && wp cron event run --due-now --quiet
+   ```
+
+## AI (valgfrit)
+
+Tilføj din Claude API-nøgle i `wp-config.php`:
+
+```php
+define( 'PLAYFORM_ANTHROPIC_API_KEY', 'sk-ant-…' );
+```
+
+eller under **Værktøjer › Playform Feeds**.
+
+```bash
+wp playform ai-classify                         # sorter produkter, reglerne ikke kunne placere
+wp playform ai-texts --category=lobebaand --limit=50   # skriv tekstudkast
+```
+
+Tekster godkendes under **Produkter › Tekster til godkendelse** eller på det enkelte produkt. Der er et loft på 200 tekster pr. døgn (`playform_ai_daily_cap`). Sæt også en udgiftsgrænse i Claude Console.
+
+## Andre kommandoer
+
+```bash
+wp playform stats          # produkter pr. kategori
+wp playform reclassify     # kør sorteringsreglerne igen efter ændringer i Config.php
+wp playform refresh        # genberegn alle produkter
+wp playform drops          # genberegn målte rabatter
+```
+
+## Lokal udvikling
+
+```bash
+dev/setup-local.sh <mappe med wordpress/, wc/woocommerce/ og sqlite-database-integration/>
+cd .local/wp && php -S localhost:8080 -t . ../../dev/router.php
+```
+
+Login: admin / admin.
+
+## Ny niche (fx hvidevarer)
+
+Kopiér projektet, ret `Config.php` (shops, kategorier, regler) og `inc/navigation.php` i temaet, skift logo og billeder.
