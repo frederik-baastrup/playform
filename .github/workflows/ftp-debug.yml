@@ -17,16 +17,19 @@ jobs:
       - uses: actions/checkout@v4
       - name: List FTP-sti og commit resultatet
         run: |
+          set +e
           mkdir -p .ftp-debug
           {
             echo "Sti: ${{ inputs.path }}"
             echo "--- PWD ---"
             curl -s "ftp://${{ secrets.FTP_SERVER }}/" --user "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" -Q "PWD" 2>&1
+            echo "(pwd exit $?)"
             echo "--- LIST (verbose) ---"
             curl -s -v "ftp://${{ secrets.FTP_SERVER }}${{ inputs.path }}" --user "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" 2>&1 | tr -d '\r'
-            echo "--- curl exit: $? ---"
+            echo "(list exit $?)"
           } > .ftp-debug/listing.txt
           cat .ftp-debug/listing.txt
+          set -e
           git config user.name "ftp-debug"
           git config user.email "ftp-debug@users.noreply.github.com"
           git add .ftp-debug/listing.txt
