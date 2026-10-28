@@ -15,7 +15,25 @@ final class Admin {
 		add_action( 'admin_menu', [ self::class, 'menu' ] );
 		add_action( 'admin_post_playform_run_import', [ self::class, 'queue_import' ] );
 		add_action( 'admin_post_playform_save_ai', [ self::class, 'save_ai' ] );
+		add_action( 'admin_post_playform_clear_cache', [ self::class, 'clear_cache' ] );
 		add_action( 'wp_ajax_playform_import_step', [ self::class, 'ajax_step' ] );
+	}
+
+	/** Forsidens "Populære"/"Tilbud"/"Nyt"-sliders caches 6 timer – ryddes efter hver import. */
+	public static function clear_front_cache(): void {
+		delete_transient( 'playform_front_popular' );
+		delete_transient( 'playform_front_deals' );
+		delete_transient( 'playform_front_new' );
+	}
+
+	public static function clear_cache(): void {
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_die( 'Ingen adgang' );
+		}
+		check_admin_referer( 'playform_clear_cache' );
+		self::clear_front_cache();
+		wp_safe_redirect( admin_url( 'tools.php?page=playform-feeds&cleared=1' ) );
+		exit;
 	}
 
 	public static function menu(): void {
@@ -143,6 +161,7 @@ final class Admin {
 		];
 		update_option( 'playform_feeds_last_run', $summary, false );
 		delete_option( self::STATE_OPTION );
+		self::clear_front_cache();
 		$total_new = array_sum( wp_list_pluck( $state['shops_stats'], 'new' ) );
 		$total_upd = array_sum( wp_list_pluck( $state['shops_stats'], 'updated' ) );
 		return [
@@ -187,8 +206,16 @@ final class Admin {
 		if ( isset( $_GET['queued'] ) ) {
 			echo '<div class="notice notice-success"><p>Importen er sat i gang og kører i baggrunden.</p></div>';
 		}
+		if ( isset( $_GET['cleared'] ) ) {
+			echo '<div class="notice notice-success"><p>Forsidens cache er ryddet – genindlæs forsiden.</p></div>';
+		}
 		$nonce = wp_create_nonce( 'playform_import_step' );
-		echo '<p><button type="button" id="playform-import-btn" class="button button-primary">Kør import nu</button> <span id="playform-import-status" style="margin-left:8px"></span></p>';
+		echo '<p><button type="button" id="playform-import-btn" class="button button-primary">Kør import nu</button> ';
+		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" style="display:inline">';
+		wp_nonce_field( 'playform_clear_cache' );
+		echo '<input type="hidden" name="action" value="playform_clear_cache"><button class="button">Ryd forside-cache</button></form> ';
+		echo '<span id="playform-import-status" style="margin-left:8px"></span></p>';
+		echo '<p class="description">Forsidens "Populære produkter" m.fl. caches 6 timer. Hvis de står tomme efter en import, så tryk "Ryd forside-cache".</p>';
 		echo '<div id="playform-import-log" style="font-family:monospace;font-size:12px;max-height:260px;overflow:auto;background:#f6f7f7;border:1px solid #dcdcde;padding:8px;display:none;white-space:pre-wrap"></div>';
 		?>
 		<script>
