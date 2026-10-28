@@ -10,9 +10,13 @@ $term  = get_queried_object();
 $is_cat = $term instanceof WP_Term && $term->taxonomy === 'product_cat';
 $search = get_search_query();
 
+$parent = $is_cat && $term->parent ? get_term( $term->parent, 'product_cat' ) : null;
 if ( $is_cat ) {
 	$title = $term->name;
-	$intro = $term->description;
+	$intro = $term->description ?: sprintf(
+		'Se %s fra flere danske webshops samlet ét sted. Priser og lagerstatus opdateres to gange i døgnet, og du handler direkte hos butikken.',
+		mb_strtolower( $term->name )
+	);
 } elseif ( $search !== '' ) {
 	$title = sprintf( 'Søgeresultater for "%s"', $search );
 	$intro = '';
@@ -21,42 +25,31 @@ if ( $is_cat ) {
 	$intro = $title === 'Tilbud' ? 'Produkter, hvor vi selv har målt et prisfald i forhold til den laveste pris de foregående 30 dage.' : '';
 }
 
-$menu_item = null;
-foreach ( playform_menu() as $item ) {
-	if ( $is_cat && $item['slug'] === $term->slug ) {
-		$menu_item = $item;
-	}
+$top   = $parent ?: ( $is_cat ? $term : null );
+$crumb = [ [ 'Forside', home_url( '/' ) ] ];
+if ( $parent ) {
+	$crumb[] = [ $parent->name, get_term_link( $parent ) ];
 }
+$crumb[] = [ $title, '' ];
+$tabs    = $top ? playform_sub_links( $top->slug ) : [];
 $sort    = isset( $_GET['sortering'] ) ? sanitize_key( $_GET['sortering'] ) : 'populaer';
 $updated = playform_last_update_label();
 global $wp_query;
 ?>
 <section class="wrap cat-top">
-	<?php playform_breadcrumbs( [ [ 'Forside', home_url( '/' ) ], [ $title, '' ] ] ); ?>
+	<?php playform_breadcrumbs( $crumb ); ?>
 	<div class="cat-top__head">
 		<h1><?php echo esc_html( $title ); ?></h1>
 		<?php if ( $intro ) : ?><p><?php echo esc_html( wp_strip_all_tags( $intro ) ); ?></p><?php endif; ?>
 	</div>
-	<?php if ( $menu_item ) : ?>
+	<?php if ( $tabs ) : ?>
 		<nav class="tabs" aria-label="Underkategorier">
-			<?php $has_filter = ! empty( $_GET ); ?>
-			<a href="<?php echo esc_url( get_term_link( $term ) ); ?>" class="tab<?php echo ! $has_filter ? ' is-active' : ''; ?>"<?php echo ! $has_filter ? ' aria-current="page"' : ''; ?>>Alle <?php echo esc_html( mb_strtolower( $term->name ) ); ?></a>
-			<?php
-			$seen = [];
-			foreach ( $menu_item['cols'] as $col ) {
-				if ( $col['title'] === 'Pris' ) {
-					continue;
-				}
-				foreach ( $col['links'] as [ $label, $args ] ) {
-					if ( ! $args || isset( $seen[ $label ] ) ) {
-						continue;
-					}
-					$seen[ $label ] = true;
-					$active = playform_query_equals( $args );
-					printf( '<a href="%s" class="tab%s">%s</a>', esc_url( playform_category_url( $term->slug, $args ) ), $active ? ' is-active' : '', esc_html( $label ) );
-				}
-			}
-			?>
+			<?php $on = ! $parent; ?>
+			<a href="<?php echo esc_url( get_term_link( $top ) ); ?>" class="tab<?php echo $on ? ' is-active' : ''; ?>"<?php echo $on ? ' aria-current="page"' : ''; ?>>Alle <?php echo esc_html( mb_strtolower( $top->name ) ); ?></a>
+			<?php foreach ( $tabs as [ $label, $args ] ) : ?>
+				<?php $on = $parent && $term->slug === $args['sub']; ?>
+				<a href="<?php echo esc_url( playform_category_url( $top->slug, $args ) ); ?>" class="tab<?php echo $on ? ' is-active' : ''; ?>"<?php echo $on ? ' aria-current="page"' : ''; ?>><?php echo esc_html( $label ); ?></a>
+			<?php endforeach; ?>
 		</nav>
 	<?php endif; ?>
 </section>

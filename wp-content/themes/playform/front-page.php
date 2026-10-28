@@ -39,9 +39,9 @@ function playform_front_products( string $which ): array {
 }
 
 $hero = [
-	[ 'slug' => 'lobebaand', 'title' => 'Løbebånd', 'img' => 'hero-lobebaand.jpg', 'big' => true, 'subs' => [ [ 'Foldbart løbebånd', [ 'egenskab' => 'foldbar' ] ], [ 'Gåbånd', [ 'q' => 'gåbånd' ] ], [ 'Løbebånd til hjemmet', [] ], [ 'Billigt løbebånd', [ 'sortering' => 'pris-lav' ] ], [ 'Løbebånd med incline', [ 'egenskab' => 'incline' ] ] ] ],
-	[ 'slug' => 'vaegte-kettlebells', 'title' => 'Kettlebells', 'img' => 'hero-kettlebells.jpg', 'args' => [ 'q' => 'kettlebell' ], 'subs' => [ [ 'Kettlebell 12 kg', [ 'q' => 'kettlebell', 'vaegt' => '12' ] ], [ 'Kettlebell 16 kg', [ 'q' => 'kettlebell', 'vaegt' => '16' ] ], [ 'Kettlebell sæt', [ 'q' => 'kettlebell sæt' ] ] ] ],
-	[ 'slug' => 'motionscykler', 'title' => 'Motionscykler', 'img' => 'hero-motionscykler.jpg', 'subs' => [ [ 'Spinningcykel', [ 'q' => 'spinning' ] ], [ 'Kondicykel', [ 'q' => 'motionscykel' ] ], [ 'Airbike', [ 'q' => 'air' ] ], [ 'Liggecykel', [ 'q' => 'liggecykel' ] ] ] ],
+	[ 'slug' => 'lobebaand', 'title' => 'Løbebånd', 'img' => 'hero-lobebaand.jpg', 'big' => true, 'subs' => [ [ 'Foldbart løbebånd', [ 'sub' => 'foldbart-lobebaand' ] ], [ 'Gåbånd', [ 'sub' => 'gaabaand' ] ], [ 'Løbebånd med incline', [ 'sub' => 'lobebaand-med-incline' ] ], [ 'Billigt løbebånd', [ 'sortering' => 'pris-lav' ] ] ] ],
+	[ 'slug' => 'kettlebell', 'title' => 'Kettlebells', 'img' => 'hero-kettlebells.jpg', 'subs' => [ [ 'Kettlebell 12 kg', [ 'sub' => 'kettlebell', 'vaegt' => '12' ] ], [ 'Kettlebell 16 kg', [ 'sub' => 'kettlebell', 'vaegt' => '16' ] ], [ 'Kettlebell 24 kg', [ 'sub' => 'kettlebell', 'vaegt' => '24' ] ] ] ],
+	[ 'slug' => 'motionscykler', 'title' => 'Motionscykler', 'img' => 'hero-motionscykler.jpg', 'subs' => [ [ 'Spinningcykel', [ 'sub' => 'spinningcykel' ] ], [ 'Kondicykel', [ 'sub' => 'kondicykel' ] ], [ 'Airbike', [ 'sub' => 'airbike' ] ], [ 'Liggecykel', [ 'sub' => 'liggecykel' ] ] ] ],
 ];
 $deals     = playform_front_products( 'deals' );
 $has_deals = count( $deals ) >= 4;

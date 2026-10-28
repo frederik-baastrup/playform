@@ -106,6 +106,18 @@ function playform_current_category_slug(): string {
 	return $term instanceof WP_Term && $term->taxonomy === 'product_cat' ? $term->slug : '';
 }
 
+/** Hovedkategorien for den aktuelle side (for en underkategori: forælderen). */
+function playform_current_top_slug(): string {
+	$term = get_queried_object();
+	if ( ! $term instanceof WP_Term || $term->taxonomy !== 'product_cat' ) {
+		return '';
+	}
+	while ( $term->parent ) {
+		$term = get_term( $term->parent, 'product_cat' );
+	}
+	return $term->slug;
+}
+
 /**
  * Beregner matchende produkter og tal pr. filtermulighed. Gemmes til resten af requestet.
  */
@@ -175,7 +187,7 @@ function playform_catalog_state(): array {
 
 	$facets = [];
 	foreach ( $groups as $g => $def ) {
-		if ( ! empty( $def['only'] ) && ! in_array( $cat, $def['only'], true ) ) {
+		if ( ! empty( $def['only'] ) && ! in_array( playform_current_top_slug(), $def['only'], true ) ) {
 			continue;
 		}
 		$opts = [];

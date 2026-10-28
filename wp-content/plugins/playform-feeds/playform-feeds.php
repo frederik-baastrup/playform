@@ -10,7 +10,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'PLAYFORM_FEEDS_VERSION', '0.1.0' );
+define( 'PLAYFORM_FEEDS_VERSION', '0.2.0' );
 define( 'PLAYFORM_FEEDS_DIR', __DIR__ );
 
 require_once __DIR__ . '/src/autoload.php';

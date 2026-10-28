@@ -62,6 +62,51 @@ function playform_default_text( string $which ): string {
 	return '<p>Playform er gratis at bruge. Når du klikker videre til en butik og handler, får vi en lille provision fra butikken. Det koster ikke dig noget ekstra, og det påvirker ikke, hvilke produkter vi viser, eller hvordan vi sorterer dem.</p><p>Vi viser kun rabatter, som vi selv har målt i vores prishistorik – aldrig butikkernes egne "førpriser".</p>';
 }
 
+/** Korte introtekster til underkategorierne. De finjusteres efter søgeordsanalysen. */
+function playform_sub_intros(): array {
+	return [
+		'motionscykler'               => 'Find motionscykler fra flere danske webshops samlet ét sted – spinningcykler til intervaltræning, kondicykler til rolig motion og airbikes til hård træning.',
+		'romaskiner-crosstrainere'    => 'Romaskiner og crosstrainere giver skånsom helkropstræning derhjemme. Se modeller fra flere danske webshops samlet ét sted.',
+		'vaegte-kettlebells'          => 'Håndvægte, kettlebells, vægtskiver og vægtstænger fra flere danske webshops samlet ét sted – alt til styrketræning derhjemme.',
+		'styrke-baenke'               => 'Træningsbænke, power racks, multigyms og pull-up-stænger til dit hjemmegym. Se udvalget fra flere danske webshops samlet ét sted.',
+		'yoga-pilates'                => 'Yogamåtter, pilates reformere og tilbehør til yoga og pilates derhjemme. Se udvalget fra flere danske webshops samlet ét sted.',
+		'restitution'                 => 'Massagepistoler, foam rollers, recovery boots og kuldeterapi, der hjælper kroppen med at restituere efter træning. Se udvalget fra flere danske webshops.',
+		'tilbehor'                    => 'Træningsmåtter, elastikker, bolde, sjippetove og boksudstyr – alt det små udstyr, der gør træningen bedre. Se udvalget fra flere danske webshops.',
+		'foldbart-lobebaand'          => 'Et foldbart løbebånd kan klappes sammen efter brug, så det fylder mindre i stuen eller lejligheden. Her finder du foldbare løbebånd fra flere danske webshops samlet ét sted.',
+		'gaabaand'                    => 'Et gåbånd er et lavt, fladt løbebånd til gang i roligt tempo – ofte under et hæve-sænkebord på hjemmekontoret. Se gåbånd fra flere danske webshops.',
+		'lobebaand-med-incline'       => 'Med incline kan løbebåndet hæve løbefladen, så du kan træne op ad bakke. Her er løbebånd med stigning fra flere danske webshops.',
+		'manuelt-lobebaand'           => 'Et manuelt løbebånd drives af dine egne skridt og kræver ingen strøm. Se manuelle løbebånd fra flere danske webshops.',
+		'lobebaand-til-tunge-brugere' => 'Løbebånd med høj maksimal brugervægt og kraftig konstruktion. Her er modeller, hvor butikken oplyser en brugervægt på mindst 150 kg.',
+		'spinningcykel'               => 'En spinningcykel har et tungt svinghjul og en sportslig siddestilling, der er god til intervaltræning. Se spinningcykler fra flere danske webshops.',
+		'kondicykel'                  => 'En kondicykel – også kaldet motionscykel – giver rolig og skånsom konditionstræning hjemme. Her finder du kondicykler fra flere danske webshops.',
+		'liggecykel'                  => 'På en liggecykel sidder du tilbagelænet med ryglæn, hvilket aflaster ryg og led. Se liggecykler fra flere danske webshops.',
+		'airbike'                     => 'En airbike bruger en blæser som modstand: Jo hårdere du træder, jo tungere bliver det. Se airbikes fra flere danske webshops.',
+		'romaskine'                   => 'En romaskine træner både ben, ryg og arme i én bevægelse. Her finder du romaskiner med luft-, vand- og magnetmodstand fra flere danske webshops.',
+		'crosstrainer'                => 'En crosstrainer giver skånsom helkropstræning uden stød på leddene. Se crosstrainere fra flere danske webshops.',
+		'kettlebell'                  => 'Kettlebells i alle vægte – fra lette modeller til begyndere til tunge konkurrence-kettlebells. Se udvalget fra flere danske webshops.',
+		'haandvaegte'                 => 'Håndvægte i gummi, vinyl og støbejern samt justerbare håndvægte, der sparer plads. Se håndvægte fra flere danske webshops.',
+		'vaegtskiver'                 => 'Vægtskiver og bumper plates til vægtstænger og håndvægtsstænger. Her finder du vægtskiver fra flere danske webshops.',
+		'vaegtstaenger'               => 'Vægtstænger, curlstænger og olympiske stænger til styrketræning hjemme. Se vægtstænger fra flere danske webshops.',
+		'vaegtstativ'                 => 'Stativer og racks til håndvægte, kettlebells og vægtskiver, så hjemmegymmet holdes ryddeligt. Se vægtstativer fra flere danske webshops.',
+		'traeningsbaenk'              => 'Flade, justerbare og foldbare træningsbænke til bænkpres, håndvægte og core-øvelser. Se træningsbænke fra flere danske webshops.',
+		'power-rack'                  => 'Power racks, squat stands og half racks til tung styrketræning med vægtstang. Se udvalget fra flere danske webshops.',
+		'multigym'                    => 'En multigym samler mange styrkeøvelser i én maskine med kabler og vægtstak. Se multigyms fra flere danske webshops.',
+		'pull-up-stang'               => 'Pull-up-stænger og dip-stationer til træning med egen kropsvægt. Se udvalget fra flere danske webshops.',
+		'yogamaatte'                  => 'Yogamåtter i forskellige tykkelser og materialer – til yoga, pilates og udstrækning. Se yogamåtter fra flere danske webshops.',
+		'pilates-reformer'            => 'En pilates reformer er en træningsmaskine med fjedre og en kørende slæde til pilatesøvelser. Se reformere fra flere danske webshops.',
+		'yogatilbehor'                => 'Yogablokke, stropper, bolstere og meditationspuder, der gør det lettere at komme ind i stillingerne. Se yogatilbehør fra flere danske webshops.',
+		'massagepistol'               => 'En massagepistol giver hurtige stød, der kan løsne spændte muskler efter træning. Se massagepistoler fra flere danske webshops.',
+		'foam-roller'                 => 'Foam rollers og massageruller til selvmassage af ben, ryg og skuldre. Se udvalget fra flere danske webshops.',
+		'recovery-boots'              => 'Recovery boots er kompressionsstøvler, der masserer benene med luft. Se recovery boots fra flere danske webshops.',
+		'kuldeterapi'                 => 'Isbade, isbadskar og udstyr til kuldeterapi efter træning. Se udvalget fra flere danske webshops.',
+		'traeningsmaatte'             => 'Træningsmåtter og gulvmåtter, der beskytter gulvet og giver et godt underlag til træningen. Se måtter fra flere danske webshops.',
+		'elastikker'                  => 'Træningselastikker og loop bands i flere modstande – lette at have med og gode til både styrke og genoptræning. Se udvalget fra flere danske webshops.',
+		'boksning'                    => 'Boksehandsker, boksesække, håndbind og andet udstyr til boksning og kampsportstræning. Se udvalget fra flere danske webshops.',
+		'traeningsbolde'              => 'Gymballs, medicinbolde, slam balls og wall balls til core- og styrketræning. Se træningsbolde fra flere danske webshops.',
+		'sjippetov'                   => 'Sjippetove til konditionstræning og opvarmning – fra simple tove til hurtige speed ropes. Se udvalget fra flere danske webshops.',
+	];
+}
+
 /** Introtekst, SEO-tekst og FAQ til kategorierne. Redaktøren kan rette dem under Produkter › Kategorier. */
 function playform_seed_category_texts(): void {
 	$texts = [
@@ -76,6 +121,12 @@ function playform_seed_category_texts(): void {
 			],
 		],
 	];
+	foreach ( playform_sub_intros() as $slug => $intro ) {
+		$term = get_term_by( 'slug', $slug, 'product_cat' );
+		if ( $term && ! $term->description ) {
+			wp_update_term( $term->term_id, 'product_cat', [ 'description' => $intro ] );
+		}
+	}
 	foreach ( playform_menu() as $item ) {
 		$term = get_term_by( 'slug', $item['slug'], 'product_cat' );
 		if ( ! $term ) {

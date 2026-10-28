@@ -27,7 +27,6 @@ add_action(
 	'wp_enqueue_scripts',
 	static function () {
 		$uri = get_template_directory_uri();
-		wp_enqueue_style( 'playform-fonts', 'https://fonts.googleapis.com/css2?family=BDO+Grotesk:wght@400;500;600;700&display=swap', [], null );
 		wp_enqueue_style( 'playform', "$uri/assets/css/main.css", [], PLAYFORM_THEME_VERSION );
 		wp_enqueue_script( 'playform', "$uri/assets/js/main.js", [], PLAYFORM_THEME_VERSION, [ 'in_footer' => true, 'strategy' => 'defer' ] );
 		// WooCommerce' egen CSS bruges ikke – temaet styler alt selv.
@@ -41,10 +40,27 @@ add_action(
 
 add_filter( 'woocommerce_enqueue_styles', '__return_empty_array' );
 
+/**
+ * Skriften ligger på vores egen server (ingen Google Fonts – det sender besøgendes IP til Google).
+ * Kun de vægte, hvor filen findes, bliver indlæst.
+ */
 add_action(
 	'wp_head',
 	static function () {
-		echo '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
+		$dir = get_template_directory() . '/assets/fonts';
+		$uri = get_template_directory_uri() . '/assets/fonts';
+		$css = '';
+		foreach ( [ 400, 500, 600, 700 ] as $w ) {
+			if ( is_file( "$dir/bdo-grotesk-$w.woff2" ) ) {
+				$css .= "@font-face{font-family:'BDO Grotesk';src:url('$uri/bdo-grotesk-$w.woff2') format('woff2');font-weight:$w;font-style:normal;font-display:swap}";
+				if ( $w === 600 ) {
+					echo '<link rel="preload" href="' . esc_url( "$uri/bdo-grotesk-$w.woff2" ) . '" as="font" type="font/woff2" crossorigin>' . "\n";
+				}
+			}
+		}
+		if ( $css ) {
+			echo '<style id="playform-fonts">' . $css . '</style>' . "\n"; // phpcs:ignore
+		}
 	},
 	1
 );

@@ -38,6 +38,64 @@ final class Config {
 		];
 	}
 
+	/**
+	 * Underkategorier = egne landingssider, fx /kategori/lobebaand/foldbart-lobebaand/.
+	 * 'name' testes mod produktnavnet; 'attr' mod udtrukne egenskaber. Et produkt kan ligge i flere.
+	 * Navnene er valgt efter, hvad folk søger på (ental, som i Google).
+	 */
+	public static function subcategories(): array {
+		return [
+			'lobebaand' => [
+				'foldbart-lobebaand'          => [ 'name' => 'Foldbart løbebånd', 'match' => 'foldbar|sammenklappelig|folding', 'attr' => [ 'foldable' => true ] ],
+				'gaabaand'                    => [ 'name' => 'Gåbånd', 'match' => 'gåbånd|walking ?pad|gå/løbebånd|walkingpad' ],
+				'lobebaand-med-incline'       => [ 'name' => 'Løbebånd med incline', 'attr' => [ 'incline' => true ] ],
+				'manuelt-lobebaand'           => [ 'name' => 'Manuelt løbebånd', 'match' => 'manuel|curve|curved|uden strøm|non-?motor' ],
+				'lobebaand-til-tunge-brugere' => [ 'name' => 'Løbebånd til tunge brugere', 'attr' => [ 'max_weight' => [ 150, null ] ] ],
+			],
+			'motionscykler' => [
+				'spinningcykel' => [ 'name' => 'Spinningcykel', 'match' => 'spinning|spin ?bike|indoor ?cycl|indendørscykel' ],
+				'kondicykel'    => [ 'name' => 'Kondicykel', 'match' => 'motionscykel|kondicykel|ergometer|exercise ?bike|upright' ],
+				'liggecykel'    => [ 'name' => 'Liggecykel', 'match' => 'liggecykel|recumbent|siddecykel' ],
+				'airbike'       => [ 'name' => 'Airbike', 'match' => 'air ?bike|assault|fan ?bike|echo bike' ],
+			],
+			'romaskiner-crosstrainere' => [
+				'romaskine'     => [ 'name' => 'Romaskine', 'match' => 'romaskine|rower|rowing|roergometer|ski ?erg' ],
+				'crosstrainer'  => [ 'name' => 'Crosstrainer', 'match' => 'crosstrainer|cross ?trainer|elliptical' ],
+			],
+			'vaegte-kettlebells' => [
+				'kettlebell'    => [ 'name' => 'Kettlebells', 'match' => 'kettlebell' ],
+				'haandvaegte'   => [ 'name' => 'Håndvægte', 'match' => 'håndvægt|dumbbell|hexagon|dumbell' ],
+				'vaegtskiver'   => [ 'name' => 'Vægtskiver', 'match' => 'vægtskive|bumper|\bplates?\b|skive' ],
+				'vaegtstaenger' => [ 'name' => 'Vægtstænger', 'match' => 'vægtstang|vægtstænger|barbell|curl ?bar|ez[- ]?bar|weight ?bar|olympisk stang' ],
+				'vaegtstativ'   => [ 'name' => 'Vægtstativ', 'match' => 'stativ|dumbbell ?rack|vægtrack|opbevaring' ],
+			],
+			'styrke-baenke' => [
+				'traeningsbaenk' => [ 'name' => 'Træningsbænk', 'match' => 'bænk|bench' ],
+				'power-rack'     => [ 'name' => 'Power rack', 'match' => '\brack\b|power ?cage|squat ?stand|squat ?rack|half ?rack' ],
+				'multigym'       => [ 'name' => 'Multigym', 'match' => 'multigym|multi ?gym|home ?gym|multistation|funktionel træner|cable' ],
+				'pull-up-stang'  => [ 'name' => 'Pull-up-stang', 'match' => 'pull[- ]?up|chin[- ]?up|dip' ],
+			],
+			'yoga-pilates' => [
+				'yogamaatte'       => [ 'name' => 'Yogamåtte', 'match' => 'yogamåtte|yoga ?mat|yoga ?måtte' ],
+				'pilates-reformer' => [ 'name' => 'Pilates reformer', 'match' => 'reformer' ],
+				'yogatilbehor'     => [ 'name' => 'Yogatilbehør', 'match' => 'yogablok|yoga ?blok|yogastrop|strop|meditationspude|bolster' ],
+			],
+			'restitution' => [
+				'massagepistol' => [ 'name' => 'Massagepistol', 'match' => 'massagepistol|massage ?gun|theragun|percussion' ],
+				'foam-roller'   => [ 'name' => 'Foam roller', 'match' => 'foam ?roller|foamroller|massagerulle|\broll\b|blackroll' ],
+				'recovery-boots' => [ 'name' => 'Recovery boots', 'match' => 'recovery boots|kompressionsstøvle' ],
+				'kuldeterapi'   => [ 'name' => 'Kuldeterapi og isbad', 'match' => 'kulde|isbad|ice ?bath|cold' ],
+			],
+			'tilbehor' => [
+				'traeningsmaatte' => [ 'name' => 'Træningsmåtte', 'match' => 'træningsmåtte|gulvmåtte|måtte|gulv' ],
+				'elastikker'      => [ 'name' => 'Træningselastik', 'match' => 'elastik|band\b|bands\b|loop' ],
+				'boksning'        => [ 'name' => 'Boksning', 'match' => 'boks|mma|hand ?wraps|håndbind|sandsæk|punching' ],
+				'traeningsbolde'  => [ 'name' => 'Træningsbolde', 'match' => 'bold\b|ball\b|gymball|medicinbold|slam ?ball|wall ?ball' ],
+				'sjippetov'       => [ 'name' => 'Sjippetov', 'match' => 'sjippetov|springreb|jump ?rope' ],
+			],
+		];
+	}
+
 	/** Produkter, der aldrig skal med (navn eller butikkens kategori). */
 	public static function exclude(): array {
 		return [

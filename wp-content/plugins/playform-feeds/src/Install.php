@@ -74,6 +74,7 @@ final class Install {
 				wp_insert_term( $def['name'], 'product_cat', [ 'slug' => $slug ] );
 			}
 		}
+		Subcategories::install();
 	}
 
 	public static function category_id( string $slug ): int {

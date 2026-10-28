@@ -7,7 +7,7 @@ final class Plugin {
 		if ( ! class_exists( 'WooCommerce' ) ) {
 			return;
 		}
-		Install::maybe_upgrade();
+		add_action( 'init', [ Install::class, 'maybe_upgrade' ], 20 );
 		Cron::register();
 		Frontend::register();
 		if ( is_admin() ) {

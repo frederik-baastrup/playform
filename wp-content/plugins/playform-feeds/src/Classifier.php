@@ -50,6 +50,6 @@ final class Classifier {
 	}
 
 	private static function m( string $pattern, string $text ): bool {
-		return (bool) preg_match( '/' . $pattern . '/iu', $text );
+		return (bool) preg_match( '~' . $pattern . '~iu', $text );
 	}
 }

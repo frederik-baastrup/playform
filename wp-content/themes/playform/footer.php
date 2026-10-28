@@ -16,11 +16,11 @@
 			</div>
 			<div class="foot__col">
 				<span class="foot__title">Populære</span>
-				<a href="<?php echo esc_url( playform_category_url( 'lobebaand', [ 'egenskab' => 'foldbar' ] ) ); ?>">Foldbare løbebånd</a>
-				<a href="<?php echo esc_url( playform_category_url( 'lobebaand', [ 'q' => 'gåbånd' ] ) ); ?>">Gåbånd</a>
-				<a href="<?php echo esc_url( playform_category_url( 'motionscykler', [ 'q' => 'spinning' ] ) ); ?>">Spinningcykler</a>
-				<a href="<?php echo esc_url( playform_category_url( 'vaegte-kettlebells', [ 'q' => 'kettlebell' ] ) ); ?>">Kettlebells</a>
-				<a href="<?php echo esc_url( playform_category_url( 'tilbehor', [ 'q' => 'måtte' ] ) ); ?>">Træningsmåtter</a>
+				<a href="<?php echo esc_url( playform_category_url( 'foldbart-lobebaand' ) ); ?>">Foldbare løbebånd</a>
+				<a href="<?php echo esc_url( playform_category_url( 'gaabaand' ) ); ?>">Gåbånd</a>
+				<a href="<?php echo esc_url( playform_category_url( 'spinningcykel' ) ); ?>">Spinningcykler</a>
+				<a href="<?php echo esc_url( playform_category_url( 'kettlebell' ) ); ?>">Kettlebells</a>
+				<a href="<?php echo esc_url( playform_category_url( 'traeningsmaatte' ) ); ?>">Træningsmåtter</a>
 			</div>
 			<div class="foot__col">
 				<span class="foot__title">Viden</span>

@@ -40,7 +40,7 @@
 		</div>
 		<nav id="hovedmenu" class="mm" aria-label="Kategorier">
 			<?php
-			$current = is_tax( 'product_cat' ) ? get_queried_object()->slug : '';
+			$current = is_tax( 'product_cat' ) ? playform_current_top_slug() : '';
 			if ( is_singular( 'product' ) ) {
 				$current = (string) get_post_meta( get_the_ID(), '_pf_category', true );
 			}
