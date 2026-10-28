@@ -9,6 +9,9 @@ defined( 'ABSPATH' ) || exit;
 add_action( 'after_switch_theme', 'playform_setup_site' );
 
 function playform_setup_site(): void {
+	update_option( 'timezone_string', 'Europe/Copenhagen' );
+	update_option( 'date_format', 'j. F Y' );
+	update_option( 'WPLANG', 'da_DK' );
 	// Danske URL'er: /kategori/lobebaand/ og /produkt/navn/
 	$perma = (array) get_option( 'woocommerce_permalinks', [] );
 	$perma['category_base'] = 'kategori';
@@ -42,6 +45,13 @@ function playform_setup_site(): void {
 		update_option( 'woocommerce_shop_page_id', $shop->ID );
 	}
 	playform_seed_category_texts();
+	// WordPress' eksempelindhold fjernes.
+	foreach ( [ 'hello-world' => 'post', 'sample-page' => 'page' ] as $slug => $type ) {
+		$p = get_page_by_path( $slug, OBJECT, $type );
+		if ( $p ) {
+			wp_delete_post( $p->ID, true );
+		}
+	}
 	flush_rewrite_rules();
 }
 

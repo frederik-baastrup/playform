@@ -24,8 +24,7 @@ function playform_front_products( string $which ): array {
 			$base['orderby']      = 'meta_value_num';
 			$base['order']        = 'DESC';
 		} elseif ( $which === 'new' ) {
-			$base['orderby'] = 'date';
-			$base['order']   = 'DESC';
+			$base['orderby'] = 'rand';
 			$base['tax_query'] = [ [ 'taxonomy' => 'product_cat', 'field' => 'slug', 'terms' => [ 'lobebaand', 'motionscykler', 'romaskiner-crosstrainere', 'styrke-baenke', 'restitution' ] ] ];
 		} else {
 			// "Populære": større maskiner og udstyr fra hovedkategorierne, blandet hver dag.

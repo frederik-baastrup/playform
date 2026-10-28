@@ -87,6 +87,7 @@ final class ProductSync {
 		}
 		update_post_meta( $product_id, self::META_IMAGE, $image );
 		update_post_meta( $product_id, self::META_IN_STOCK, (int) $best['in_stock'] );
+		self::write_flat_attributes( $product_id, (array) get_post_meta( $product_id, self::META_ATTR, true ) );
 		update_post_meta( $product_id, self::META_SHOP, $best['shop'] );
 		$shop_keys = array_values( array_unique( array_column( $offers, 'shop' ) ) );
 		update_post_meta( $product_id, self::META_SHOPS, count( $shop_keys ) );
@@ -116,7 +117,11 @@ final class ProductSync {
 		$old  = (array) get_post_meta( $product_id, self::META_ATTR, true );
 		$all  = array_merge( $attr, $old );
 		update_post_meta( $product_id, self::META_ATTR, $all );
-		// Hver egenskab også som eget felt, så kategorisiden kan filtrere med meta_query.
+		self::write_flat_attributes( $product_id, $all );
+	}
+
+	/** Hver egenskab også som eget felt, så kategorisiden kan filtrere på dem. */
+	private static function write_flat_attributes( int $product_id, array $all ): void {
 		foreach ( [ 'foldable', 'incline', 'max_speed', 'max_weight', 'weight_kg' ] as $key ) {
 			if ( array_key_exists( $key, $all ) ) {
 				update_post_meta( $product_id, '_pf_' . $key, is_bool( $all[ $key ] ) ? (int) $all[ $key ] : $all[ $key ] );

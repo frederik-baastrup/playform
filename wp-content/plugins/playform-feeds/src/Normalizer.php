@@ -96,6 +96,16 @@ final class Normalizer {
 
 	public static function clean_text( string $v ): string {
 		$v = wp_strip_all_tags( $v );
+		// Nogle shops sender UTF-8 inde i et Latin-1-feed (fx "â¯"). Det repareres her.
+		$v = preg_replace_callback(
+			'/[\x{00C2}-\x{00F4}][\x{0080}-\x{00BF}]{1,3}/u',
+			static function ( $m ) {
+				$bytes = mb_convert_encoding( $m[0], 'ISO-8859-1', 'UTF-8' );
+				return mb_check_encoding( $bytes, 'UTF-8' ) ? $bytes : $m[0];
+			},
+			$v
+		);
+		$v = preg_replace( '/[\x{200B}-\x{200D}\x{FEFF}]/u', '', $v );
 		$v = preg_replace( '/[\x{2028}\x{2029}\x{00A0}\x{202F}]/u', ' ', $v );
 		$v = preg_replace( '/\s+/u', ' ', $v );
 		return trim( $v );
