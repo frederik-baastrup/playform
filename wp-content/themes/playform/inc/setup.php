@@ -10,6 +10,8 @@ add_action( 'after_switch_theme', 'playform_setup_site' );
 
 function playform_setup_site(): void {
 	update_option( 'timezone_string', 'Europe/Copenhagen' );
+	// WooCommerce' ordresporing sætter cookies (sourcebuster) – den bruges ikke, da der ikke handles på siden.
+	update_option( 'woocommerce_feature_order_attribution_enabled', 'no' );
 	update_option( 'date_format', 'j. F Y' );
 	update_option( 'WPLANG', 'da_DK' );
 	// Danske URL'er: /kategori/lobebaand/ og /produkt/navn/
@@ -25,11 +27,15 @@ function playform_setup_site(): void {
 		'viden'                  => [ 'Viden & guides', '' ],
 		'vores-butikker'         => [ 'Vores butikker', playform_default_text( 'butikker' ) ],
 		'saadan-tjener-vi-penge' => [ 'Sådan tjener vi penge', playform_default_text( 'penge' ) ],
-		'privatlivspolitik'      => [ 'Privatlivspolitik', '<p>[Privatlivspolitik skal skrives]</p>' ],
-		'cookies'                => [ 'Cookies', '<p>[Cookiepolitik skal skrives]</p>' ],
+		'privatlivspolitik'      => [ 'Privatlivspolitik', playform_legal_privacy() ],
+		'cookies'                => [ 'Cookiepolitik', playform_legal_cookies() ],
 	];
 	foreach ( $pages as $slug => [ $title, $content ] ) {
-		if ( ! get_page_by_path( $slug ) ) {
+		$existing = get_page_by_path( $slug );
+		if ( $existing && str_starts_with( trim( $existing->post_content ), '<p>[' ) && $content ) {
+			wp_update_post( [ 'ID' => $existing->ID, 'post_title' => $title, 'post_content' => $content ] );
+		}
+		if ( ! $existing ) {
 			wp_insert_post( [ 'post_type' => 'page', 'post_status' => 'publish', 'post_name' => $slug, 'post_title' => $title, 'post_content' => $content ] );
 		}
 	}

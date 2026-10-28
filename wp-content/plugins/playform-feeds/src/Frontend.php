@@ -14,8 +14,10 @@ final class Frontend {
 		add_action( 'template_redirect', [ self::class, 'hide_uncategorized' ] );
 	}
 
+	/** Lokalt gemt billede, hvis det findes – ellers butikkens eget. */
 	public static function image_url( int $product_id ): string {
-		return (string) get_post_meta( $product_id, ProductSync::META_IMAGE, true );
+		$remote = (string) get_post_meta( $product_id, ProductSync::META_IMAGE, true );
+		return ImageCache::local_url( $remote ) ?: $remote;
 	}
 
 	public static function product_image( $html, $product, $size, $attr, $placeholder ) {

@@ -18,11 +18,13 @@ Fitnessudstyr fra flere danske shops samlet ét sted. WordPress + WooCommerce me
 3. **Upload** `wp-content/plugins/playform-feeds` og `wp-content/themes/playform` (fx via git eller SFTP).
 4. **Aktiver** pluginnet *Playform Feeds* og temaet *Playform*. Temaet opretter forside, "Alle produkter", "Vores butikker" m.fl. og sætter danske URL'er (`/kategori/…`, `/produkt/…`).
 5. **Indstillinger › Permalinks › Gem** én gang.
-6. **Første import** via SSH (tager ca. 15 min):
+6. **Første import** via SSH (tager ca. 15 min) og hent billeder:
    ```bash
    wp playform import
+   wp playform images
    ```
-7. **Cronjob** (i stedet for WordPress' egen cron). Tilføj `define( 'DISABLE_WP_CRON', true );` i `wp-config.php` og læg dette i serverens crontab:
+7. **Skrift:** Læg BDO Grotesk som woff2 i `wp-content/themes/playform/assets/fonts/` (se README der).
+8. **Cronjob** (i stedet for WordPress' egen cron). Tilføj `define( 'DISABLE_WP_CRON', true );` i `wp-config.php` og læg dette i serverens crontab:
    ```
    30 5,17 * * *  cd /sti/til/wordpress && wp playform import --quiet
    */5 * * * *    cd /sti/til/wordpress && wp cron event run --due-now --quiet
@@ -52,6 +54,7 @@ wp playform stats          # produkter pr. kategori
 wp playform reclassify     # kør sorteringsreglerne igen efter ændringer i Config.php
 wp playform refresh        # genberegn alle produkter
 wp playform drops          # genberegn målte rabatter
+wp playform images         # hent produktbilleder til egen server (kører også efter hver import)
 ```
 
 ## Lokal udvikling

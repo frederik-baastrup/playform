@@ -37,6 +37,7 @@ final class Cron {
 		set_transient( 'playform_feeds_running', 1, 2 * HOUR_IN_SECONDS );
 		try {
 			( new Importer() )->run();
+			ImageCache::run( 1500 );
 			if ( Ai::enabled() ) {
 				AiClassifier::run( 400 );
 				$n = (int) get_option( 'playform_ai_texts_per_run', 0 );

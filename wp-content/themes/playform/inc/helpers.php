@@ -62,7 +62,7 @@ function playform_card_data( WC_Product $p ): array {
 		'url'      => get_permalink( $id ),
 		'name'     => $p->get_name(),
 		'brand'    => $brand,
-		'image'    => (string) get_post_meta( $id, '_pf_image', true ),
+		'image'    => class_exists( '\\Playform\\Feeds\\Frontend' ) ? \Playform\Feeds\Frontend::image_url( $id ) : (string) get_post_meta( $id, '_pf_image', true ),
 		'price'    => (float) $p->get_price(),
 		'drop'     => $drop,
 		'ref'      => $ref,

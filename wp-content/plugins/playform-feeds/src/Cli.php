@@ -93,6 +93,17 @@ final class Cli {
 		\WP_CLI::success( "$ok tekster venter nu på godkendelse under Produkter › Tekster til godkendelse." );
 	}
 
+	/**
+	 * Henter produktbilleder til vores egen server.
+	 *
+	 * [--limit=<n>]
+	 * : Højst så mange billeder. Standard 10000.
+	 */
+	public function images( $args, $assoc ): void {
+		$s = ImageCache::run( (int) ( $assoc['limit'] ?? 10000 ), static fn( $m ) => \WP_CLI::log( $m ) );
+		\WP_CLI::success( sprintf( '%d billeder hentet, %d fejlede.', $s['fetched'], $s['failed'] ) );
+	}
+
 	/** Kører sorteringsreglerne igen på alle tilbud (efter ændringer i Config). */
 	public function reclassify(): void {
 		global $wpdb;

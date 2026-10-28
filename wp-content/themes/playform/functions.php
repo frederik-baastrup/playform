@@ -12,6 +12,7 @@ require_once __DIR__ . '/inc/helpers.php';
 require_once __DIR__ . '/inc/catalog.php';
 require_once __DIR__ . '/inc/setup.php';
 require_once __DIR__ . '/inc/seo.php';
+require_once __DIR__ . '/inc/legal.php';
 
 add_action(
 	'after_setup_theme',
@@ -63,4 +64,22 @@ add_action(
 		}
 	},
 	1
+);
+
+/**
+ * Siden har ingen kurv, så WooCommerce' frontend-scripts fjernes.
+ * Det gør siden hurtigere og undgår WooCommerce' sporings-cookies.
+ */
+add_action(
+	'wp_enqueue_scripts',
+	static function () {
+		foreach ( [ 'wc-add-to-cart', 'woocommerce', 'wc-cart-fragments', 'js-cookie', 'jquery-blockui', 'sourcebuster-js', 'wc-order-attribution', 'wc-add-to-cart-variation' ] as $h ) {
+			wp_dequeue_script( $h );
+			wp_deregister_script( $h );
+		}
+		if ( ! is_admin() && ! is_user_logged_in() ) {
+			wp_deregister_script( 'jquery' );
+		}
+	},
+	100
 );

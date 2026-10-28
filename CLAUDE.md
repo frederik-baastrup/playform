@@ -15,6 +15,9 @@ Ejer: Frederik Baastrup. Al tekst på siden er på dansk.
   - `src/Offers.php` – tabel `wp_pf_offers`: ét tilbud pr. produkt pr. butik. Produkter matches på tværs af shops via EAN.
   - `src/PriceHistory.php` – tabel `wp_pf_price_history`: dagens laveste pris pr. produkt pr. butik.
   - `src/ProductSync.php` – opretter/opdaterer WooCommerce "eksterne produkter".
+  - `src/Subcategories.php` – underkategorier (landingssider) ud fra regler i `Config::subcategories()`.
+  - `src/ImageCache.php` – produktbilleder gemmes på egen server (GDPR + hastighed).
+  - `src/Ai.php`, `src/AiClassifier.php`, `src/AiWriter.php`, `src/AdminTexts.php` – AI-sortering og -tekster med godkendelse.
   - `src/Importer.php`, `src/Cron.php`, `src/Cli.php`, `src/Admin.php`, `src/Frontend.php`
 - `wp-content/themes/playform/` – temaet, bygget ud fra designet (forside, kategoriside, produktside).
 - `dev/setup-local.sh` – lokal WordPress med SQLite i `.local/` (ignoreres af git).
@@ -26,7 +29,8 @@ Ejer: Frederik Baastrup. Al tekst på siden er på dansk.
 3. **Affiliate-links** har `rel="sponsored nofollow"`, og siden skal tydeligt oplyse, at den indeholder annoncer.
 4. **Udsolgte produkter slettes ikke.** Siden bliver liggende som "ikke på lager". Eksterne produkter kan ikke have WooCommerce-lagerstatus, så vi bruger metafeltet `_pf_in_stock`.
 5. **Prissammenligning er en bonus.** De fleste produkter sælges af én butik. Produktsiden viser "Sælges af [butik]" ved én butik og prislisten ved flere.
-6. **Redaktørens rettelser vinder.** Metafeltet `_pf_locks` (`name`, `category`) forhindrer importen i at overskrive.
+6. **Ingen tredjepartskald fra den offentlige side.** Skrift ligger i `themes/playform/assets/fonts/`, billeder caches lokalt, WooCommerce' scripts og sporings-cookies er slået fra.
+7. **Redaktørens rettelser vinder.** Metafeltet `_pf_locks` (`name`, `category`) forhindrer importen i at overskrive.
 
 ## Kommandoer
 
