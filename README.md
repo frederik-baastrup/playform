@@ -18,13 +18,13 @@ Fitnessudstyr fra flere danske shops samlet ét sted. WordPress + WooCommerce me
 3. **Upload** `wp-content/plugins/playform-feeds` og `wp-content/themes/playform` (fx via git eller SFTP).
 4. **Aktiver** pluginnet *Playform Feeds* og temaet *Playform*. Temaet opretter forside, "Alle produkter", "Vores butikker" m.fl. og sætter danske URL'er (`/kategori/…`, `/produkt/…`).
 5. **Indstillinger › Permalinks › Gem** én gang.
-6. **Første import** via SSH (tager ca. 15 min) og hent billeder:
+6. **Første import** – ingen SSH nødvendig: gå til **Værktøjer › Playform Feeds** og tryk **"Kør import nu"**. Knappen arbejder sig igennem feeds og billeder i mange små bidder (så serverens 120-sekunders grænse pr. kald aldrig rammes) og viser status, til den skriver "Færdig!". Det tager typisk 10–20 minutter – lad siden stå åben. Har du SSH/WP-CLI, går det hurtigere:
    ```bash
    wp playform import
    wp playform images
    ```
 7. **Skrift:** Læg BDO Grotesk som woff2 i `wp-content/themes/playform/assets/fonts/` (se README der).
-8. **Cronjob** (i stedet for WordPress' egen cron). Tilføj `define( 'DISABLE_WP_CRON', true );` i `wp-config.php` og læg dette i serverens crontab:
+8. **Cronjob** (i stedet for WordPress' egen cron), så importen også kører automatisk kl. 05:30/17:30. Tilføj `define( 'DISABLE_WP_CRON', true );` i `wp-config.php` og læg dette i serverens crontab (eller Site Tools › Devs › Cron Jobs på SiteGround):
    ```
    30 5,17 * * *  cd /sti/til/wordpress && wp playform import --quiet
    */5 * * * *    cd /sti/til/wordpress && wp cron event run --due-now --quiet

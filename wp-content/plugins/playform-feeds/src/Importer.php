@@ -79,6 +79,86 @@ final class Importer {
 		return $summary;
 	}
 
+	/**
+	 * Importerer en enkelt bid af én butiks feed – til "Kør import nu"-knappen, som ellers
+	 * ville ramme PHP's tidsgrænse. Kaldes gentagne gange med stigende $offset, til 'eof' er sand.
+	 *
+	 * @return array{stats:array,next_offset:int,eof:bool}
+	 */
+	public function run_chunk( string $shop_key, string $file, int $offset, int $chunk, string $started, string $today ): array {
+		@set_time_limit( 0 );
+		$shops = Config::shops();
+		if ( ! isset( $shops[ $shop_key ] ) ) {
+			throw new \RuntimeException( "Ukendt butik: $shop_key" );
+		}
+		$name  = $shops[ $shop_key ]['name'];
+		$stats = [ 'read' => 0, 'excluded' => 0, 'new' => 0, 'updated' => 0, 'unchanged' => 0 ];
+		$pos       = 0;
+		$processed = 0;
+		$eof       = true;
+		foreach ( FeedReader::read( $file ) as $row ) {
+			if ( $pos < $offset ) {
+				++$pos;
+				continue;
+			}
+			if ( $processed >= $chunk ) {
+				$eof = false;
+				break;
+			}
+			++$pos;
+			++$processed;
+			$stats['read']++;
+
+			$offer = Normalizer::offer( $row, $shop_key, $name );
+			if ( $offer['shop_product_id'] === '' || $offer['url'] === '' ) {
+				$stats['excluded']++;
+				continue;
+			}
+			$category = Classifier::classify( $offer );
+			if ( $category === 'exclude' ) {
+				$stats['excluded']++;
+				continue;
+			}
+
+			$existing   = Offers::find( $shop_key, $offer['shop_product_id'] );
+			$product_id = $existing ? (int) $existing['product_id'] : 0;
+			if ( $product_id && ! get_post( $product_id ) ) {
+				$product_id = 0;
+			}
+			if ( ! $product_id ) {
+				$product_id = Offers::product_for_ean( $offer['ean'], $shop_key );
+			}
+			if ( ! $product_id ) {
+				$product_id = ProductSync::create( $offer, $category );
+			}
+
+			$result = Offers::save( $offer, $product_id, $category, $started );
+			ProductSync::save_texts_and_attributes( $product_id, $offer, $category );
+			PriceHistory::record( $product_id, $shop_key, $offer['in_stock'] ? $offer['price'] : 0, $today );
+
+			if ( $result['is_new'] ) {
+				$stats['new']++;
+			} elseif ( $result['changed'] ) {
+				$stats['updated']++;
+			} else {
+				$stats['unchanged']++;
+			}
+			if ( $result['changed'] ) {
+				ProductSync::refresh( $product_id, $today );
+			}
+		}
+		return [ 'stats' => $stats, 'next_offset' => $pos, 'eof' => $eof ];
+	}
+
+	/** Markerer tilbud, der ikke dukkede op i feedet, som væk – kaldes når en butiks chunks er færdige. */
+	public static function finish_shop( string $shop_key, string $started ): int {
+		$ids = Offers::deactivate_missing( $shop_key, $started );
+		foreach ( $ids as $id ) {
+			ProductSync::refresh( (int) $id, current_time( 'Y-m-d' ) );
+		}
+		return count( $ids );
+	}
+
 	private function import_shop( string $key, string $name, string $file, string $now, string $today, int $limit ): void {
 		$s = &$this->stats[ $key ];
 		foreach ( FeedReader::read( $file ) as $row ) {

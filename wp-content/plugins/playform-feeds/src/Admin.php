@@ -6,10 +6,16 @@ namespace Playform\Feeds;
  */
 final class Admin {
 
+	/** Hvor mange produkter der læses i hver AJAX-runde, og hvor mange billeder. */
+	private const PRODUCT_CHUNK = 250;
+	private const IMAGE_CHUNK   = 80;
+	private const STATE_OPTION  = 'playform_import_state';
+
 	public static function register(): void {
 		add_action( 'admin_menu', [ self::class, 'menu' ] );
 		add_action( 'admin_post_playform_run_import', [ self::class, 'queue_import' ] );
 		add_action( 'admin_post_playform_save_ai', [ self::class, 'save_ai' ] );
+		add_action( 'wp_ajax_playform_import_step', [ self::class, 'ajax_step' ] );
 	}
 
 	public static function menu(): void {
@@ -24,6 +30,126 @@ final class Admin {
 		wp_schedule_single_event( time(), Cron::HOOK );
 		wp_safe_redirect( admin_url( 'tools.php?page=playform-feeds&queued=1' ) );
 		exit;
+	}
+
+	/**
+	 * Én runde af importen, kaldt fra JavaScript igen og igen, så vi aldrig rammer PHP's
+	 * tidsgrænse: hver runde læser kun en bid af én butiks feed, eller henter nogle billeder.
+	 */
+	public static function ajax_step(): void {
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_send_json_error( [ 'message' => 'Ingen adgang' ], 403 );
+		}
+		check_ajax_referer( 'playform_import_step' );
+
+		$state = get_option( self::STATE_OPTION );
+		if ( ! empty( $_POST['reset'] ) || ! is_array( $state ) ) {
+			$state = [
+				'started'     => current_time( 'mysql', true ),
+				'today'       => current_time( 'Y-m-d' ),
+				'shop_keys'   => array_keys( Config::shops() ),
+				'shop_index'  => 0,
+				'offset'      => 0,
+				'file'        => null,
+				'shops_stats' => [],
+				'phase'       => 'shops',
+				'images'      => [ 'fetched' => 0, 'failed' => 0 ],
+			];
+		}
+
+		try {
+			$result = self::run_one_unit( $state );
+		} catch ( \Throwable $e ) {
+			update_option( self::STATE_OPTION, $state, false );
+			wp_send_json_error( [ 'message' => $e->getMessage() ] );
+		}
+		update_option( self::STATE_OPTION, $state, false );
+		wp_send_json_success( $result );
+	}
+
+	/** Udfører én bid af importen og opdaterer $state (sendes som reference). */
+	private static function run_one_unit( array &$state ): array {
+		$shops = Config::shops();
+
+		if ( $state['phase'] === 'shops' ) {
+			if ( $state['shop_index'] >= count( $state['shop_keys'] ) ) {
+				$state['phase'] = 'drops';
+				return [ 'status' => 'Genberegner rabatter …', 'line' => '', 'done' => false ];
+			}
+			$key  = $state['shop_keys'][ $state['shop_index'] ];
+			$name = $shops[ $key ]['name'] ?? $key;
+			if ( ! isset( $state['shops_stats'][ $key ] ) ) {
+				$state['shops_stats'][ $key ] = [ 'name' => $name, 'read' => 0, 'excluded' => 0, 'new' => 0, 'updated' => 0, 'unchanged' => 0, 'removed' => 0, 'error' => '' ];
+			}
+			if ( ! $state['file'] ) {
+				try {
+					$state['file'] = FeedReader::download( $shops[ $key ]['url'], $key );
+				} catch ( \Throwable $e ) {
+					$state['shops_stats'][ $key ]['error'] = $e->getMessage();
+					$state['shop_index']++;
+					$state['offset'] = 0;
+					$state['file']   = null;
+					return [ 'status' => "Fejl hos $name – springer videre …", 'line' => "FEJL $name: " . $e->getMessage(), 'done' => false ];
+				}
+			}
+
+			$importer = new Importer();
+			$chunk    = $importer->run_chunk( $key, $state['file'], $state['offset'], self::PRODUCT_CHUNK, $state['started'], $state['today'] );
+			foreach ( $chunk['stats'] as $k => $v ) {
+				$state['shops_stats'][ $key ][ $k ] += $v;
+			}
+			$state['offset'] = $chunk['next_offset'];
+
+			if ( $chunk['eof'] ) {
+				$state['shops_stats'][ $key ]['removed'] = Importer::finish_shop( $key, $state['started'] );
+				$state['shop_index']++;
+				$state['offset'] = 0;
+				$state['file']   = null;
+			}
+
+			$s = $state['shops_stats'][ $key ];
+			return [
+				'status' => sprintf( '%s: %d læst (%d nye, %d ændret)', $name, $s['read'], $s['new'], $s['updated'] ),
+				'line'   => $chunk['eof'] ? sprintf( '%s færdig – %d læst, %d nye, %d ændret, %d væk', $name, $s['read'], $s['new'], $s['updated'], $s['removed'] ) : '',
+				'done'   => false,
+			];
+		}
+
+		if ( $state['phase'] === 'drops' ) {
+			Importer::recalc_drops( $state['today'] );
+			$state['phase'] = 'images';
+			return [ 'status' => 'Henter produktbilleder …', 'line' => 'Rabatter genberegnet.', 'done' => false ];
+		}
+
+		if ( $state['phase'] === 'images' ) {
+			$res = ImageCache::run( self::IMAGE_CHUNK );
+			$state['images']['fetched'] += $res['fetched'];
+			$state['images']['failed']  += $res['failed'];
+			if ( ( $res['fetched'] + $res['failed'] ) < self::IMAGE_CHUNK ) {
+				$state['phase'] = 'done';
+			}
+			return [
+				'status' => sprintf( 'Billeder: %d hentet, %d mislykkedes', $state['images']['fetched'], $state['images']['failed'] ),
+				'line'   => '',
+				'done'   => false,
+			];
+		}
+
+		// phase === 'done'
+		$summary = [
+			'started'  => $state['started'],
+			'finished' => current_time( 'mysql', true ),
+			'shops'    => $state['shops_stats'],
+		];
+		update_option( 'playform_feeds_last_run', $summary, false );
+		delete_option( self::STATE_OPTION );
+		$total_new = array_sum( wp_list_pluck( $state['shops_stats'], 'new' ) );
+		$total_upd = array_sum( wp_list_pluck( $state['shops_stats'], 'updated' ) );
+		return [
+			'status' => sprintf( 'Import færdig – %d nye, %d ændret, %d billeder hentet.', $total_new, $total_upd, $state['images']['fetched'] ),
+			'line'   => 'Importen er færdig.',
+			'done'   => true,
+		];
 	}
 
 	public static function save_ai(): void {
@@ -61,9 +187,62 @@ final class Admin {
 		if ( isset( $_GET['queued'] ) ) {
 			echo '<div class="notice notice-success"><p>Importen er sat i gang og kører i baggrunden.</p></div>';
 		}
-		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
-		wp_nonce_field( 'playform_run_import' );
-		echo '<input type="hidden" name="action" value="playform_run_import"><p><button class="button button-primary">Kør import nu</button></p></form>';
+		$nonce = wp_create_nonce( 'playform_import_step' );
+		echo '<p><button type="button" id="playform-import-btn" class="button button-primary">Kør import nu</button> <span id="playform-import-status" style="margin-left:8px"></span></p>';
+		echo '<div id="playform-import-log" style="font-family:monospace;font-size:12px;max-height:260px;overflow:auto;background:#f6f7f7;border:1px solid #dcdcde;padding:8px;display:none;white-space:pre-wrap"></div>';
+		?>
+		<script>
+		(function () {
+			var btn = document.getElementById('playform-import-btn');
+			var status = document.getElementById('playform-import-status');
+			var log = document.getElementById('playform-import-log');
+			if (!btn) return;
+			function write(line) {
+				log.style.display = 'block';
+				log.textContent += line + "\n";
+				log.scrollTop = log.scrollHeight;
+			}
+			function step(reset) {
+				var body = new URLSearchParams();
+				body.set('action', 'playform_import_step');
+				body.set('_ajax_nonce', '<?php echo esc_js( $nonce ); ?>');
+				if (reset) body.set('reset', '1');
+				fetch(ajaxurl, { method: 'POST', credentials: 'same-origin', body: body })
+					.then(function (r) { return r.json(); })
+					.then(function (res) {
+						if (!res.success) {
+							status.textContent = 'Fejl: ' + (res.data && res.data.message ? res.data.message : 'ukendt fejl');
+							btn.disabled = false;
+							btn.textContent = 'Prøv igen';
+							return;
+						}
+						var d = res.data;
+						status.textContent = d.status;
+						if (d.line) write(d.line);
+						if (d.done) {
+							btn.disabled = false;
+							btn.textContent = 'Kør import nu';
+							status.textContent = 'Færdig! ' + d.status;
+							setTimeout(function () { window.location.reload(); }, 1200);
+							return;
+						}
+						step(false);
+					})
+					.catch(function (err) {
+						status.textContent = 'Netværksfejl – prøver igen om 3 sekunder …';
+						setTimeout(function () { step(false); }, 3000);
+					});
+			}
+			btn.addEventListener('click', function () {
+				btn.disabled = true;
+				btn.textContent = 'Kører …';
+				log.textContent = '';
+				status.textContent = 'Starter …';
+				step(true);
+			});
+		})();
+		</script>
+		<?php
 
 		if ( $last ) {
 			echo '<h2>Seneste import</h2><p>' . esc_html( get_date_from_gmt( $last['finished'], 'j. M Y H:i' ) ) . '</p>';
