@@ -1,6 +1,6 @@
 <?php
 /**
- * De første guides. Køres med: wp eval-file content/guides.php
+ * De første guides. Køres med: wp eval-file wp-content/themes/playform/content/guides.php
  * Oprettes som KLADDER – læs dem igennem, før de udgives.
  */
 

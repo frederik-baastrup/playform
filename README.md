@@ -56,7 +56,7 @@ Vælg Brevo eller MailerLite under **Værktøjer › Playform Feeds** og indsæt
 
 ## Guides
 
-`content/guides.php` opretter de første fire guides som kladder: `wp eval-file content/guides.php`. Produkter vises i guides med shortcoden `[playform_produkter kategori="gaabaand" antal="4"]`.
+`wp-content/themes/playform/content/guides.php` opretter de første fire guides som kladder: `wp eval-file wp-content/themes/playform/content/guides.php`. Produkter vises i guides med shortcoden `[playform_produkter kategori="gaabaand" antal="4"]`.
 
 ## Andre kommandoer
 
