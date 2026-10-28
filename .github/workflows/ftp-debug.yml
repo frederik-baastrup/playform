@@ -20,9 +20,11 @@ jobs:
           mkdir -p .ftp-debug
           {
             echo "Sti: ${{ inputs.path }}"
-            echo "---"
-            curl -s --list-only "ftp://${{ secrets.FTP_SERVER }}${{ inputs.path }}" --user "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" | tr -d '\r'
-            echo "---curl exit: $?---"
+            echo "--- PWD ---"
+            curl -s "ftp://${{ secrets.FTP_SERVER }}/" --user "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" -Q "PWD" 2>&1
+            echo "--- LIST (verbose) ---"
+            curl -s -v "ftp://${{ secrets.FTP_SERVER }}${{ inputs.path }}" --user "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" 2>&1 | tr -d '\r'
+            echo "--- curl exit: $? ---"
           } > .ftp-debug/listing.txt
           cat .ftp-debug/listing.txt
           git config user.name "ftp-debug"
