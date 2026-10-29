@@ -105,7 +105,7 @@ button, input, select { font-family: inherit; }
 .mm__back, .mm__knowledge, .mm__all { display: none; }
 .mm__panel { display: none; position: absolute; left: 0; right: 0; top: 100%; z-index: 60; padding-top: 1px; }
 .mm__item[data-mm]:hover .mm__panel, .mm__item[data-mm]:focus-within .mm__panel { display: block; }
-.mm__inner { display: grid; grid-template-columns: 220px minmax(0, 1fr) minmax(0, 1fr) minmax(0, 2fr); gap: 0 32px; min-height: 250px; padding: 28px 32px 32px; background: #fff; border: 1px solid #E4E4DF; border-top: 0; border-radius: 0 0 var(--r-l) var(--r-l); box-shadow: 0 24px 48px rgba(17, 17, 17, .10); }
+.mm__inner { display: grid; grid-template-columns: 220px minmax(0, 1fr) minmax(0, 1fr) minmax(0, 2fr); gap: 0 32px; min-height: var(--mm-h, 250px); padding: 28px 32px 32px; background: #fff; border: 1px solid #E4E4DF; border-top: 0; border-radius: 0 0 var(--r-l) var(--r-l); box-shadow: 0 24px 48px rgba(17, 17, 17, .10); }
 .mm__title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); }
 .mm__cats { display: flex; flex-direction: column; gap: 2px; padding-right: 24px; border-right: 1px solid var(--line); }
 .mm__cats .mm__title { margin: 0 0 10px 12px; }
@@ -121,7 +121,7 @@ button, input, select { font-family: inherit; }
 .mm__col a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .mm__col a.mm__more { margin-top: 6px; font-weight: 600; }
 .mm__cats { grid-row: 1; }
-.mm__promo { grid-column: 4; grid-row: 1; position: relative; overflow: hidden; display: flex; align-items: flex-end; min-height: 200px; padding: 18px; border-radius: var(--r); background: var(--tile); }
+.mm__promo { grid-column: 4; grid-row: 1; align-self: stretch; position: relative; overflow: hidden; display: flex; align-items: flex-end; min-height: 200px; padding: 18px; border-radius: var(--r); background: var(--tile); }
 .mm__promo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease; }
 .mm__promo:hover img { transform: scale(1.04); }
 .mm__promo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(17,17,17,.78) 0%, rgba(17,17,17,.25) 50%, rgba(17,17,17,0) 80%); }

@@ -63,6 +63,37 @@
 		}, 4000);
 	}
 
+	// Alle menupaneler får samme højde som det højeste, så panelet ikke hopper, når man skifter punkt.
+	// Måles ved første hover (skjult), og igen hvis vinduet ændrer størrelse.
+	if (menu) {
+		var measured = false;
+		var measurePanels = function () {
+			if (mobile.matches) return;
+			var max = 0;
+			menu.querySelectorAll('.mm__item[data-mm]').forEach(function (item) {
+				var panel = item.querySelector('.mm__panel');
+				var inner = item.querySelector('.mm__inner');
+				if (!panel || !inner) return;
+				var was = panel.getAttribute('style') || '';
+				panel.style.cssText = 'display:block;visibility:hidden;pointer-events:none';
+				inner.style.minHeight = '0';
+				var active = inner.querySelector('.mm__pane.is-active');
+				inner.querySelectorAll('.mm__pane').forEach(function (pane) {
+					inner.querySelectorAll('.mm__pane').forEach(function (x) { x.classList.toggle('is-active', x === pane); });
+					max = Math.max(max, inner.offsetHeight);
+				});
+				inner.querySelectorAll('.mm__pane').forEach(function (x) { x.classList.toggle('is-active', x === active); });
+				inner.style.minHeight = '';
+				panel.setAttribute('style', was);
+				if (!was) panel.removeAttribute('style');
+			});
+			if (max) menu.style.setProperty('--mm-h', max + 'px');
+			measured = true;
+		};
+		menu.addEventListener('mouseenter', function () { if (!measured) measurePanels(); });
+		window.addEventListener('resize', function () { measured = false; });
+	}
+
 	// Menuens faktiske bredde, så den folder sig jævnt sammen, når søgefeltet vokser
 	if (menu && header) {
 		menu.querySelectorAll(':scope > .mm__item').forEach(function (it, i) { it.style.setProperty('--i', i); });
