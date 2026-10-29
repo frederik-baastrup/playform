@@ -6,6 +6,8 @@ final class Install {
 	public static function activate(): void {
 		self::tables();
 		self::categories();
+		// Nye underkategorier under Romaskine (0.3.0): sortér de eksisterende produkter med det samme.
+		self::refresh_category( 'romaskiner-crosstrainere' );
 		Cron::schedule();
 		update_option( 'playform_feeds_db_version', PLAYFORM_FEEDS_VERSION );
 	}
@@ -46,12 +48,23 @@ final class Install {
 				active tinyint(1) NOT NULL DEFAULT 1,
 				first_seen datetime NOT NULL,
 				last_seen datetime NOT NULL,
+				sale_since date NULL,
 				PRIMARY KEY  (id),
 				UNIQUE KEY shop_item (shop, shop_product_id),
 				KEY ean (ean),
 				KEY product_id (product_id)
 			) $charset"
 		);
+
+		// Kolonner tilføjet efter første version.
+		$cols = (array) $wpdb->get_col( "SHOW COLUMNS FROM $offers" );
+		if ( $cols && ! in_array( 'sale_since', $cols, true ) ) {
+			$wpdb->query( "ALTER TABLE $offers ADD COLUMN sale_since date NULL" );
+			// Tilbud, butikkerne allerede har kørende, regnes fra i dag (vi kender ikke deres startdato).
+			$today = current_time( 'Y-m-d' );
+			$wpdb->query( $wpdb->prepare( "UPDATE $offers SET sale_since = %s WHERE price > 0 AND list_price > price", $today ) );
+			Sales::refresh_all( $today );
+		}
 
 		$wpdb->query(
 			"CREATE TABLE IF NOT EXISTS $history (
@@ -75,6 +88,30 @@ final class Install {
 			}
 		}
 		Subcategories::install();
+	}
+
+	/**
+	 * Kører sorteringsreglerne igen for én kategoris tilbud og opdaterer produkterne – bruges, når reglerne
+	 * eller underkategorierne ændres, da importen kun opdaterer produkter, hvis pris/lager ændrer sig.
+	 */
+	public static function refresh_category( string $category ): void {
+		global $wpdb;
+		$t    = Offers::table();
+		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT id, product_id, name, brand, shop_category, price, category FROM $t WHERE category = %s", $category ), ARRAY_A ) ?: [];
+		$ids  = [];
+		foreach ( $rows as $r ) {
+			$cat = Classifier::classify( [ 'name' => $r['name'], 'brand' => $r['brand'], 'shop_category' => $r['shop_category'], 'price' => (float) $r['price'] ] );
+			if ( $cat !== $r['category'] ) {
+				$wpdb->update( $t, $cat === 'exclude' ? [ 'category' => 'exclude', 'active' => 0 ] : [ 'category' => $cat ], [ 'id' => $r['id'] ] );
+			}
+			if ( (int) $r['product_id'] ) {
+				$ids[ (int) $r['product_id'] ] = true;
+			}
+		}
+		$today = current_time( 'Y-m-d' );
+		foreach ( array_keys( $ids ) as $id ) {
+			ProductSync::refresh( $id, $today );
+		}
 	}
 
 	public static function category_id( string $slug ): int {

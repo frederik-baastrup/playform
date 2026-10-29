@@ -135,8 +135,9 @@ final class Admin {
 
 		if ( $state['phase'] === 'drops' ) {
 			Importer::recalc_drops( $state['today'] );
+			$sales          = Sales::refresh_all( $state['today'] );
 			$state['phase'] = 'images';
-			return [ 'status' => 'Henter produktbilleder …', 'line' => 'Rabatter genberegnet.', 'done' => false ];
+			return [ 'status' => 'Henter produktbilleder …', 'line' => sprintf( 'Rabatter genberegnet. %d produkter på tilbud hos butikkerne.', $sales ), 'done' => false ];
 		}
 
 		if ( $state['phase'] === 'images' ) {

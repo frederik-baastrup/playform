@@ -18,7 +18,9 @@ add_filter(
 			return $robots;
 		}
 		$noise = array_intersect( array_keys( $_GET ), array_merge( array_keys( playform_filter_groups() ), [ 'sortering', 'q', 'tilbud' ] ) ); // phpcs:ignore
-		if ( $noise || is_search() ) {
+		// En tilbudsside uden tilbud lige nu bliver stående, men skal ikke i Google som tom side.
+		$empty_offers = playform_is_tilbud_page() && ! playform_catalog_state()['total'];
+		if ( $noise || is_search() || $empty_offers ) {
 			$robots['noindex'] = true;
 			$robots['follow']  = true;
 			unset( $robots['max-image-preview'] );
@@ -33,7 +35,10 @@ add_filter(
 		if ( playform_has_seo_plugin() ) {
 			return $parts;
 		}
-		if ( is_tax( 'product_cat' ) ) {
+		if ( playform_is_tilbud_page() ) {
+			$t              = get_queried_object();
+			$parts['title'] = $t instanceof WP_Term ? 'Tilbud på ' . mb_strtolower( playform_cat_label( $t ) ) . ' – aktuelle tilbud fra danske shops' : 'Tilbud på fitnessudstyr – aktuelle tilbud fra danske shops';
+		} elseif ( is_tax( 'product_cat' ) ) {
 			$parts['title'] = 'Køb ' . mb_strtolower( single_term_title( '', false ) ) . ' – stort udvalg fra danske shops';
 		} elseif ( is_singular( 'product' ) ) {
 			$parts['title'] = get_the_title() . ' – se pris';
@@ -54,6 +59,9 @@ add_action(
 		$desc = '';
 		if ( is_front_page() ) {
 			$desc = 'Fitnessudstyr fra flere danske webshops samlet ét sted: løbebånd, motionscykler, vægte, kettlebells, yoga og meget mere. Priserne opdateres to gange i døgnet.';
+		} elseif ( playform_is_tilbud_page() ) {
+			$t    = get_queried_object();
+			$desc = sprintf( 'Se %s, som danske webshops har sat på tilbud lige nu. Vi samler butikkernes egne tilbud ét sted, og du handler direkte hos butikken.', $t instanceof WP_Term ? mb_strtolower( playform_cat_label( $t ) ) : 'fitnessudstyr' );
 		} elseif ( is_tax( 'product_cat' ) ) {
 			$desc = wp_strip_all_tags( term_description() );
 		} elseif ( is_singular( 'product' ) ) {
@@ -67,7 +75,8 @@ add_action(
 		}
 		if ( is_tax( 'product_cat' ) && ! array_intersect( array_keys( $_GET ), array_keys( playform_filter_groups() ) ) ) { // phpcs:ignore
 			$paged = max( 1, (int) get_query_var( 'paged' ) );
-			echo '<link rel="canonical" href="' . esc_url( $paged > 1 ? get_pagenum_link( $paged ) : get_term_link( get_queried_object() ) ) . '">' . "\n";
+			$base  = playform_is_tilbud_page() ? playform_tilbud_url( get_queried_object() ) : get_term_link( get_queried_object() );
+			echo '<link rel="canonical" href="' . esc_url( $paged > 1 ? get_pagenum_link( $paged ) : $base ) . '">' . "\n";
 		}
 	},
 	2

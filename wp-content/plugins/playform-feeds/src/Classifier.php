@@ -9,7 +9,7 @@ final class Classifier {
 
 	/** Maskinkategorier, hvor tilbehør (silikone, måtter, reservedele …) skal sendes til Tilbehør. */
 	private const MACHINE = [ 'lobebaand', 'motionscykler', 'romaskiner-crosstrainere' ];
-	private const ACCESSORY = 'silikone|smøre|olie|beskyttelsesmåtte|måtte til|underlag|gulvbeskytt|reservedel|sikkerhedsnøgle|pulsbælte|\bbælte til|motorbælte|holder til|tabletholder|cover|overtræk|sadel|pedal(er)?\b|hjul til';
+	private const ACCESSORY = 'silikone|smøre|olie|beskyttelsesmåtte|måtte til|underlag|gulvbeskytt|reservedel|sikkerhedsnøgle|pulsbælte|\bbælte til|motorbælte|holder til|tabletholder|cover|overtræk|sadel|pedal(er)?\b|hjul til|rensetablet|tabletter|klortablet|\bbase for\b';
 
 	public static function classify( array $offer ): string {
 		$name = mb_strtolower( $offer['name'] );

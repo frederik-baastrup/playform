@@ -134,8 +134,84 @@ function playform_category_image( string $slug ): string {
 }
 
 /**
+ * Menuens opbygning: [ menupunkt, kategorier i venstre kolonne ]. null = menupunktets egne underkategorier.
+ * En kategori kan angives som [ slug, visningsnavn ], fx når en underkategori står for sig selv.
+ */
+function playform_menu_spec(): array {
+	return [
+		[ 'traeningsmaskiner', [ 'lobebaand', 'motionscykler', [ 'romaskine', 'Romaskiner' ], [ 'crosstrainer', 'Crosstrainere' ] ] ],
+		[ 'styrketraening', [ 'vaegte-kettlebells', 'styrke-baenke' ] ],
+		[ 'yoga-pilates', null ],
+		[ 'restitution', null ],
+		[ 'tilbehor', null ],
+	];
+}
+
+/** Visningsnavne fra menuen (fx "Romaskiner" for kategorien "Romaskine"), slug => navn. */
+function playform_menu_labels(): array {
+	// Kategorierne hedder ental (som folk søger), men i menu, faner og "Tilbud på …" læser flertal bedst.
+	$out = [
+		'romaskine'        => 'Romaskiner',
+		'crosstrainer'     => 'Crosstrainere',
+		'yogamaatte'       => 'Yogamåtter',
+		'pilates-reformer' => 'Pilates reformere',
+		'massagepistol'    => 'Massagepistoler',
+		'foam-roller'      => 'Foam rollers',
+		'traeningsmaatte'  => 'Træningsmåtter',
+		'elastikker'       => 'Træningselastikker',
+		'boksning'         => 'Boksudstyr',
+		'traeningsbaenk'   => 'Træningsbænke',
+		'spinningcykel'    => 'Spinningcykler',
+		'kondicykel'       => 'Kondicykler',
+		'liggecykel'       => 'Liggecykler',
+		'airbike'          => 'Airbikes',
+	];
+	foreach ( playform_menu_spec() as [ $slug, $cats ] ) {
+		if ( isset( playform_virtual_groups()[ $slug ] ) ) {
+			$out[ $slug ] = playform_virtual_groups()[ $slug ]['label'];
+		}
+		foreach ( (array) $cats as $c ) {
+			if ( is_array( $c ) ) {
+				$out[ $c[0] ] = $c[1];
+			}
+		}
+	}
+	return $out;
+}
+
+/** Kategoriens navn, som det står i menuen. */
+function playform_cat_label( WP_Term $term ): string {
+	return playform_menu_labels()[ $term->slug ] ?? wp_specialchars_decode( $term->name );
+}
+
+/** Kategorier, der har en "Tilbud på …"-side: alle menupunkter og kategorierne i deres venstre kolonne. */
+function playform_tilbud_slugs(): array {
+	$out = [];
+	foreach ( playform_menu_spec() as [ $slug, $cats ] ) {
+		$out[] = $slug;
+		if ( $cats === null ) {
+			$cats = class_exists( '\Playform\Feeds\Config' ) ? array_keys( \Playform\Feeds\Config::subcategories()[ $slug ] ?? [] ) : [];
+		}
+		foreach ( $cats as $c ) {
+			$out[] = is_array( $c ) ? $c[0] : $c;
+		}
+	}
+	return $out;
+}
+
+/** URL til "Tilbud på …" for en kategori (eller alle tilbud). */
+function playform_tilbud_url( ?WP_Term $term = null ): string {
+	return $term ? trailingslashit( get_term_link( $term ) ) . user_trailingslashit( 'tilbud' ) : home_url( user_trailingslashit( 'tilbud' ) );
+}
+
+/** Står vi på en tilbudsside (/…/tilbud/ eller /tilbud/)? */
+function playform_is_tilbud_page(): bool {
+	return (bool) get_query_var( 'pf_tilbud' );
+}
+
+/**
  * Topmenuen. Hvert punkt: label, slug, url og 'primary' = kategorierne i venstre kolonne. Hver af dem har
- * 'subs' (midterkolonnen) og 'prices' (højre kolonne).
+ * 'subs' (midterkolonnen), 'prices' (højre kolonne) og 'tilbud' (link til Tilbud på …).
  *
  * @return array<int,array>
  */
@@ -144,17 +220,8 @@ function playform_menu(): array {
 	if ( $menu !== null ) {
 		return $menu;
 	}
-	// [ menupunkt, kategorier i venstre kolonne ]. null = menupunktets egne underkategorier.
-	// En kategori kan angives som [ slug, visningsnavn ], fx når en underkategori står for sig selv.
-	$spec = [
-		[ 'traeningsmaskiner', [ 'lobebaand', 'motionscykler', [ 'romaskine', 'Romaskiner' ], [ 'crosstrainer', 'Crosstrainere' ] ] ],
-		[ 'styrketraening', [ 'vaegte-kettlebells', 'styrke-baenke' ] ],
-		[ 'yoga-pilates', null ],
-		[ 'restitution', null ],
-		[ 'tilbehor', null ],
-	];
 	$menu = [];
-	foreach ( $spec as [ $slug, $cats ] ) {
+	foreach ( playform_menu_spec() as [ $slug, $cats ] ) {
 		$term = get_term_by( 'slug', $slug, 'product_cat' );
 		if ( ! $term ) {
 			continue;
@@ -164,8 +231,8 @@ function playform_menu(): array {
 		}
 		$primary = [];
 		foreach ( $cats as $c ) {
-			[ $cslug, $label ] = is_array( $c ) ? $c : [ $c, null ];
-			$ct = get_term_by( 'slug', $cslug, 'product_cat' );
+			$cslug = is_array( $c ) ? $c[0] : $c;
+			$ct    = get_term_by( 'slug', $cslug, 'product_cat' );
 			if ( ! $ct || $ct->count < 1 ) {
 				continue;
 			}
@@ -178,17 +245,19 @@ function playform_menu(): array {
 				$prices[] = [ $pl, playform_category_url( $cslug, [ 'pris' => $key ] ) ];
 			}
 			$primary[] = [
-				'label'  => $label ?: $ct->name,
+				'label'  => playform_cat_label( $ct ),
 				'slug'   => $cslug,
 				'url'    => playform_category_url( $cslug ),
+				'tilbud' => playform_tilbud_url( $ct ),
 				'subs'   => $subs,
 				'prices' => $prices,
 			];
 		}
 		$menu[] = [
-			'label'   => playform_virtual_groups()[ $slug ]['label'] ?? $term->name,
+			'label'   => playform_cat_label( $term ),
 			'slug'    => $slug,
 			'url'     => playform_category_url( $slug ),
+			'tilbud'  => playform_tilbud_url( $term ),
 			'primary' => $primary,
 		];
 	}

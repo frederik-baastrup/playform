@@ -64,6 +64,15 @@ final class Offers {
 			'active'        => 1,
 			'last_seen'     => $now,
 		];
+		// Butikkens eget tilbud (førpris over prisen): dato for hvornår netop dette tilbud startede.
+		// Ændres pris eller førpris, er det et nyt tilbud. Se Sales.
+		if ( $o['price'] > 0 && $o['list_price'] > $o['price'] ) {
+			$same               = $existing && ! empty( $existing['sale_since'] )
+				&& (float) $existing['price'] === (float) $o['price'] && (float) $existing['list_price'] === (float) $o['list_price'];
+			$data['sale_since'] = $same ? $existing['sale_since'] : substr( $now, 0, 10 );
+		} else {
+			$data['sale_since'] = null;
+		}
 		if ( $existing ) {
 			$wpdb->update( self::table(), $data, [ 'id' => $existing['id'] ] );
 			$changed = $existing['hash'] !== $hash || ! (int) $existing['active'] || (int) $existing['product_id'] !== $product_id;

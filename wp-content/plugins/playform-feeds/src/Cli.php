@@ -156,6 +156,12 @@ final class Cli {
 		\WP_CLI::success( count( $ids ) . ' produkter opdateret.' );
 	}
 
+	/** Genberegner butikstilbud (højst Sales::DAYS dage gamle). */
+	public function sales(): void {
+		$n = Sales::refresh_all( current_time( 'Y-m-d' ) );
+		\WP_CLI::success( "$n produkter er på tilbud hos butikken." );
+	}
+
 	/** Genberegner rabatter ud fra prishistorikken. */
 	public function drops(): void {
 		$n = Importer::recalc_drops( current_time( 'Y-m-d' ) );

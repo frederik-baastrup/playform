@@ -19,8 +19,10 @@ function playform_front_products( string $which ): array {
 			],
 		];
 		if ( $which === 'deals' ) {
-			$base['meta_query'][] = [ 'key' => '_pf_drop_percent', 'compare' => 'EXISTS' ];
-			$base['meta_key']     = '_pf_drop_percent';
+			// Butikkernes egne tilbud (højst 14 dage gamle) på udstyr over 300 kr, største rabat først.
+			$base['meta_query'][] = [ 'key' => '_pf_shop_sale', 'compare' => 'EXISTS' ];
+			$base['meta_query'][] = [ 'key' => '_price', 'value' => 300, 'compare' => '>=', 'type' => 'NUMERIC' ];
+			$base['meta_key']     = '_pf_sale_percent';
 			$base['orderby']      = 'meta_value_num';
 			$base['order']        = 'DESC';
 		} elseif ( $which === 'new' ) {
@@ -82,7 +84,7 @@ get_template_part(
 	'template-parts/slider',
 	null,
 	$has_deals
-		? [ 'title' => 'Skarpe tilbud lige nu', 'products' => $deals, 'id' => 'slider-deals' ]
+		? [ 'title' => 'Tilbud lige nu', 'products' => $deals, 'id' => 'slider-deals', 'link' => playform_tilbud_url(), 'link_label' => 'Se alle tilbud' ]
 		: [ 'title' => 'Nyt i butikkerne', 'products' => playform_front_products( 'new' ), 'id' => 'slider-new' ]
 );
 ?>

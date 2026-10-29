@@ -6,13 +6,18 @@ namespace Playform\Feeds;
  */
 final class Subcategories {
 
-	/** @return string[] slugs på de underkategorier, produktet hører til */
-	public static function match( string $category, string $name, array $attrs ): array {
+	/** @return string[] slugs på de underkategorier (og deres underkategorier), produktet hører til */
+	public static function match( string $category, string $name, array $attrs, string $desc = '' ): array {
 		$defs = Config::subcategories()[ $category ] ?? [];
 		$name = mb_strtolower( $name );
+		$desc = mb_strtolower( $desc );
 		$out  = [];
 		foreach ( $defs as $slug => $def ) {
-			$hit = ! empty( $def['match'] ) && preg_match( '~' . $def['match'] . '~iu', $name );
+			if ( ! empty( $def['not'] ) && preg_match( '~' . $def['not'] . '~iu', $name ) ) {
+				continue;
+			}
+			$hit = ( ! empty( $def['match'] ) && preg_match( '~' . $def['match'] . '~iu', $name ) )
+				|| ( ! empty( $def['desc'] ) && $desc !== '' && preg_match( '~' . $def['desc'] . '~iu', $desc ) );
 			foreach ( $def['attr'] ?? [] as $key => $want ) {
 				if ( ! array_key_exists( $key, $attrs ) ) {
 					continue;
@@ -27,6 +32,9 @@ final class Subcategories {
 			}
 			if ( $hit ) {
 				$out[] = $slug;
+				if ( isset( Config::subcategories()[ $slug ] ) ) {
+					array_push( $out, ...self::match( $slug, $name, $attrs, $desc ) );
+				}
 			}
 		}
 		return $out;

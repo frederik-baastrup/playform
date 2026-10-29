@@ -72,7 +72,7 @@ while ( have_posts() ) :
 					<span class="pcard__ph"><?php echo playform_icon( 'product', 160, 1 ); // phpcs:ignore ?></span>
 				<?php endif; ?>
 				<span class="pcard__badges">
-					<?php if ( $d['drop'] ) : ?><span class="badge badge--accent">-<?php echo (int) $d['drop']; ?> %</span><?php endif; ?>
+					<?php if ( $d['sale'] ) : ?><span class="badge badge--sale">Tilbud hos <?php echo esc_html( $d['shop'] ); ?></span><?php endif; ?>
 					<?php if ( $d['foldable'] ) : ?><span class="badge">Foldbar</span><?php endif; ?>
 				</span>
 			</div>
@@ -88,7 +88,7 @@ while ( have_posts() ) :
 					<div class="pricebox__top">
 						<div>
 							<span class="muted"><?php echo $shops_n > 1 ? 'Laveste pris lige nu' : 'Pris'; ?></span>
-							<span class="pricebox__price<?php echo $d['drop'] ? ' is-sale' : ''; ?>"><?php echo esc_html( playform_kr( $d['price'] ) ); ?></span>
+							<span class="pricebox__price"><?php echo esc_html( playform_kr( $d['price'] ) ); ?></span>
 							<?php if ( $d['drop'] && $d['ref'] ) : ?>
 								<span class="pricebox__ref">Laveste pris de 30 dage før: <s><?php echo esc_html( playform_kr( $d['ref'] ) ); ?></s></span>
 							<?php endif; ?>

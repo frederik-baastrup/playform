@@ -45,7 +45,7 @@ function playform_filter_groups(): array {
 			'all'     => true, // alle valgte skal være opfyldt
 			'options' => [
 				'lager'   => [ 'På lager', static fn( $m ) => ! empty( $m['_pf_in_stock'] ) ],
-				'tilbud'  => [ 'Målt prisfald', static fn( $m ) => ! empty( $m['_pf_drop_percent'] ) ],
+				'tilbud'  => [ 'Tilbud', static fn( $m ) => ! empty( $m['_pf_shop_sale'] ) ],
 				'foldbar' => [ 'Foldbar', static fn( $m ) => ! empty( $m['_pf_foldable'] ) ],
 				'incline' => [ 'Med incline', static fn( $m ) => ! empty( $m['_pf_incline'] ) ],
 			],
@@ -169,10 +169,14 @@ function playform_catalog_state(): array {
 	foreach ( $ids as $id ) {
 		$all = get_post_meta( $id );
 		$m   = [];
-		foreach ( [ '_price', '_pf_in_stock', '_pf_drop_percent', '_pf_foldable', '_pf_incline', '_pf_max_speed', '_pf_max_weight', '_pf_weight_kg', '_pf_shop_list' ] as $k ) {
+		foreach ( [ '_price', '_pf_in_stock', '_pf_drop_percent', '_pf_foldable', '_pf_incline', '_pf_max_speed', '_pf_max_weight', '_pf_weight_kg', '_pf_shop_list', '_pf_shop_sale' ] as $k ) {
 			if ( isset( $all[ $k ][0] ) ) {
 				$m[ $k ] = $all[ $k ][0];
 			}
+		}
+		// Tilbudssider viser kun produkter, butikken har på tilbud.
+		if ( playform_is_tilbud_page() && empty( $m['_pf_shop_sale'] ) ) {
+			continue;
 		}
 		$meta[ $id ] = $m;
 	}
@@ -212,6 +216,9 @@ function playform_catalog_state(): array {
 		}
 		$opts = [];
 		foreach ( $def['options'] as $key => [ $label, $test ] ) {
+			if ( $key === 'tilbud' && playform_is_tilbud_page() ) {
+				continue;
+			}
 			$n = 0;
 			foreach ( $meta as $m ) {
 				if ( ( empty( $def['all'] ) ? $passes( $m, $g ) : $passes( $m, null ) ) && $test( $m ) ) {
@@ -257,8 +264,7 @@ add_action(
 		$q->set( 'post_type', 'product' );
 		$q->set( 'meta_query', [ 'stock' => [ 'key' => '_pf_in_stock', 'type' => 'NUMERIC' ] ] );
 
-		$sort = isset( $_GET['sortering'] ) ? sanitize_key( $_GET['sortering'] ) : 'populaer';
-		switch ( $sort ) {
+		switch ( playform_current_sort() ) {
 			case 'pris-lav':
 				$q->set( 'meta_query', [ 'stock' => [ 'key' => '_pf_in_stock', 'type' => 'NUMERIC' ], 'price' => [ 'key' => '_price', 'type' => 'DECIMAL(12,2)' ] ] );
 				$q->set( 'orderby', [ 'stock' => 'DESC', 'price' => 'ASC' ] );
@@ -271,8 +277,19 @@ add_action(
 				$q->set( 'orderby', [ 'stock' => 'DESC', 'date' => 'DESC' ] );
 				break;
 			case 'rabat':
-				$q->set( 'meta_query', [ 'stock' => [ 'key' => '_pf_in_stock', 'type' => 'NUMERIC' ], 'drop' => [ 'key' => '_pf_drop_percent', 'type' => 'DECIMAL(12,2)' ] ] );
-				$q->set( 'orderby', [ 'stock' => 'DESC', 'drop' => 'DESC' ] );
+				// Største rabat ifølge butikken først. Produkter uden tilbud kommer bagefter (NOT EXISTS).
+				$q->set(
+					'meta_query',
+					[
+						'stock' => [ 'key' => '_pf_in_stock', 'type' => 'NUMERIC' ],
+						[
+							'relation' => 'OR',
+							'sale'     => [ 'key' => '_pf_sale_percent', 'type' => 'NUMERIC', 'compare' => 'EXISTS' ],
+							[ 'key' => '_pf_sale_percent', 'compare' => 'NOT EXISTS' ],
+						],
+					]
+				);
+				$q->set( 'orderby', [ 'stock' => 'DESC', 'sale' => 'DESC' ] );
 				break;
 			default:
 				// "Mest populære": på lager først, derefter produkter med billede og højest pris (de vigtigste maskiner).
@@ -282,6 +299,13 @@ add_action(
 	},
 	20
 );
+
+/** Valgt sortering. Tilbudssider sorterer som standard efter største rabat. */
+function playform_current_sort(): string {
+	$sort = isset( $_GET['sortering'] ) ? sanitize_key( $_GET['sortering'] ) : ''; // phpcs:ignore
+	$ok   = [ 'populaer', 'pris-lav', 'pris-hoj', 'nyeste', 'rabat' ];
+	return in_array( $sort, $ok, true ) ? $sort : ( playform_is_tilbud_page() ? 'rabat' : 'populaer' );
+}
 
 function playform_catalog_state_for_query( WP_Query $q ): array {
 	return playform_catalog_state();
@@ -313,7 +337,10 @@ function playform_query_equals( array $args ): bool {
 function playform_reset_url(): string {
 	$term = get_queried_object();
 	if ( $term instanceof WP_Term && $term->taxonomy === 'product_cat' ) {
-		return get_term_link( $term );
+		return playform_is_tilbud_page() ? playform_tilbud_url( $term ) : get_term_link( $term );
+	}
+	if ( playform_is_tilbud_page() ) {
+		return playform_tilbud_url();
 	}
 	$search = get_search_query();
 	return $search !== '' ? add_query_arg( [ 's' => $search, 'post_type' => 'product' ], home_url( '/' ) ) : get_permalink( wc_get_page_id( 'shop' ) );

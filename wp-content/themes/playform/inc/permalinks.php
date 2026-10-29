@@ -36,18 +36,28 @@ add_filter(
 		if ( is_wp_error( $terms ) ) {
 			return $rules;
 		}
-		$new = [];
+		$new     = [
+			'^tilbud/page/?([0-9]{1,})/?$' => 'index.php?post_type=product&pf_tilbud=1&paged=$matches[1]',
+			'^tilbud/?$'                   => 'index.php?post_type=product&pf_tilbud=1',
+		];
+		$tilbud  = playform_tilbud_slugs();
 		foreach ( $terms as $t ) {
 			if ( in_array( $t->slug, [ 'uncategorized', 'ukategoriseret' ], true ) ) {
 				continue;
 			}
 			$p = preg_quote( playform_cat_path( $t ), '#' );
+			if ( in_array( $t->slug, $tilbud, true ) ) {
+				$new[ "^$p/tilbud/page/?([0-9]{1,})/?$" ] = 'index.php?product_cat=' . $t->slug . '&pf_tilbud=1&paged=$matches[1]';
+				$new[ "^$p/tilbud/?$" ]                    = 'index.php?product_cat=' . $t->slug . '&pf_tilbud=1';
+			}
 			$new[ "^$p/page/?([0-9]{1,})/?$" ] = 'index.php?product_cat=' . $t->slug . '&paged=$matches[1]';
 			$new[ "^$p/?$" ]                    = 'index.php?product_cat=' . $t->slug;
 		}
 		return $new + $rules;
 	}
 );
+
+add_filter( 'query_vars', static fn( array $vars ): array => array_merge( $vars, [ 'pf_tilbud' ] ) );
 
 // Reglerne bygges ud fra kategorierne, så de skal genopbygges, når en kategori oprettes, flyttes eller slettes.
 foreach ( [ 'created_product_cat', 'edited_product_cat', 'delete_product_cat' ] as $hook ) {
@@ -78,7 +88,7 @@ add_action(
 			exit;
 		};
 		$with_page = static function ( WP_Term $t, int $page ): string {
-			$url = get_term_link( $t );
+			$url = playform_is_tilbud_page() ? playform_tilbud_url( $t ) : get_term_link( $t );
 			return $page > 1 ? trailingslashit( $url ) . user_trailingslashit( "page/$page", 'paged' ) : $url;
 		};
 

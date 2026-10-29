@@ -71,6 +71,12 @@ final class Importer {
 			update_option( 'playform_feeds_drops_day', $today, false );
 		}
 
+		// Butikstilbud udløber med datoen, så de genberegnes efter hver import.
+		if ( ! $limit ) {
+			$this->log( 'Opdaterer butikstilbud …' );
+			Sales::refresh_all( $today );
+		}
+
 		wp_suspend_cache_invalidation( false );
 		wp_defer_term_counting( false );
 

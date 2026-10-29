@@ -67,6 +67,7 @@ function playform_card_data( WC_Product $p ): array {
 		'drop'     => $drop,
 		'ref'      => $ref,
 		'in_stock' => $in_stock,
+		'sale'     => $in_stock && (bool) get_post_meta( $id, '_pf_shop_sale', true ),
 		'foldable' => ! empty( $attrs['foldable'] ),
 		'shop'     => $shop,
 		'shops'    => $shops,
@@ -84,7 +85,7 @@ function playform_product_card( WC_Product $p, string $class = 'pcard' ): void {
 				<span class="pcard__ph"><?php echo playform_icon( 'product', 72, 1.2 ); // phpcs:ignore ?></span>
 			<?php endif; ?>
 			<span class="pcard__badges">
-				<?php if ( $d['drop'] ) : ?><span class="badge badge--accent">-<?php echo (int) $d['drop']; ?> %</span><?php endif; ?>
+				<?php if ( $d['sale'] ) : ?><span class="badge badge--sale">Tilbud</span><?php endif; ?>
 				<?php if ( $d['foldable'] ) : ?><span class="badge">Foldbar</span><?php endif; ?>
 				<?php if ( ! $d['in_stock'] ) : ?><span class="badge badge--muted">Ikke på lager</span><?php endif; ?>
 			</span>
@@ -93,15 +94,16 @@ function playform_product_card( WC_Product $p, string $class = 'pcard' ): void {
 			<?php if ( $d['brand'] ) : ?><span class="pcard__brand"><?php echo esc_html( $d['brand'] ); ?></span><?php endif; ?>
 			<span class="pcard__name"><?php echo esc_html( $d['name'] ); ?></span>
 			<span class="pcard__price">
-				<span class="<?php echo $d['drop'] ? 'is-sale' : ''; ?>"><?php echo esc_html( playform_kr( $d['price'] ) ); ?></span>
-				<?php if ( $d['drop'] && $d['ref'] ) : ?><s><?php echo esc_html( playform_kr( $d['ref'] ) ); ?></s><?php endif; ?>
+				<span><?php echo esc_html( playform_kr( $d['price'] ) ); ?></span>
 			</span>
 			<span class="pcard__shop">
 				<?php
 				echo esc_html(
-					$d['shops'] > 1
+					$d['sale']
+						? sprintf( 'Tilbud hos %s', $d['shop'] )
+						: ( $d['shops'] > 1
 						? sprintf( 'Billigst hos %s · %d butikker', $d['shop'], $d['shops'] )
-						: sprintf( 'Hos %s', $d['shop'] )
+						: sprintf( 'Hos %s', $d['shop'] ) )
 				);
 				?>
 			</span>

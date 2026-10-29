@@ -52,6 +52,7 @@
 												<?php foreach ( $p['subs'] as [ $label, $url ] ) : ?>
 													<a href="<?php echo esc_url( $url ); ?>"><?php echo esc_html( $label ); ?></a>
 												<?php endforeach; ?>
+												<a href="<?php echo esc_url( $p['tilbud'] ); ?>" class="mm__offer">Tilbud på <?php echo esc_html( mb_strtolower( $p['label'] ) ); ?></a>
 												<a href="<?php echo esc_url( $p['url'] ); ?>" class="mm__more">Se alle <?php echo esc_html( mb_strtolower( $p['label'] ) ); ?> &rarr;</a>
 											</div>
 											<?php if ( $p['prices'] ) : ?>
@@ -69,6 +70,7 @@
 												<?php foreach ( $p['prices'] as [ $label, $url ] ) : ?>
 													<a href="<?php echo esc_url( $url ); ?>"><?php echo esc_html( $label ); ?></a>
 												<?php endforeach; ?>
+												<a href="<?php echo esc_url( $p['tilbud'] ); ?>" class="mm__offer">Tilbud på <?php echo esc_html( mb_strtolower( $p['label'] ) ); ?></a>
 												<a href="<?php echo esc_url( $p['url'] ); ?>" class="mm__more">Se hele kategorien &rarr;</a>
 											</div>
 										<?php endif; ?>
@@ -79,7 +81,7 @@
 					</div>
 				<?php endforeach; ?>
 				<div class="mm__item mm__item--plain">
-					<a href="<?php echo esc_url( add_query_arg( [ 'egenskab' => 'tilbud', 'sortering' => 'rabat' ], get_permalink( wc_get_page_id( 'shop' ) ) ) ); ?>" class="mm__link mm__link--sale">Tilbud</a>
+					<a href="<?php echo esc_url( playform_tilbud_url() ); ?>" class="mm__link mm__link--sale<?php echo playform_is_tilbud_page() && ! is_tax() ? ' is-active' : ''; ?>">Tilbud</a>
 				</div>
 				<div class="mm__knowledge">
 					<a href="<?php echo esc_url( home_url( '/viden/' ) ); ?>">Viden</a>

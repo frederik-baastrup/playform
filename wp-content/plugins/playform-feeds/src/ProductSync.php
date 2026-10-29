@@ -67,7 +67,7 @@ final class ProductSync {
 
 		$category = $best['category'];
 		if ( empty( $locks['category'] ) && $category ) {
-			$subs = Subcategories::match( $category, $best['name'], (array) get_post_meta( $product_id, self::META_ATTR, true ) );
+			$subs = Subcategories::match( $category, $best['name'], (array) get_post_meta( $product_id, self::META_ATTR, true ), (string) get_post_meta( $product_id, self::META_FEED_DESC, true ) );
 			$product->set_category_ids( Subcategories::term_ids( $category, $subs ) );
 			update_post_meta( $product_id, self::META_CATEGORY, $category );
 			if ( $product->get_status() !== 'publish' || $category === Config::uncategorized_slug() ) {

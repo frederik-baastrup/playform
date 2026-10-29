@@ -7,9 +7,10 @@ get_header();
 
 $term   = get_queried_object();
 $is_cat = $term instanceof WP_Term && $term->taxonomy === 'product_cat';
+$offers = playform_is_tilbud_page();
 
 // Træningsmaskiner og Styrketræning: oversigtsside med kategorikort i stedet for produkter.
-if ( $is_cat && playform_is_virtual_category( $term->slug ) ) {
+if ( $is_cat && ! $offers && playform_is_virtual_category( $term->slug ) ) {
 	get_template_part( 'template-parts/category-overview', null, [ 'term' => $term ] );
 	get_footer();
 	return;
@@ -18,29 +19,42 @@ if ( $is_cat && playform_is_virtual_category( $term->slug ) ) {
 $state  = playform_catalog_state();
 $search = get_search_query();
 
-// $top = den kategori, hvis underkategorier vises som faner (stopper ved grupperingskategorierne).
-// $parent sættes, når vi står på en underkategori.
-$top = $is_cat ? $term : null;
-while ( $top && $top->parent ) {
-	$up = get_term( $top->parent, 'product_cat' );
-	if ( ! $up instanceof WP_Term || playform_is_virtual_category( $up->slug ) ) {
-		break;
+// $top = kategorien, hvis underkategorier vises som faner: den nærmeste (inkl. den selv), der har
+// underkategorier. $parent sættes, når vi står på en af dem.
+$subcats = class_exists( '\Playform\Feeds\Config' ) ? \Playform\Feeds\Config::subcategories() : [];
+$top     = null;
+if ( $is_cat ) {
+	$top = $term;
+	while ( ! isset( $subcats[ $top->slug ] ) && $top->parent ) {
+		$up = get_term( $top->parent, 'product_cat' );
+		if ( ! $up instanceof WP_Term || playform_is_virtual_category( $up->slug ) ) {
+			$top = $term;
+			break;
+		}
+		$top = $up;
 	}
-	$top = $up;
 }
 $parent = $is_cat && $top && $top->term_id !== $term->term_id ? $top : null;
-if ( $is_cat ) {
+$label  = $is_cat ? playform_cat_label( $term ) : '';
+if ( $offers ) {
+	$title = $is_cat ? 'Tilbud på ' . mb_strtolower( $label ) : 'Tilbud';
+	$intro = sprintf(
+		'Her er %s, som butikkerne selv har sat på tilbud lige nu. Vi viser kun tilbud, der højst er %d dage gamle, og prisen er butikkens egen – tjek altid den endelige pris hos butikken.',
+		$is_cat ? mb_strtolower( $label ) : 'fitnessudstyr',
+		class_exists( '\Playform\Feeds\Sales' ) ? \Playform\Feeds\Sales::DAYS : 14
+	);
+} elseif ( $is_cat ) {
 	$title = $term->name;
 	$intro = $term->description ?: sprintf(
 		'Se %s fra flere danske webshops samlet ét sted. Priser og lagerstatus opdateres to gange i døgnet, og du handler direkte hos butikken.',
-		mb_strtolower( $term->name )
+		mb_strtolower( $label )
 	);
 } elseif ( $search !== '' ) {
 	$title = sprintf( 'Søgeresultater for "%s"', $search );
 	$intro = '';
 } else {
-	$title = ( playform_active_filters()['egenskab'] ?? [] ) === [ 'tilbud' ] ? 'Tilbud' : 'Alle produkter';
-	$intro = $title === 'Tilbud' ? 'Produkter, hvor vi selv har målt et prisfald i forhold til den laveste pris de foregående 30 dage.' : '';
+	$title = 'Alle produkter';
+	$intro = '';
 }
 
 $crumb = [ [ 'Forside', home_url( '/' ) ] ];
@@ -51,11 +65,15 @@ if ( $is_cat ) {
 			$crumb[] = [ $a->name, get_term_link( $a ) ];
 		}
 	}
+	if ( $offers ) {
+		$crumb[] = [ $term->name, get_term_link( $term ) ];
+	}
 }
-$crumb[] = [ $title, '' ];
+$crumb[] = [ $offers ? 'Tilbud' : $title, '' ];
 $tabs    = $top ? playform_sub_links( $top->slug ) : [];
-$sort    = isset( $_GET['sortering'] ) ? sanitize_key( $_GET['sortering'] ) : 'populaer';
+$sort    = playform_current_sort();
 $updated = playform_last_update_label();
+$has_offer_tab = $top && in_array( $top->slug, playform_tilbud_slugs(), true );
 global $wp_query;
 ?>
 <section class="wrap cat-top">
@@ -64,14 +82,18 @@ global $wp_query;
 		<h1><?php echo esc_html( $title ); ?></h1>
 		<?php if ( $intro ) : ?><p><?php echo esc_html( wp_strip_all_tags( $intro ) ); ?></p><?php endif; ?>
 	</div>
-	<?php if ( $tabs ) : ?>
+	<?php if ( $tabs || $has_offer_tab ) : ?>
 		<nav class="tabs" aria-label="Underkategorier">
-			<?php $on = ! $parent; ?>
-			<a href="<?php echo esc_url( get_term_link( $top ) ); ?>" class="tab<?php echo $on ? ' is-active' : ''; ?>"<?php echo $on ? ' aria-current="page"' : ''; ?>>Alle <?php echo esc_html( mb_strtolower( $top->name ) ); ?><span class="tab__n"><?php echo (int) ( $parent ? $top->count : $state['total'] ); ?></span></a>
-			<?php foreach ( $tabs as [ $label, $args, $count ] ) : ?>
-				<?php $on = $parent && $term->slug === $args['sub']; ?>
-				<a href="<?php echo esc_url( playform_category_url( $top->slug, $args ) ); ?>" class="tab<?php echo $on ? ' is-active' : ''; ?>"<?php echo $on ? ' aria-current="page"' : ''; ?>><?php echo esc_html( $label ); ?><span class="tab__n"><?php echo (int) $count; ?></span></a>
+			<?php $on = ! $parent && ! $offers; ?>
+			<a href="<?php echo esc_url( get_term_link( $top ) ); ?>" class="tab<?php echo $on ? ' is-active' : ''; ?>"<?php echo $on ? ' aria-current="page"' : ''; ?>>Alle <?php echo esc_html( mb_strtolower( playform_cat_label( $top ) ) ); ?><span class="tab__n"><?php echo (int) ( $on ? $state['total'] : $top->count ); ?></span></a>
+			<?php foreach ( $tabs as [ $tlabel, $args, $count ] ) : ?>
+				<?php $on = $parent && ! $offers && $term->slug === $args['sub']; ?>
+				<a href="<?php echo esc_url( playform_category_url( $top->slug, $args ) ); ?>" class="tab<?php echo $on ? ' is-active' : ''; ?>"<?php echo $on ? ' aria-current="page"' : ''; ?>><?php echo esc_html( $tlabel ); ?><span class="tab__n"><?php echo (int) $count; ?></span></a>
 			<?php endforeach; ?>
+			<?php if ( $has_offer_tab ) : ?>
+				<?php $on = $offers && $term->term_id === $top->term_id; ?>
+				<a href="<?php echo esc_url( playform_tilbud_url( $top ) ); ?>" class="tab tab--sale<?php echo $on ? ' is-active' : ''; ?>"<?php echo $on ? ' aria-current="page"' : ''; ?>>Tilbud<?php echo $on ? '<span class="tab__n">' . (int) $state['total'] . '</span>' : ''; ?></a>
+			<?php endif; ?>
 		</nav>
 	<?php endif; ?>
 </section>
@@ -111,8 +133,8 @@ global $wp_query;
 					<label for="sortering">Sortér efter</label>
 					<span class="select">
 						<select id="sortering" name="sortering" data-autosubmit>
-							<?php foreach ( [ 'populaer' => 'Mest populære', 'rabat' => 'Størst besparelse', 'pris-lav' => 'Laveste pris', 'pris-hoj' => 'Højeste pris', 'nyeste' => 'Nyeste' ] as $k => $label ) : ?>
-								<option value="<?php echo esc_attr( $k ); ?>" <?php selected( $sort, $k ); ?>><?php echo esc_html( $label ); ?></option>
+							<?php foreach ( [ 'populaer' => 'Mest populære', 'rabat' => $offers ? 'Største rabat' : 'Tilbud først', 'pris-lav' => 'Laveste pris', 'pris-hoj' => 'Højeste pris', 'nyeste' => 'Nyeste' ] as $k => $slabel ) : ?>
+								<option value="<?php echo esc_attr( $k ); ?>" <?php selected( $sort, $k ); ?>><?php echo esc_html( $slabel ); ?></option>
 							<?php endforeach; ?>
 						</select>
 						<?php echo playform_icon( 'chevron', 14, 1.8 ); // phpcs:ignore ?>
@@ -168,19 +190,24 @@ global $wp_query;
 				<?php endif; ?>
 			<?php else : ?>
 				<div class="empty">
-					<?php if ( in_array( 'tilbud', playform_active_filters()['egenskab'] ?? [], true ) ) : ?>
-						<b>Ingen målte prisfald lige nu</b>
-						<span>Vi viser kun tilbud, som vi selv har målt i vores prishistorik. Det kræver mindst 30 dages data, så de første tilbud dukker op efter ca. en måned.</span>
+					<?php if ( $offers && ! $state['tags'] ) : ?>
+						<b>Ingen tilbud<?php echo $is_cat ? ' på ' . esc_html( mb_strtolower( $label ) ) : ''; ?> lige nu</b>
+						<span>Vi viser kun tilbud, som butikkerne selv har markeret, og som højst er <?php echo (int) ( class_exists( '\Playform\Feeds\Sales' ) ? \Playform\Feeds\Sales::DAYS : 14 ); ?> dage gamle. Kig forbi igen – priserne opdateres to gange i døgnet.</span>
+						<?php if ( $is_cat ) : ?><a class="btn" href="<?php echo esc_url( get_term_link( $term ) ); ?>">Se alle <?php echo esc_html( mb_strtolower( $label ) ); ?></a><?php endif; ?>
+					<?php elseif ( in_array( 'tilbud', playform_active_filters()['egenskab'] ?? [], true ) ) : ?>
+						<b>Ingen tilbud matcher dine filtre</b>
+						<span>Vi viser kun tilbud, som butikkerne selv har markeret, og som højst er 14 dage gamle. Prøv at fjerne et filter.</span>
+						<a class="btn" href="<?php echo esc_url( playform_reset_url() ); ?>">Nulstil filtre</a>
 					<?php else : ?>
 						<b>Ingen produkter matcher dine filtre</b>
 						<span>Prøv at fjerne et eller flere filtre.</span>
+						<a class="btn" href="<?php echo esc_url( playform_reset_url() ); ?>">Nulstil filtre</a>
 					<?php endif; ?>
-					<?php if ( $is_cat ) : ?><a class="btn" href="<?php echo esc_url( get_term_link( $term ) ); ?>">Nulstil filtre</a><?php endif; ?>
 				</div>
 			<?php endif; ?>
 
 			<?php
-			if ( $is_cat ) {
+			if ( $is_cat && ! $offers ) { // tilbudssider gentager ikke kategoriens tekst
 				$faq = get_term_meta( $term->term_id, 'pf_faq', true );
 				if ( is_array( $faq ) && $faq && max( 1, (int) get_query_var( 'paged' ) ) === 1 ) {
 					echo '<div class="faq-wrap"><h2>Ofte stillede spørgsmål om ' . esc_html( mb_strtolower( $term->name ) ) . '</h2>';

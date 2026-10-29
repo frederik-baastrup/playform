@@ -40,7 +40,9 @@ final class Config {
 
 	/**
 	 * Underkategorier = egne landingssider, fx /kategori/lobebaand/foldbart-lobebaand/.
-	 * 'name' testes mod produktnavnet; 'attr' mod udtrukne egenskaber. Et produkt kan ligge i flere.
+	 * 'match' testes mod produktnavnet, 'desc' mod butikkens beskrivelse, 'attr' mod udtrukne egenskaber,
+	 * og 'not' udelukker ud fra navnet. Et produkt kan ligge i flere. En underkategori kan selv have
+	 * underkategorier (fx Romaskine → Romaskine med vand).
 	 * Navnene er valgt efter, hvad folk søger på (ental, som i Google).
 	 */
 	public static function subcategories(): array {
@@ -92,6 +94,13 @@ final class Config {
 				'boksning'        => [ 'name' => 'Boksning', 'match' => 'boks|mma|hand ?wraps|håndbind|sandsæk|punching' ],
 				'traeningsbolde'  => [ 'name' => 'Træningsbolde', 'match' => 'bold\b|ball\b|gymball|medicinbold|slam ?ball|wall ?ball' ],
 				'sjippetov'       => [ 'name' => 'Sjippetov', 'match' => 'sjippetov|springreb|jump ?rope' ],
+			],
+			// Under Romaskine. 'desc' testes mod butikkens beskrivelse, 'not' udelukker ud fra navnet.
+			'romaskine' => [
+				'romaskine-vand'               => [ 'name' => 'Romaskine med vand', 'match' => 'vandromaskine|vand-romaskine|water|aqua', 'desc' => 'vandmodstand|vand-?modstand|vandtank|vandbeholder|water ?resistance|water ?tank|vandfyldt|fyldt med vand|vandets modstand|modstand fra vand|vand som modstand', 'not' => 'ski ?erg' ],
+				'romaskine-luftmodstand'       => [ 'name' => 'Romaskine med luftmodstand', 'match' => '\bair\b|airmag|air ?rower|luftromaskine', 'desc' => 'luftmodstand|luft-?modstand|air ?resistance|vindmodstand|luft som modstand|blæsermodstand|ventilatorhjul|vifte', 'not' => 'ski ?erg|vand|water|aqua' ],
+				'romaskine-magnetisk'          => [ 'name' => 'Magnetisk romaskine', 'match' => 'magnet|airmag', 'desc' => 'magnetisk modstand|magnetmodstand|magnet-?modstand|magnetic resistance|magnetisk bremse|magnetbremse|magnetsystem|magnetiske modstand', 'not' => 'ski ?erg|vand|water|aqua' ],
+				'romaskine-til-hjemmetraening' => [ 'name' => 'Romaskine til hjemmetræning', 'desc' => 'hjemmetræning|til hjemmet|i hjemmet|hjemmebrug|hjemme-?gym|home ?gym|derhjemme|hjemmefitness|til private|privat brug', 'not' => 'ski ?erg' ],
 			],
 		];
 	}
