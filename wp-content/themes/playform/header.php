@@ -16,6 +16,7 @@
 		<span class="topbar__extra">Priser opdateres 2 gange dagligt</span>
 		<a href="<?php echo esc_url( home_url( '/saadan-tjener-vi-penge/' ) ); ?>">Annoncering: Siden indeholder affiliate-links</a>
 	</div>
+	<a class="topbar__mob" href="<?php echo esc_url( home_url( '/saadan-tjener-vi-penge/' ) ); ?>"><u>Indeholder annoncer</u> · Priser opdateres 2× dagligt</a>
 </div>
 
 <header class="site-header">
@@ -114,10 +115,11 @@
 				<a href="<?php echo esc_url( home_url( '/viden/' ) ); ?>">Guides</a>
 				<a href="<?php echo esc_url( playform_tilbud_url() ); ?>" class="knowledge__sale">Tilbud</a>
 			</nav>
-			<button type="button" class="menu-toggle" aria-expanded="false" aria-controls="hovedmenu" aria-label="Åbn menu"><?php echo playform_icon( 'menu', 22 ); // phpcs:ignore ?></button>
+			<button type="button" class="menu-toggle" aria-expanded="false" aria-controls="mobilmenu" aria-label="Åbn menu"><?php echo playform_icon( 'menu', 24, 1.6 ); // phpcs:ignore ?></button>
 		</div>
 	</div>
 </header>
+<?php get_template_part( 'template-parts/mobile-menu' ); ?>
 <?php if ( isset( $_GET['nyhedsbrev'] ) && $_GET['nyhedsbrev'] === 'bekraeftet' ) : // phpcs:ignore ?>
 	<div class="notice-bar" role="status"><div class="wrap">Tak – din tilmelding til nyhedsbrevet er bekræftet.</div></div>
 <?php endif; ?>

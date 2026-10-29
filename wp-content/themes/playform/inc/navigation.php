@@ -135,6 +135,15 @@ function playform_category_image( string $slug, string $fallback = '' ): string 
 	return playform_asset( $map[ $slug ] ?? $map[ $fallback ] ?? 't-hjemmegym.jpg' );
 }
 
+/** Lille, kvadratisk udgave af kategoribilledet til mobilmenuen (assets/img/th-*.jpg). Tom, hvis kategorien ikke har sit eget. */
+function playform_category_thumb( string $slug ): string {
+	$file = basename( (string) wp_parse_url( playform_category_image( $slug, '-' ), PHP_URL_PATH ) );
+	if ( $file === 't-hjemmegym.jpg' ) {
+		return '';
+	}
+	return playform_asset( 'th-' . explode( '-', $file, 2 )[1] );
+}
+
 /**
  * Menuens opbygning: [ menupunkt, kategorier i venstre kolonne ]. null = menupunktets egne underkategorier.
  * En kategori kan angives som [ slug, visningsnavn ], fx når en underkategori står for sig selv.

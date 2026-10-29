@@ -24,6 +24,7 @@ Siden hed Playform. Synlige tekster og logo siger nu Fitbase (`playform_rebrand(
   - `src/Importer.php`, `src/Cron.php`, `src/Cli.php`, `src/Admin.php`, `src/Frontend.php`
 - `wp-content/themes/playform/` – temaet, bygget ud fra designet (forside, kategoriside, produktside).
   - `inc/navigation.php` – menuen (`playform_menu_spec()`): Træningsmaskiner, Styrketræning, Yoga & pilates, Restitution, Tilbehør, Tilbud. Træningsmaskiner og Styrketræning er grupperingskategorier med oversigtsside.
+  - `template-parts/mobile-menu.php` – mobilmenuen (≤1080 px): skuffe med lag, menupunkt → kategori (underkategorier, pris, tilbud). Bygges ud fra `playform_menu()` ligesom mega-menuen.
   - `inc/permalinks.php` – flade kategori-URL'er (`/traeningsmaskiner/lobebaand/gaabaand/`) og `/…/tilbud/`-sider. WooCommerce' præfiks `kategori` bruges kun til gamle links, som omdirigeres.
   - `inc/search.php` – søgeforslag (`/wp-json/playform/v1/search`).
 - `dev/setup-local.sh` – lokal WordPress med SQLite i `.local/` (ignoreres af git).
