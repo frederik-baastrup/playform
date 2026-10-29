@@ -12,19 +12,20 @@
 
 <?php
 $pf_money = home_url( '/saadan-tjener-vi-penge/' );
-$pf_check = playform_icon( 'check', 14, 2 );
+$pf_ico   = static fn( string $n ): string => playform_icon( $n, 13, 1.5 );
 $pf_shops = count( playform_shop_names() );
 ?>
 <div class="topbar">
 	<div class="wrap topbar__in">
 		<ul class="topbar__usp">
-			<li><?php echo $pf_check; // phpcs:ignore ?><?php echo $pf_shops ? esc_html( $pf_shops ) . ' danske shops samlet ét sted' : 'Danske shops samlet ét sted'; ?></li>
-			<li class="topbar__extra"><?php echo $pf_check; // phpcs:ignore ?>Priser opdateres 2× dagligt</li>
-			<li class="topbar__extra"><?php echo $pf_check; // phpcs:ignore ?>Du handler direkte hos butikken</li>
+			<li><?php echo $pf_ico( 'grid' ); // phpcs:ignore ?><?php echo $pf_shops ? esc_html( $pf_shops ) . ' danske shops samlet ét sted' : 'Danske shops samlet ét sted'; ?></li>
+			<li class="topbar__extra"><a href="<?php echo esc_url( playform_tilbud_url() ); ?>"><?php echo $pf_ico( 'tag' ); // phpcs:ignore ?>Butikkernes tilbud samlet ét sted</a></li>
+			<li class="topbar__extra"><?php echo $pf_ico( 'refresh' ); // phpcs:ignore ?>Priser opdateres 2× dagligt</li>
+			<li class="topbar__extra"><?php echo $pf_ico( 'store' ); // phpcs:ignore ?>Du handler direkte hos butikken</li>
 		</ul>
 		<a class="topbar__ad" href="<?php echo esc_url( $pf_money ); ?>"><span class="topbar__tag">Annonce</span>Siden indeholder affiliate-links</a>
 	</div>
-	<a class="topbar__mob" href="<?php echo esc_url( $pf_money ); ?>"><span class="topbar__tag">Annonce</span><?php echo $pf_check; // phpcs:ignore ?>Priser opdateres 2× dagligt</a>
+	<a class="topbar__mob" href="<?php echo esc_url( $pf_money ); ?>"><span class="topbar__tag">Annonce</span><?php echo $pf_ico( 'refresh' ); // phpcs:ignore ?>Priser opdateres 2× dagligt</a>
 </div>
 
 <header class="site-header">
