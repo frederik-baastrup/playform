@@ -1,0 +1,61 @@
+name: Diagnose (midlertidig)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  diag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Grundig diagnose af det midlertidige domæne
+        shell: bash
+        run: |
+          set +e
+          HOST="https://frederikb7.sg-host.com"
+          RAND=$(date +%s)
+          {
+            echo "== Headers på forsiden (cache-busted query) =="
+            curl -sS -k -D - -o forside.html "$HOST/?nocache=$RAND"
+
+            echo ""
+            echo "== Headers på forsiden UDEN cache-bust (normal URL) =="
+            curl -sS -k -D - -o forside2.html "$HOST/"
+
+            echo ""
+            echo "== main.css version i begge =="
+            grep -o "main.css?ver=[0-9.]*" forside.html
+            grep -o "main.css?ver=[0-9.]*" forside2.html
+
+            echo ""
+            echo "== Står 'Kondiudstyr' (ny menu) i den cache-bustede forside? =="
+            grep -c "Kondiudstyr" forside.html
+
+            echo ""
+            echo "== Kalder admin-ajax (bliver normalt ALDRIG cachet) =="
+            curl -sS -k -D - -o ajax.html "$HOST/wp-admin/admin-ajax.php"
+
+            echo ""
+            echo "== REST API: tema-info via wp-json (kan afsløre version) =="
+            curl -sS -k "$HOST/wp-json/" | head -c 500
+            echo ""
+
+            echo ""
+            echo "== PHP-info via feed (RSS indeholder generator-version) =="
+            curl -sS -k "$HOST/?feed=rss2" | grep -i "generator\|pubDate" | head -5
+          } > diag.txt 2>&1
+          exit 0
+
+      - name: Commit resultat til branch
+        shell: bash
+        run: |
+          git config user.name "verify-bot"
+          git config user.email "verify-bot@example.com"
+          git checkout -B diag-result
+          git add diag.txt
+          git commit -m "Diag-resultat" --allow-empty
+          git push -f origin diag-result
