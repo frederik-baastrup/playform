@@ -16,7 +16,7 @@
 	--r-s: 10px;
 	--r: 14px;
 	--r-l: 18px;
-	--top-gap: 48px; /* luft fra menuen til brødkrummer/overskrift */
+	--top-gap: 88px; /* luft fra menuen til brødkrummer/overskrift (32 px på mobil) */
 	--font: 'BDO Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 *, *::before, *::after { box-sizing: border-box; }
