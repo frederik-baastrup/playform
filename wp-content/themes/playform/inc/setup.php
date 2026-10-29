@@ -18,10 +18,75 @@ add_action(
 	static function () {
 		if ( get_option( 'playform_content_version' ) !== PLAYFORM_THEME_VERSION ) {
 			playform_seed_category_texts();
+			playform_restructure_menu_categories();
+			$perma = (array) get_option( 'woocommerce_permalinks', [] );
+			if ( ( $perma['category_base'] ?? null ) !== '' ) {
+				$perma['category_base'] = '';
+				update_option( 'woocommerce_permalinks', $perma );
+			}
 			update_option( 'playform_content_version', PLAYFORM_THEME_VERSION, false );
+			flush_rewrite_rules();
 		}
 	},
 	20
+);
+
+/**
+ * Opretter de "virtuelle" grupperings-kategorier (Kondiudstyr, Styrketræning) og flytter de
+ * rigtige kategorier ind under dem, så menuen kan vise dem samlet. Kan køres igen sikkert.
+ */
+function playform_restructure_menu_categories(): void {
+	foreach ( playform_virtual_groups() as $slug => $group ) {
+		$parent = get_term_by( 'slug', $slug, 'product_cat' );
+		if ( ! $parent ) {
+			$result = wp_insert_term( $group['label'], 'product_cat', [ 'slug' => $slug ] );
+			$parent_id = is_wp_error( $result ) ? 0 : (int) $result['term_id'];
+		} else {
+			$parent_id = (int) $parent->term_id;
+		}
+		if ( ! $parent_id ) {
+			continue;
+		}
+		foreach ( $group['children'] as $child_slug ) {
+			$child = get_term_by( 'slug', $child_slug, 'product_cat' );
+			if ( $child && (int) $child->parent !== $parent_id ) {
+				wp_update_term( $child->term_id, 'product_cat', [ 'parent' => $parent_id ] );
+			}
+		}
+	}
+}
+
+/**
+ * Omdirigerer gamle URL'er (med /kategori/-præfiks, og/eller uden Kondiudstyr/Styrketræning
+ * som mellemled) til de nye, så vi ikke mister søgemaskine-trafik eller delte links.
+ */
+add_action(
+	'template_redirect',
+	static function () {
+		$uri = (string) ( $_SERVER['REQUEST_URI'] ?? '' ); // phpcs:ignore
+		if ( ! str_starts_with( $uri, '/kategori/' ) ) {
+			return;
+		}
+		$rest             = substr( $uri, strlen( '/kategori/' ) );
+		[ $path, $query ] = array_pad( explode( '?', $rest, 2 ), 2, '' );
+		$segments         = array_values( array_filter( explode( '/', $path ) ) );
+		$map              = [
+			'motionscykler'            => [ 'kondiudstyr', 'motionscykler' ],
+			'romaskiner-crosstrainere' => [ 'kondiudstyr', 'romaskiner-crosstrainere' ],
+			'vaegte-kettlebells'       => [ 'styrketraening', 'vaegte-kettlebells' ],
+			'styrke-baenke'            => [ 'styrketraening', 'styrke-baenke' ],
+		];
+		if ( isset( $segments[0], $map[ $segments[0] ] ) ) {
+			array_splice( $segments, 0, 1, $map[ $segments[0] ] );
+		}
+		$new = '/' . implode( '/', $segments ) . '/';
+		if ( $query ) {
+			$new .= '?' . $query;
+		}
+		wp_safe_redirect( home_url( $new ), 301 );
+		exit;
+	},
+	1
 );
 
 function playform_setup_site(): void {
@@ -32,9 +97,9 @@ function playform_setup_site(): void {
 	update_option( 'woocommerce_feature_order_attribution_enabled', 'no' );
 	update_option( 'date_format', 'j. F Y' );
 	update_option( 'WPLANG', 'da_DK' );
-	// Danske URL'er: /kategori/lobebaand/ og /produkt/navn/
+	// Danske URL'er: /lobebaand/ (uden kategori-præfiks) og /produkt/navn/
 	$perma = (array) get_option( 'woocommerce_permalinks', [] );
-	$perma['category_base'] = 'kategori';
+	$perma['category_base'] = '';
 	$perma['tag_base']      = 'emne';
 	$perma['product_base']  = 'produkt';
 	update_option( 'woocommerce_permalinks', $perma );
@@ -221,16 +286,15 @@ function playform_seed_category_texts(): void {
 			wp_update_term( $term->term_id, 'product_cat', [ 'description' => $intro ] );
 		}
 	}
-	foreach ( playform_menu() as $item ) {
-		$term = get_term_by( 'slug', $item['slug'], 'product_cat' );
+	foreach ( $texts as $slug => $t ) {
+		$term = get_term_by( 'slug', $slug, 'product_cat' );
 		if ( ! $term ) {
 			continue;
 		}
-		$t = $texts[ $item['slug'] ] ?? null;
-		if ( $t && ! $term->description ) {
+		if ( ! $term->description ) {
 			wp_update_term( $term->term_id, 'product_cat', [ 'description' => $t['intro'] ] );
 		}
-		if ( $t && ! get_term_meta( $term->term_id, 'pf_seo_text', true ) ) {
+		if ( ! get_term_meta( $term->term_id, 'pf_seo_text', true ) ) {
 			update_term_meta( $term->term_id, 'pf_seo_text', $t['seo'] );
 			update_term_meta( $term->term_id, 'pf_faq', $t['faq'] );
 		}

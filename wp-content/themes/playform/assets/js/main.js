@@ -31,6 +31,15 @@
 		});
 	}
 
+	// Mobilmenu: gruppepunkter (fx Kondiudstyr) har ingen egen side, kun en undermenu
+	document.querySelectorAll('.mm__item--group > .mm__link').forEach(function (label) {
+		label.addEventListener('click', function () {
+			var item = label.closest('.mm__item--group');
+			var open = item.classList.toggle('is-open');
+			label.setAttribute('aria-expanded', open ? 'true' : 'false');
+		});
+	});
+
 	// Sortering skifter med det samme
 	document.querySelectorAll('[data-autosubmit]').forEach(function (el) {
 		el.addEventListener('change', function () { el.form.submit(); });

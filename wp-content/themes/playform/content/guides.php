@@ -51,7 +51,7 @@ $guides = [
 <li>Har du lidt plads, så vælg et foldbart løbebånd.</li>
 <li>Tjek den maksimale brugervægt og hold god margin.</li>
 </ul>
-<p>Se alle <a href="/kategori/lobebaand/">løbebånd</a> – du kan filtrere på pris, hastighed, foldbar og incline.</p>
+<p>Se alle <a href="/lobebaand/">løbebånd</a> – du kan filtrere på pris, hastighed, foldbar og incline.</p>
 HTML,
 	],
 	[
@@ -85,7 +85,7 @@ HTML,
 <li>Læg en måtte under, især hvis du bor i lejlighed.</li>
 <li>Tjek den maksimale brugervægt og den støj, producenten oplyser.</li>
 </ul>
-<p>Se alle <a href="/kategori/lobebaand/gaabaand/">gåbånd</a> fra flere danske webshops.</p>
+<p>Se alle <a href="/lobebaand/gaabaand/">gåbånd</a> fra flere danske webshops.</p>
 HTML,
 	],
 	[
@@ -117,7 +117,7 @@ HTML,
 
 <h2>Husk underlaget</h2>
 <p>En kettlebell, der bliver sat hårdt ned, kan skade gulvet. Træn på en gummimåtte eller et andet beskyttende underlag.</p>
-<p>Se alle <a href="/kategori/vaegte-kettlebells/kettlebell/">kettlebells</a> – du kan filtrere på vægt og pris.</p>
+<p>Se alle <a href="/styrketraening/vaegte-kettlebells/kettlebell/">kettlebells</a> – du kan filtrere på vægt og pris.</p>
 HTML,
 	],
 	[
@@ -150,7 +150,7 @@ HTML,
 <li><strong>Har du ondt i ryggen?</strong> Overvej en liggecykel.</li>
 </ul>
 <p>Uanset typen er det en god idé at tjekke den maksimale brugervægt, hvordan modstanden justeres, og om sadel og styr kan indstilles, så de passer til din højde.</p>
-<p>Se alle <a href="/kategori/motionscykler/">motionscykler</a> fra flere danske webshops.</p>
+<p>Se alle <a href="/kondiudstyr/motionscykler/">motionscykler</a> fra flere danske webshops.</p>
 HTML,
 	],
 ];

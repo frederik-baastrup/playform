@@ -5,7 +5,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'PLAYFORM_THEME_VERSION', '0.2.0' );
+define( 'PLAYFORM_THEME_VERSION', '0.3.0' );
 
 require_once __DIR__ . '/inc/navigation.php';
 require_once __DIR__ . '/inc/helpers.php';

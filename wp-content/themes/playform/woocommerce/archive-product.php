@@ -11,6 +11,11 @@ $is_cat = $term instanceof WP_Term && $term->taxonomy === 'product_cat';
 $search = get_search_query();
 
 $parent = $is_cat && $term->parent ? get_term( $term->parent, 'product_cat' ) : null;
+if ( $parent instanceof WP_Term && playform_is_virtual_category( $parent->slug ) ) {
+	// Virtuelle grupperingskategorier (Kondiudstyr, Styrketræning) har ingen egen side –
+	// behandl den rigtige kategori som toppen, som før de blev samlet i menuen.
+	$parent = null;
+}
 if ( $is_cat ) {
 	$title = $term->name;
 	$intro = $term->description ?: sprintf(
@@ -45,10 +50,10 @@ global $wp_query;
 	<?php if ( $tabs ) : ?>
 		<nav class="tabs" aria-label="Underkategorier">
 			<?php $on = ! $parent; ?>
-			<a href="<?php echo esc_url( get_term_link( $top ) ); ?>" class="tab<?php echo $on ? ' is-active' : ''; ?>"<?php echo $on ? ' aria-current="page"' : ''; ?>>Alle <?php echo esc_html( mb_strtolower( $top->name ) ); ?></a>
-			<?php foreach ( $tabs as [ $label, $args ] ) : ?>
+			<a href="<?php echo esc_url( get_term_link( $top ) ); ?>" class="tab<?php echo $on ? ' is-active' : ''; ?>"<?php echo $on ? ' aria-current="page"' : ''; ?>>Alle <?php echo esc_html( mb_strtolower( $top->name ) ); ?><span class="tab__n"><?php echo (int) $state['total']; ?></span></a>
+			<?php foreach ( $tabs as [ $label, $args, $count ] ) : ?>
 				<?php $on = $parent && $term->slug === $args['sub']; ?>
-				<a href="<?php echo esc_url( playform_category_url( $top->slug, $args ) ); ?>" class="tab<?php echo $on ? ' is-active' : ''; ?>"<?php echo $on ? ' aria-current="page"' : ''; ?>><?php echo esc_html( $label ); ?></a>
+				<a href="<?php echo esc_url( playform_category_url( $top->slug, $args ) ); ?>" class="tab<?php echo $on ? ' is-active' : ''; ?>"<?php echo $on ? ' aria-current="page"' : ''; ?>><?php echo esc_html( $label ); ?><span class="tab__n"><?php echo (int) $count; ?></span></a>
 			<?php endforeach; ?>
 		</nav>
 	<?php endif; ?>

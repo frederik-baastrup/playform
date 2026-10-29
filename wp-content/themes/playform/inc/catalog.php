@@ -119,6 +119,26 @@ function playform_current_top_slug(): string {
 }
 
 /**
+ * Som ovenfor, men stopper ved den nærmeste RIGTIGE kategori (springer de virtuelle
+ * grupperings-kategorier som Kondiudstyr/Styrketræning over). Bruges til filterregler
+ * ('only'), der er sat op pr. rigtig kategori og ikke kender til de virtuelle grupper.
+ */
+function playform_current_real_top_slug(): string {
+	$term = get_queried_object();
+	if ( ! $term instanceof WP_Term || $term->taxonomy !== 'product_cat' ) {
+		return '';
+	}
+	while ( $term->parent ) {
+		$parent_term = get_term( $term->parent, 'product_cat' );
+		if ( ! $parent_term instanceof WP_Term || playform_is_virtual_category( $parent_term->slug ) ) {
+			break;
+		}
+		$term = $parent_term;
+	}
+	return $term->slug;
+}
+
+/**
  * Beregner matchende produkter og tal pr. filtermulighed. Gemmes til resten af requestet.
  */
 function playform_catalog_state(): array {
@@ -187,7 +207,7 @@ function playform_catalog_state(): array {
 
 	$facets = [];
 	foreach ( $groups as $g => $def ) {
-		if ( ! empty( $def['only'] ) && ! in_array( playform_current_top_slug(), $def['only'], true ) ) {
+		if ( ! empty( $def['only'] ) && ! in_array( playform_current_real_top_slug(), $def['only'], true ) ) {
 			continue;
 		}
 		$opts = [];
