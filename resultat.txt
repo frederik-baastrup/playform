@@ -1,0 +1,35 @@
+== css/js version på forsiden ==
+HTTP 202
+
+== /kategori/lobebaand/ ==
+HTTP 202
+Ofte stillede spørgsmål: 0
+Købsguide-overskrift (h2 med 'Køb'): 0
+== /kategori/motionscykler/ ==
+HTTP 202
+Ofte stillede spørgsmål: 0
+Købsguide-overskrift (h2 med 'Køb'): 0
+== /kategori/romaskiner-crosstrainere/ ==
+HTTP 202
+Ofte stillede spørgsmål: 0
+Købsguide-overskrift (h2 med 'Køb'): 0
+== /kategori/vaegte-kettlebells/ ==
+HTTP 202
+Ofte stillede spørgsmål: 0
+Købsguide-overskrift (h2 med 'Køb'): 0
+== /kategori/styrke-baenke/ ==
+HTTP 202
+Ofte stillede spørgsmål: 0
+Købsguide-overskrift (h2 med 'Køb'): 0
+== /kategori/yoga-pilates/ ==
+HTTP 202
+Ofte stillede spørgsmål: 0
+Købsguide-overskrift (h2 med 'Køb'): 0
+== /kategori/restitution/ ==
+HTTP 202
+Ofte stillede spørgsmål: 0
+Købsguide-overskrift (h2 med 'Køb'): 0
+== /kategori/tilbehor/ ==
+HTTP 202
+Ofte stillede spørgsmål: 0
+Købsguide-overskrift (h2 med 'Køb'): 0
