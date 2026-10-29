@@ -11,7 +11,7 @@ return [
 		'slug'    => 'romaskine-vand-luft-eller-magnet',
 		'title'   => 'Romaskine med vand, luft eller magnet – hvilken skal du vælge?',
 		'cat'     => 'Købsguide',
-		'img'     => 't-romaskine.jpg',
+		'img'     => 'articles/romaskine-vand-luft-eller-magnet.jpg',
 		'excerpt' => 'Vand, luft eller magnet? Modstandstypen afgør, hvordan romaskinen føles, hvor meget den larmer, og hvor den passer ind. Her er forskellene forklaret.',
 		'html'    => <<<'HTML'
 <p>Den vigtigste beslutning, når du skal købe romaskine, er ikke mærket eller prisen – det er modstandstypen. Den bestemmer, hvordan hvert tag føles, hvor meget maskinen larmer, og om den passer til en lejlighed, et træningsrum eller en garage. Her gennemgår vi de tre typer, så du kan vælge den, der passer til dig.</p>
@@ -126,7 +126,7 @@ HTML,
 		'slug'    => 'crosstrainer-eller-lobebaand',
 		'title'   => 'Crosstrainer eller løbebånd: Hvad skal du vælge?',
 		'cat'     => 'Købsguide',
-		'img'     => 'mm-crosstrainer.jpg',
+		'img'     => 'articles/crosstrainer-eller-lobebaand.jpg',
 		'excerpt' => 'Løbebånd og crosstrainer er de to mest populære kondimaskiner til hjemmet. Her er forskellene på træning, led, plads og støj – og hvem der passer til hvad.',
 		'html'    => <<<'HTML'
 <p>Skal du have én kondimaskine derhjemme, står valget ofte mellem et løbebånd og en crosstrainer. Begge giver god konditionstræning, men de føles meget forskellige, belaster kroppen forskelligt og passer til forskellige hjem. Her er det, du skal vide, før du vælger.</p>
@@ -250,7 +250,7 @@ HTML,
 		'slug'    => 'hjemmegym-paa-et-budget',
 		'title'   => 'Hjemmegym på et budget: Det skal du købe først',
 		'cat'     => 'Hjemmegym',
-		'img'     => 't-hjemmegym.jpg',
+		'img'     => 'articles/hjemmegym-paa-et-budget.jpg',
 		'excerpt' => 'Du behøver hverken et stort rum eller et stort budget for at træne effektivt hjemme. Her er rækkefølgen, vi ville købe udstyret i – og hvad du kan vente med.',
 		'html'    => <<<'HTML'
 <p>Et hjemmegym behøver ikke at starte med en dyr maskine. Med få, gennemtænkte køb kan du træne både styrke og kondition derhjemme – og bygge videre, når du ved, hvad du faktisk bruger. Her er den rækkefølge, vi ville købe i, hvis budgettet er stramt.</p>
@@ -410,7 +410,7 @@ HTML,
 		'slug'    => 'hvor-tunge-haandvaegte-skal-du-koebe',
 		'title'   => 'Hvor tunge håndvægte skal du købe?',
 		'cat'     => 'Købsguide',
-		'img'     => 't-haandvaegte.jpg',
+		'img'     => 'articles/hvor-tunge-haandvaegte-skal-du-koebe.jpg',
 		'excerpt' => 'Den rigtige vægt afhænger af øvelsen, din erfaring og dit mål. Her er en enkel måde at vælge håndvægte på – og hvornår justerbare håndvægte giver mening.',
 		'html'    => <<<'HTML'
 <p>Håndvægte er noget af det mest alsidige udstyr, du kan have derhjemme. Men det er ikke ligegyldigt, hvilken vægt du vælger: For let, og du bliver hurtigt færdig med dem. For tung, og teknikken lider. Her er en enkel måde at vælge på.</p>
@@ -506,7 +506,7 @@ HTML,
 		'slug'    => 'power-rack-i-hjemmet',
 		'title'   => 'Power rack i hjemmet: Det skal du vide, før du køber',
 		'cat'     => 'Hjemmegym',
-		'img'     => 'mm-baenk.jpg',
+		'img'     => 'articles/power-rack-i-hjemmet.jpg',
 		'excerpt' => 'Et power rack gør det sikkert at løfte tungt alene. Her er forskellen på power rack, half rack og squat stand – og hvad du skal måle op, før du køber.',
 		'html'    => <<<'HTML'
 <p>Vil du træne tunge basisløft som squat og bænkpres derhjemme, er et rack det vigtigste stykke udstyr. Det giver dig sikkerhed, når du træner alene, og det bliver samlingspunktet i dit hjemmegym. Men racks fylder og varierer meget, så det betaler sig at vide, hvad du kigger efter.</p>

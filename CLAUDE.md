@@ -27,6 +27,8 @@ Siden hed Playform. Synlige tekster og logo siger nu Fitbase (`playform_rebrand(
   - `template-parts/mobile-menu.php` – mobilmenuen (≤1080 px): skuffe med lag, menupunkt → kategori (underkategorier, pris, tilbud). Bygges ud fra `playform_menu()` ligesom mega-menuen.
   - `inc/permalinks.php` – flade kategori-URL'er (`/traeningsmaskiner/lobebaand/gaabaand/`) og `/…/tilbud/`-sider. WooCommerce' præfiks `kategori` bruges kun til gamle links, som omdirigeres.
   - `inc/authors.php` – forfattere (E-E-A-T): navn i byline, forfatterside `/viden/forfatter/navn/`, forfatterboks under artikler, JSON-LD (Article, ProfilePage/Person). Ingen Gravatar – profilbillede via feltet `pf_photo`. Påstå aldrig kvalifikationer, ejeren ikke selv har skrevet i sin profil.
+  - `template-parts/guides-index.php` – Viden & guides (`/viden/`) og emnesider (`/viden/emne/<emne>/`): emnefaner, fremhævet guide, gitter. Emner = WordPress-kategorier.
+  - `assets/img/articles/<slug>.jpg` – artikelbilleder fra Pexels (fri licens, 1800 px). `playform_article_images()` sætter dem på indlæg uden billede eller med for lille billede. Brug aldrig produktbilleder som artikelbilleder.
   - `inc/search.php` – søgeforslag (`/wp-json/playform/v1/search`).
 - `dev/setup-local.sh` – lokal WordPress med SQLite i `.local/` (ignoreres af git).
 

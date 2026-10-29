@@ -58,7 +58,7 @@ HTML,
 		'slug'    => 'gaabaand-til-kontoret',
 		'title'   => 'Gåbånd til kontoret: Er det noget for dig?',
 		'cat'     => 'Hjemmekontor',
-		'img'     => 'guide-gaabaand.jpg',
+		'img'     => 'articles/gaabaand-til-kontoret.jpg',
 		'excerpt' => 'Et gåbånd under skrivebordet kan give mange flere skridt på en almindelig arbejdsdag. Her er, hvad du skal vide, før du køber.',
 		'html'    => <<<'HTML'
 <p>Sidder du ned det meste af dagen, er et gåbånd en nem måde at få bevægelse ind i hverdagen. Du går i roligt tempo, mens du læser mails, deltager i møder eller tænker over en opgave. Men et gåbånd er ikke det samme som et løbebånd, og det passer ikke til alle.</p>
@@ -92,7 +92,7 @@ HTML,
 		'slug'    => 'kettlebell-hvilken-vaegt-skal-du-vaelge',
 		'title'   => 'Kettlebell for begyndere: Hvilken vægt skal du vælge?',
 		'cat'     => 'Træning',
-		'img'     => 'hero-kettlebells.jpg',
+		'img'     => 'articles/kettlebell-hvilken-vaegt-skal-du-vaelge.jpg',
 		'excerpt' => 'For let bliver kedeligt, for tung bliver farligt. Sådan finder du den rigtige kettlebell at starte med.',
 		'html'    => <<<'HTML'
 <p>Kettlebells er et af de mest alsidige stykker træningsudstyr, du kan have derhjemme. Med én eller to kettlebells kan du træne hele kroppen. Det sværeste er ofte at vælge den rigtige vægt.</p>
@@ -124,7 +124,7 @@ HTML,
 		'slug'    => 'spinningcykel-kondicykel-eller-airbike',
 		'title'   => 'Spinningcykel, kondicykel eller airbike – hvad skal du vælge?',
 		'cat'     => 'Købsguide',
-		'img'     => 'hero-motionscykler.jpg',
+		'img'     => 'articles/spinningcykel-kondicykel-eller-airbike.jpg',
 		'excerpt' => 'Tre typer motionscykler, tre forskellige måder at træne på. Her er forskellen, og hvem de passer til.',
 		'html'    => <<<'HTML'
 <p>Motionscykler er populære til træning derhjemme, fordi de er skånsomme for leddene og nemme at komme i gang med. Men der er stor forskel på, hvordan de forskellige typer føles, og hvad de er bedst til.</p>

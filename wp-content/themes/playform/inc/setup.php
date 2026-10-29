@@ -45,6 +45,8 @@ function playform_run_upgrades(): void {
 	playform_seed_articles();
 	playform_rebrand();
 	playform_fix_author_name();
+	playform_article_images();
+	playform_guide_topics();
 	if ( class_exists( '\Playform\Feeds\Sales' ) ) {
 		\Playform\Feeds\Sales::refresh_all( current_time( 'Y-m-d' ) ); // kontrollerede førpriser
 	}
@@ -130,6 +132,72 @@ function playform_update_text( string $slug, string $old, string $new ): void {
 	$page = get_page_by_path( $slug );
 	if ( $page && str_contains( $page->post_content, $old ) ) {
 		wp_update_post( [ 'ID' => $page->ID, 'post_content' => str_replace( $old, $new, $page->post_content ) ] );
+	}
+}
+
+/**
+ * Artikelbilleder (Pexels, fri licens) fra assets/img/articles/<slug>.jpg.
+ * Sættes på indlæg uden billede eller med et for lille billede (< 1200 px) – et billede,
+ * redaktøren selv har valgt i den rigtige størrelse, bliver stående.
+ */
+function playform_article_images(): void {
+	require_once ABSPATH . 'wp-admin/includes/media.php';
+	require_once ABSPATH . 'wp-admin/includes/file.php';
+	require_once ABSPATH . 'wp-admin/includes/image.php';
+	foreach ( glob( get_template_directory() . '/assets/img/articles/*.jpg' ) ?: [] as $src ) {
+		$slug = basename( $src, '.jpg' );
+		$post = get_posts( [ 'name' => $slug, 'post_type' => 'post', 'post_status' => 'any', 'numberposts' => 1 ] );
+		if ( ! $post ) {
+			continue;
+		}
+		$id    = $post[0]->ID;
+		$thumb = get_post_thumbnail_id( $id );
+		$hash  = md5_file( $src );
+		if ( $thumb ) {
+			if ( get_post_meta( $thumb, '_pf_auto_img', true ) === $hash ) {
+				continue; // allerede dette billede
+			}
+			$meta = wp_get_attachment_metadata( $thumb );
+			if ( (int) ( $meta['width'] ?? 0 ) >= 1200 && ! get_post_meta( $thumb, '_pf_auto_img', true ) ) {
+				continue; // redaktørens eget billede i god størrelse
+			}
+		}
+		$tmp = wp_tempnam( $slug . '.jpg' );
+		copy( $src, $tmp );
+		$att = media_handle_sideload( [ 'name' => $slug . '.jpg', 'tmp_name' => $tmp ], $id, get_the_title( $id ) );
+		if ( is_wp_error( $att ) ) {
+			@unlink( $tmp ); // phpcs:ignore
+			continue;
+		}
+		update_post_meta( $att, '_pf_auto_img', $hash );
+		update_post_meta( $att, '_wp_attachment_image_alt', get_the_title( $id ) );
+		set_post_thumbnail( $id, $att );
+	}
+}
+
+/** Emner under Viden & guides: /viden/emne/<emne>/ med en kort beskrivelse (kun hvis den er tom). */
+function playform_guide_topics(): void {
+	if ( get_option( 'category_base' ) !== 'viden/emne' ) {
+		update_option( 'category_base', 'viden/emne' );
+		// Kategoriens adresse er allerede registreret i denne forespørgsel – ret den, så flush_rewrite_rules() bruger den nye.
+		global $wp_rewrite;
+		$wp_rewrite->set_category_base( 'viden/emne' );
+		if ( isset( $wp_rewrite->extra_permastructs['category'] ) ) {
+			$wp_rewrite->extra_permastructs['category']['struct'] = 'viden/emne/%category%';
+		}
+	}
+	$texts = [
+		'Købsguide'    => 'Købsguides til fitnessudstyr: hvad du skal kigge efter, før du køber løbebånd, romaskine, håndvægte, yogamåtte og andet udstyr til hjemmet.',
+		'Hjemmegym'    => 'Sådan indretter du et hjemmegym – fra den billige start til power rack og træning i lejlighed uden at genere naboerne.',
+		'Restitution'  => 'Massagepistoler, isbad og andet udstyr til restitution – og hvordan du bruger det rigtigt.',
+		'Træning'      => 'Træningstips og øvelser til dig, der træner derhjemme.',
+		'Hjemmekontor' => 'Gåbånd og mere bevægelse i arbejdsdagen, når du arbejder hjemme.',
+	];
+	foreach ( $texts as $name => $desc ) {
+		$t = get_term_by( 'name', $name, 'category' );
+		if ( $t && trim( $t->description ) === '' ) {
+			wp_update_term( $t->term_id, 'category', [ 'description' => $desc ] );
+		}
 	}
 }
 
@@ -416,3 +484,13 @@ function playform_seed_articles(): void {
 		}
 	}
 }
+
+// Viden & guides: 1 fremhævet + 12 i gitteret pr. side.
+add_action(
+	'pre_get_posts',
+	static function ( WP_Query $q ) {
+		if ( ! is_admin() && $q->is_main_query() && ( $q->is_home() || $q->is_category() ) ) {
+			$q->set( 'posts_per_page', 13 );
+		}
+	}
+);

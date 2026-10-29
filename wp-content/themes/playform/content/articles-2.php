@@ -11,7 +11,7 @@ return [
 		'slug'    => 'massagepistol-saadan-bruger-du-den',
 		'title'   => 'Massagepistol: Sådan bruger du den – og hvad skal du kigge efter?',
 		'cat'     => 'Restitution',
-		'img'     => 'mm-restitution.jpg',
+		'img'     => 'articles/massagepistol-saadan-bruger-du-den.jpg',
 		'excerpt' => 'En massagepistol kan løsne spændte muskler efter træning. Her er, hvordan du bruger den rigtigt, hvad de forskellige hoveder er til, og hvad du skal kigge efter.',
 		'html'    => <<<'HTML'
 <p>Massagepistoler er blevet en fast del af mange løberes, cykelrytteres og fitnessfolks rutine. Den giver hurtige, kraftige stød mod musklen og kan føles som en dyb massage på få minutter. Men den skal bruges rigtigt – og der er stor forskel på modellerne.</p>
@@ -100,7 +100,7 @@ HTML,
 		'slug'    => 'isbad-derhjemme',
 		'title'   => 'Isbad derhjemme: Kom sikkert i gang',
 		'cat'     => 'Restitution',
-		'img'     => 'mm-restitution.jpg',
+		'img'     => 'articles/isbad-derhjemme.jpg',
 		'excerpt' => 'Isbad er blevet populært som restitution og fast rutine. Her er, hvordan du kommer sikkert i gang, og hvad du skal vælge: oppusteligt kar, fast kar eller tønde.',
 		'html'    => <<<'HTML'
 <p>Kuldetræning og isbade er gået fra at være noget for vinterbadere og eliteatleter til at stå i mange danske haver og på altaner. Nogle bruger det efter træning, andre som en fast morgenrutine. Her er, hvad du skal vide for at komme sikkert i gang – og hvordan du vælger det rigtige kar.</p>
@@ -190,7 +190,7 @@ HTML,
 		'slug'    => 'yogamaatte-tykkelse-materiale-greb',
 		'title'   => 'Yogamåtte: Tykkelse, materiale og greb forklaret',
 		'cat'     => 'Købsguide',
-		'img'     => 'mm-pilates.jpg',
+		'img'     => 'articles/yogamaatte-tykkelse-materiale-greb.jpg',
 		'excerpt' => 'Tynd eller tyk? PVC, TPE, naturgummi eller kork? Her er det, der betyder noget, når du skal vælge yogamåtte – og hvilken der passer til din yoga.',
 		'html'    => <<<'HTML'
 <p>En yogamåtte ser enkel ud, men forskellen mellem en god og en dårlig måtte mærker du med det samme: glider hænderne i nedadvendt hund, gør knæene ondt, eller lugter måtten af gummi? Her er de tre ting, der betyder mest – tykkelse, materiale og greb.</p>
@@ -279,7 +279,7 @@ HTML,
 		'slug'    => 'pilates-reformer-derhjemme',
 		'title'   => 'Pilates reformer derhjemme – er det noget for dig?',
 		'cat'     => 'Købsguide',
-		'img'     => 'mm-pilates.jpg',
+		'img'     => 'articles/pilates-reformer-derhjemme.jpg',
 		'excerpt' => 'Reformer-pilates er populært på hold – men kan det betale sig at have en reformer derhjemme? Her er, hvad den kan, hvad den kræver af plads, og hvad du skal kigge efter.',
 		'html'    => <<<'HTML'
 <p>Reformer-pilates er et af de mest populære hold i mange fitnesscentre og studier. Flere og flere overvejer derfor at have en reformer derhjemme. Men en reformer er en stor maskine og en stor investering, så her er det, du skal vide, før du beslutter dig.</p>
@@ -358,7 +358,7 @@ HTML,
 		'slug'    => 'traening-i-lejlighed-stoejsvagt-udstyr',
 		'title'   => 'Træning i lejlighed: Sådan træner du uden at genere naboerne',
 		'cat'     => 'Hjemmegym',
-		'img'     => 'guide-gaabaand.jpg',
+		'img'     => 'articles/traening-i-lejlighed-stoejsvagt-udstyr.jpg',
 		'excerpt' => 'Bor du i lejlighed, er støj og vibrationer det store spørgsmål. Her er det mest støjsvage fitnessudstyr – og de små tricks, der gør den største forskel.',
 		'html'    => <<<'HTML'
 <p>Det er fuldt ud muligt at have et hjemmegym i en lejlighed – men naboerne skal også kunne holde dig ud. Det er især stød og vibrationer gennem gulvet, der generer, mere end selve lyden i rummet. Her er det udstyr, der larmer mindst, og de tricks, der gør den største forskel.</p>
