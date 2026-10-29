@@ -1,0 +1,35 @@
+name: Tjek udrulning (midlertidig)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Hent forside og kategorisider, tjek version og omdirigering
+        run: |
+          echo "== Forside ==" > resultat.txt
+          curl -s https://playform.dk/ | grep -o 'main\.\(css\|js\)?ver=[^"'"'"']*' >> resultat.txt || true
+          echo "" >> resultat.txt
+          echo "== /kategori/motionscykler/ (skal 301 til /kondiudstyr/motionscykler/) ==" >> resultat.txt
+          curl -s -o /dev/null -w "HTTP %{http_code} -> %{redirect_url}\n" https://playform.dk/kategori/motionscykler/ >> resultat.txt
+          echo "" >> resultat.txt
+          echo "== /motionscykler/ (ny flad URL, skal give 200) ==" >> resultat.txt
+          curl -s -o /dev/null -w "HTTP %{http_code}\n" https://playform.dk/motionscykler/ >> resultat.txt
+          echo "" >> resultat.txt
+          echo "== Bund af /romaskiner-crosstrainere/romaskiner/ (SEO-tekst/FAQ?) ==" >> resultat.txt
+          curl -s https://playform.dk/kondiudstyr/romaskiner-crosstrainere/ -o side.html || true
+          grep -q "pf_seo_text\|Ofte stillede spørgsmål\|seo-text" side.html && echo "FUNDET SEO/FAQ-markør" >> resultat.txt || echo "INGEN SEO/FAQ-markør fundet" >> resultat.txt
+          cat resultat.txt
+
+      - name: Commit resultat til branch
+        run: |
+          git config user.name "verify-bot"
+          git config user.email "verify-bot@example.com"
+          git checkout -b verify-result
+          git add resultat.txt
+          git commit -m "Verify-resultat"
+          git push -f origin verify-result
