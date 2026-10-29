@@ -1,0 +1,50 @@
+name: FTP-debug (midlertidig)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Installer lftp
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+
+      - name: Hent functions.php fra serveren og list mappen
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_REMOTE_PATH: ${{ secrets.FTP_REMOTE_PATH }}
+        run: |
+          set +e
+          {
+            echo "== REMOTE_PATH =="
+            echo "$FTP_REMOTE_PATH"
+            echo ""
+            echo "== ls public_html (eller remote path) =="
+            lftp -u "$FTP_USERNAME","$FTP_PASSWORD" -e "set ftp:ssl-force true; set ssl:verify-certificate no; cls -1 $FTP_REMOTE_PATH; bye" "$FTP_SERVER"
+            echo ""
+            echo "== ls wp-content/themes =="
+            lftp -u "$FTP_USERNAME","$FTP_PASSWORD" -e "set ftp:ssl-force true; set ssl:verify-certificate no; cls -1 $FTP_REMOTE_PATH/wp-content/themes/playform; bye" "$FTP_SERVER"
+            echo ""
+            echo "== functions.php (version-linje) =="
+            lftp -u "$FTP_USERNAME","$FTP_PASSWORD" -e "set ftp:ssl-force true; set ssl:verify-certificate no; get -O . $FTP_REMOTE_PATH/wp-content/themes/playform/functions.php; bye" "$FTP_SERVER"
+            grep -n "PLAYFORM_THEME_VERSION" functions.php
+          } > resultat_ftp.txt 2>&1
+          exit 0
+
+      - name: Commit resultat til branch
+        shell: bash
+        run: |
+          git config user.name "verify-bot"
+          git config user.email "verify-bot@example.com"
+          git checkout -B ftp-debug-result
+          git add resultat_ftp.txt
+          git commit -m "FTP-debug-resultat" --allow-empty
+          git push -f origin ftp-debug-result
