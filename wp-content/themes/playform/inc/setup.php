@@ -9,31 +9,50 @@ defined( 'ABSPATH' ) || exit;
 add_action( 'after_switch_theme', 'playform_setup_site' );
 
 /**
- * Kører playform_seed_category_texts() igen, hver gang PLAYFORM_THEME_VERSION hæves –
- * så ny kategoritekst/FAQ dukker op af sig selv, næste gang temaets filer opdateres,
- * uden at man skal deaktivere/aktivere temaet igen.
+ * Opdateringer efter en udrulning: kategorier, tekster, plugin-tabeller og URL-regler.
+ *
+ * Udrulningen (GitHub Actions) uploader filerne én ad gangen og lægger til sidst et nyt id i
+ * wp-content/playform-deploy.txt. Først når id'et skifter, er alle filer på plads, og så kører vi
+ * opdateringerne. (Tidligere brugte vi kun versionsnumre, men en sidevisning midt i uploaden kunne
+ * så køre opdateringen med halvt gamle filer og markere den som færdig.)
+ * Lokalt, uden id-fil, køres de, når PLAYFORM_THEME_VERSION ændres.
  */
 add_action(
 	'init',
 	static function () {
-		if ( get_option( 'playform_content_version' ) !== PLAYFORM_THEME_VERSION ) {
-			playform_restructure_menu_categories();
-			playform_seed_category_texts();
-			foreach ( [ 'playform_front_popular', 'playform_front_deals', 'playform_front_new', 'playform_price_ranges' ] as $t ) {
-				delete_transient( $t );
-			}
-			// WooCommerce kræver et præfiks. Det bruges kun til gamle links, som omdirigeres (se permalinks.php).
-			$perma = (array) get_option( 'woocommerce_permalinks', [] );
-			if ( ( $perma['category_base'] ?? '' ) !== 'kategori' ) {
-				$perma['category_base'] = 'kategori';
-				update_option( 'woocommerce_permalinks', $perma );
-			}
-			update_option( 'playform_content_version', PLAYFORM_THEME_VERSION, false );
-			flush_rewrite_rules( false );
+		$file      = WP_CONTENT_DIR . '/playform-deploy.txt';
+		$deploy_id = is_readable( $file ) ? trim( (string) file_get_contents( $file ) ) : ''; // phpcs:ignore
+		$want      = $deploy_id !== '' ? $deploy_id : PLAYFORM_THEME_VERSION;
+		if ( get_option( 'playform_content_version' ) === $want || get_transient( 'playform_upgrading' ) ) {
+			return;
 		}
+		set_transient( 'playform_upgrading', 1, 5 * MINUTE_IN_SECONDS ); // kun én ad gangen
+		@set_time_limit( 300 ); // phpcs:ignore
+		playform_run_upgrades();
+		update_option( 'playform_content_version', $want, false );
+		delete_transient( 'playform_upgrading' );
 	},
-	20
+	25
 );
+
+function playform_run_upgrades(): void {
+	// Importens tabeller og kategorier (kolonner, underkategorier, omsortering).
+	if ( class_exists( '\Playform\Feeds\Install' ) ) {
+		\Playform\Feeds\Install::activate();
+	}
+	playform_restructure_menu_categories();
+	playform_seed_category_texts();
+	foreach ( [ 'playform_front_popular', 'playform_front_deals', 'playform_front_new', 'playform_price_ranges' ] as $t ) {
+		delete_transient( $t );
+	}
+	// WooCommerce kræver et præfiks. Det bruges kun til gamle links, som omdirigeres (se permalinks.php).
+	$perma = (array) get_option( 'woocommerce_permalinks', [] );
+	if ( ( $perma['category_base'] ?? '' ) !== 'kategori' ) {
+		$perma['category_base'] = 'kategori';
+		update_option( 'woocommerce_permalinks', $perma );
+	}
+	flush_rewrite_rules( false );
+}
 
 /**
  * Opretter grupperingskategorierne (Træningsmaskiner, Styrketræning) og flytter de rigtige
