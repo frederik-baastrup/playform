@@ -45,7 +45,6 @@ $popular = static function ( string $slug ): array {
 	<div class="cat-top__head">
 		<h1><?php echo esc_html( $term->name ); ?></h1>
 		<?php if ( $term->description ) : ?><p><?php echo esc_html( wp_strip_all_tags( $term->description ) ); ?></p><?php endif; ?>
-		<a class="cat-top__offer" href="<?php echo esc_url( playform_tilbud_url( $term ) ); ?>">Se tilbud på <?php echo esc_html( mb_strtolower( playform_cat_label( $term ) ) ); ?> &rarr;</a>
 	</div>
 </section>
 
@@ -90,7 +89,7 @@ foreach ( $cards as $c ) {
 }
 ?>
 
-<section class="wrap catalog">
+<section class="wrap catalog catalog--right">
 	<?php
 	$faq = get_term_meta( $term->term_id, 'pf_faq', true );
 	if ( is_array( $faq ) && $faq ) {

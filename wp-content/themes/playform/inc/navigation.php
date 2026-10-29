@@ -117,7 +117,7 @@ function playform_price_ranges( WP_Term $term ): array {
 }
 
 /** Billede til oversigtssidernes kategorikort. */
-function playform_category_image( string $slug ): string {
+function playform_category_image( string $slug, string $fallback = '' ): string {
 	$map = [
 		'lobebaand'                => 'hero-lobebaand.jpg',
 		'motionscykler'            => 'hero-motionscykler.jpg',
@@ -129,8 +129,10 @@ function playform_category_image( string $slug ): string {
 		'yoga-pilates'             => 'mm-pilates.jpg',
 		'restitution'              => 'mm-restitution.jpg',
 		'tilbehor'                 => 'mm-tilbehor.jpg',
+		'traeningsmaskiner'        => 'hero-lobebaand.jpg',
+		'styrketraening'           => 'mm-vaegte.jpg',
 	];
-	return playform_asset( $map[ $slug ] ?? 't-hjemmegym.jpg' );
+	return playform_asset( $map[ $slug ] ?? $map[ $fallback ] ?? 't-hjemmegym.jpg' );
 }
 
 /**
@@ -249,6 +251,7 @@ function playform_menu(): array {
 				'slug'   => $cslug,
 				'url'    => playform_category_url( $cslug ),
 				'tilbud' => playform_tilbud_url( $ct ),
+				'img'    => playform_category_image( $cslug, $slug ),
 				'subs'   => $subs,
 				'prices' => $prices,
 			];

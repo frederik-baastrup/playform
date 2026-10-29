@@ -90,7 +90,7 @@ button, input, select { font-family: inherit; }
 .mm__back, .mm__knowledge, .mm__all { display: none; }
 .mm__panel { display: none; position: absolute; left: 0; right: 0; top: 100%; z-index: 60; padding-top: 1px; }
 .mm__item[data-mm]:hover .mm__panel, .mm__item[data-mm]:focus-within .mm__panel { display: block; }
-.mm__inner { display: grid; grid-template-columns: 250px minmax(0, 1fr) minmax(0, 1fr); gap: 0 48px; min-height: 250px; padding: 28px 32px 32px; background: #fff; border: 1px solid #E4E4DF; border-top: 0; border-radius: 0 0 var(--r-l) var(--r-l); box-shadow: 0 24px 48px rgba(17, 17, 17, .10); }
+.mm__inner { display: grid; grid-template-columns: 230px minmax(0, 1fr) minmax(0, 1fr) minmax(0, 300px); gap: 0 40px; min-height: 250px; padding: 28px 32px 32px; background: #fff; border: 1px solid #E4E4DF; border-top: 0; border-radius: 0 0 var(--r-l) var(--r-l); box-shadow: 0 24px 48px rgba(17, 17, 17, .10); }
 .mm__title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); }
 .mm__cats { display: flex; flex-direction: column; gap: 2px; padding-right: 24px; border-right: 1px solid var(--line); }
 .mm__cats .mm__title { margin: 0 0 10px 12px; }
@@ -104,9 +104,13 @@ button, input, select { font-family: inherit; }
 .mm__col .mm__title { margin-bottom: 4px; }
 .mm__col a { font-weight: 400; }
 .mm__col a:hover { text-decoration: underline; text-underline-offset: 3px; }
-.mm__col a.mm__offer { margin-top: 6px; color: var(--sale); font-weight: 500; }
 .mm__col a.mm__more { margin-top: 6px; font-weight: 600; }
-.mm__col a.mm__offer + a.mm__more { margin-top: 0; }
+.mm__cats { grid-row: 1; }
+.mm__promo { grid-column: 4; grid-row: 1; position: relative; overflow: hidden; display: flex; align-items: flex-end; min-height: 200px; padding: 14px; border-radius: var(--r); background: var(--tile); }
+.mm__promo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease; }
+.mm__promo:hover img { transform: scale(1.04); }
+.mm__promo span { position: relative; z-index: 1; width: 100%; padding: 11px 14px 10px; border-radius: 10px; background: #fff; color: var(--sale); font-size: 15px; font-weight: 500; text-align: center; transition: background-color .2s ease, color .2s ease; }
+.mm__promo:hover span { background: var(--sale); color: #fff; }
 
 @media (min-width: 1081px) {
 	.site-header.is-searching .mm { max-width: 0; opacity: 0; visibility: hidden; }
@@ -143,6 +147,9 @@ button, input, select { font-family: inherit; }
 	.mm__pane .mm__col { gap: 0; padding-bottom: 12px; }
 	.mm__pane .mm__col .mm__title { margin: 14px 0 2px; }
 	.mm__pane .mm__col a { width: 100%; padding: 12px 0; border-bottom: 1px solid #EDEDE8; }
+	.mm__promo { min-height: 0; padding: 0; margin: 4px 0 16px; background: none; }
+	.mm__promo img { display: none; }
+	.mm__promo span { border: 1px solid rgba(180, 35, 24, .35); }
 	.mm__back { display: none; align-items: center; gap: 6px; padding: 14px 0; border: 0; background: none; font: inherit; font-weight: 600; color: var(--ink); cursor: pointer; text-align: left; }
 	.mm__back svg { transform: rotate(90deg); }
 	.mm.is-drill .mm__back { display: flex; }
@@ -184,9 +191,10 @@ button, input, select { font-family: inherit; }
 .overview .cat { min-height: 300px; }
 @media (max-width: 900px) { .overview { grid-template-columns: minmax(0, 1fr); } .overview .cat { min-height: 240px; } }
 
-/* Oversigtsside: link til tilbud */
-.cat-top__offer { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(180, 35, 24, .3); color: var(--sale); font-size: 14px; font-weight: 500; }
-.cat-top__offer:hover { border-color: var(--sale); color: var(--sale); }
+/* Oversigtsside: FAQ og tekst i bunden fylder 3/4 og står til højre */
+.catalog--right .faq-wrap, .catalog--right .seo > * { width: 75%; margin-left: auto; }
+.catalog--right .seo .btn-ghost { width: auto; margin-left: 25%; }
+@media (max-width: 900px) { .catalog--right .faq-wrap, .catalog--right .seo > * { width: 100%; } .catalog--right .seo .btn-ghost { margin-left: 0; } }
 
 /* USP */
 .usp { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 16px; }

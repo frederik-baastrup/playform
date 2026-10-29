@@ -52,7 +52,6 @@
 												<?php foreach ( $p['subs'] as [ $label, $url ] ) : ?>
 													<a href="<?php echo esc_url( $url ); ?>"><?php echo esc_html( $label ); ?></a>
 												<?php endforeach; ?>
-												<a href="<?php echo esc_url( $p['tilbud'] ); ?>" class="mm__offer">Tilbud på <?php echo esc_html( mb_strtolower( $p['label'] ) ); ?></a>
 												<a href="<?php echo esc_url( $p['url'] ); ?>" class="mm__more">Se alle <?php echo esc_html( mb_strtolower( $p['label'] ) ); ?> &rarr;</a>
 											</div>
 											<?php if ( $p['prices'] ) : ?>
@@ -70,10 +69,13 @@
 												<?php foreach ( $p['prices'] as [ $label, $url ] ) : ?>
 													<a href="<?php echo esc_url( $url ); ?>"><?php echo esc_html( $label ); ?></a>
 												<?php endforeach; ?>
-												<a href="<?php echo esc_url( $p['tilbud'] ); ?>" class="mm__offer">Tilbud på <?php echo esc_html( mb_strtolower( $p['label'] ) ); ?></a>
 												<a href="<?php echo esc_url( $p['url'] ); ?>" class="mm__more">Se hele kategorien &rarr;</a>
 											</div>
 										<?php endif; ?>
+										<a href="<?php echo esc_url( $p['tilbud'] ); ?>" class="mm__promo">
+											<img src="<?php echo esc_url( $p['img'] ); ?>" alt="" loading="lazy">
+											<span>Tilbud på <?php echo esc_html( mb_strtolower( $p['label'] ) ); ?></span>
+										</a>
 									</div>
 								<?php endforeach; ?>
 							</div>
