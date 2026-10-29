@@ -44,6 +44,10 @@ function playform_run_upgrades(): void {
 	playform_seed_category_texts();
 	playform_seed_articles();
 	playform_rebrand();
+	if ( class_exists( '\Playform\Feeds\Sales' ) ) {
+		\Playform\Feeds\Sales::refresh_all( current_time( 'Y-m-d' ) ); // kontrollerede førpriser
+	}
+	playform_update_text( 'saadan-tjener-vi-penge', '<p>Som tilbud viser vi kun butikkernes egne tilbud, og kun i højst 14 dage. Vi viser aldrig butikkernes førpriser eller rabatter i procent.</p>', '<p>Som tilbud viser vi kun butikkernes egne tilbud, og kun i højst 14 dage. Vi viser ikke butikkernes egne førpriser. En overstreget førpris viser vi kun, når vi selv har fulgt prisen hos butikken i de 30 dage før tilbuddet, og den er den laveste pris i perioden.</p>' );
 	foreach ( [ 'playform_front_popular', 'playform_front_deals', 'playform_front_new', 'playform_price_ranges' ] as $t ) {
 		delete_transient( $t );
 	}
@@ -109,7 +113,7 @@ function playform_rebrand(): void {
 		]
 	);
 	$old_sale = '<p>Vi viser kun rabatter, som vi selv har målt i vores prishistorik – aldrig butikkernes egne "førpriser".</p>';
-	$new_sale = '<p>Som tilbud viser vi kun butikkernes egne tilbud, og kun i højst 14 dage. Vi viser aldrig butikkernes førpriser eller rabatter i procent.</p>';
+	$new_sale = '<p>Som tilbud viser vi kun butikkernes egne tilbud, og kun i højst 14 dage. Vi viser ikke butikkernes egne førpriser. En overstreget førpris viser vi kun, når vi selv har fulgt prisen hos butikken i de 30 dage før tilbuddet, og den er den laveste pris i perioden.</p>';
 	foreach ( $posts as $p ) {
 		$content = str_replace( [ 'Playform', 'playform.dk', $old_sale ], [ 'Fitbase', 'fitbase.dk', $new_sale ], $p->post_content );
 		$title   = str_replace( 'Playform', 'Fitbase', $p->post_title );
@@ -118,6 +122,14 @@ function playform_rebrand(): void {
 		}
 	}
 	update_option( 'playform_brand', 'fitbase', false );
+}
+
+/** Retter en bestemt sætning på en fast side (kun hvis den står der uændret – redaktørens rettelser vinder). */
+function playform_update_text( string $slug, string $old, string $new ): void {
+	$page = get_page_by_path( $slug );
+	if ( $page && str_contains( $page->post_content, $old ) ) {
+		wp_update_post( [ 'ID' => $page->ID, 'post_content' => str_replace( $old, $new, $page->post_content ) ] );
+	}
 }
 
 function playform_setup_site(): void {
@@ -179,7 +191,7 @@ function playform_default_text( string $which ): string {
 	if ( $which === 'butikker' ) {
 		return '<p>Fitbase samler fitnessudstyr fra flere danske webshops ét sted. Vi henter produkter, priser og lagerstatus direkte fra butikkerne to gange i døgnet. Når du klikker på "Gå til butik", sendes du videre til butikken, hvor du handler som normalt.</p><h2>Butikker på Fitbase</h2><p>[Listen over butikker vises automatisk her.]</p>';
 	}
-	return '<p>Fitbase er gratis at bruge. Når du klikker videre til en butik og handler, får vi en lille provision fra butikken. Det koster ikke dig noget ekstra, og det påvirker ikke, hvilke produkter vi viser, eller hvordan vi sorterer dem.</p><p>Som tilbud viser vi kun butikkernes egne tilbud, og kun i højst 14 dage. Vi viser aldrig butikkernes førpriser eller rabatter i procent.</p>';
+	return '<p>Fitbase er gratis at bruge. Når du klikker videre til en butik og handler, får vi en lille provision fra butikken. Det koster ikke dig noget ekstra, og det påvirker ikke, hvilke produkter vi viser, eller hvordan vi sorterer dem.</p><p>Som tilbud viser vi kun butikkernes egne tilbud, og kun i højst 14 dage. Vi viser ikke butikkernes egne førpriser. En overstreget førpris viser vi kun, når vi selv har fulgt prisen hos butikken i de 30 dage før tilbuddet, og den er den laveste pris i perioden.</p>';
 }
 
 /** Korte introtekster til underkategorierne. De finjusteres efter søgeordsanalysen. */

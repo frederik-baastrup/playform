@@ -69,6 +69,8 @@ function playform_card_data( WC_Product $p ): array {
 		'ref'      => $ref,
 		'in_stock' => $in_stock,
 		'sale'     => $in_stock && (bool) get_post_meta( $id, '_pf_shop_sale', true ),
+		// Kontrolleret førpris: laveste pris i de 30 dage før tilbuddet, målt af os (se Sales::reference).
+		'was'      => $in_stock && get_post_meta( $id, '_pf_shop_sale', true ) ? (float) get_post_meta( $id, '_pf_sale_ref', true ) : 0.0,
 		'foldable' => ! empty( $attrs['foldable'] ),
 		'shop'     => $shop,
 		'shops'    => $shops,
@@ -95,7 +97,12 @@ function playform_product_card( WC_Product $p, string $class = 'pcard' ): void {
 			<?php if ( $d['brand'] ) : ?><span class="pcard__brand"><?php echo esc_html( $d['brand'] ); ?></span><?php endif; ?>
 			<span class="pcard__name"><?php echo esc_html( $d['name'] ); ?></span>
 			<span class="pcard__price">
-				<span><?php echo esc_html( playform_kr( $d['price'] ) ); ?></span>
+				<?php if ( $d['was'] > $d['price'] ) : ?>
+					<span class="is-sale"><?php echo esc_html( playform_kr( $d['price'] ) ); ?></span>
+					<s title="Laveste pris de 30 dage før tilbuddet"><?php echo esc_html( playform_kr( $d['was'] ) ); ?></s>
+				<?php else : ?>
+					<span><?php echo esc_html( playform_kr( $d['price'] ) ); ?></span>
+				<?php endif; ?>
 			</span>
 			<span class="pcard__shop">
 				<?php

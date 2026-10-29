@@ -98,8 +98,11 @@ while ( have_posts() ) :
 					<div class="pricebox__top">
 						<div>
 							<span class="muted"><?php echo $shops_n > 1 ? 'Laveste pris lige nu' : 'Pris'; ?></span>
-							<span class="pricebox__price"><?php echo esc_html( playform_kr( $d['price'] ) ); ?></span>
-							<?php if ( $d['drop'] && $d['ref'] ) : ?>
+							<?php $is_was = $d['was'] > $d['price']; ?>
+							<span class="pricebox__price<?php echo $is_was ? ' is-sale' : ''; ?>"><?php echo esc_html( playform_kr( $d['price'] ) ); ?></span>
+							<?php if ( $is_was ) : ?>
+								<span class="pricebox__ref">Førpris <s><?php echo esc_html( playform_kr( $d['was'] ) ); ?></s> · laveste pris hos <?php echo esc_html( $d['shop'] ); ?> de 30 dage før tilbuddet</span>
+							<?php elseif ( $d['drop'] && $d['ref'] ) : ?>
 								<span class="pricebox__ref">Laveste pris de 30 dage før: <s><?php echo esc_html( playform_kr( $d['ref'] ) ); ?></s></span>
 							<?php endif; ?>
 						</div>

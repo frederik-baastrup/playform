@@ -8,14 +8,18 @@ namespace Playform\Feeds;
  * og tilbuddet højst er DAYS dage gammelt. Forbrugerombudsmanden regner en tilbudspris, der har stået
  * mere end to uger, som en ny normalpris – så faste "førpriser" falder ud af sig selv.
  *
- * Playform viser kun, at butikken har varen på tilbud, og prisen – aldrig butikkens førpris eller rabat i %.
- * _pf_sale_percent bruges kun til sortering.
+ * Vi viser aldrig butikkens egen førpris (glpris) – den kan vi ikke kontrollere. En overstreget førpris
+ * vises kun, når vores egen prishistorik har fulgt butikkens pris i alle 30 dage før tilbuddet begyndte.
+ * Førprisen er så den laveste pris i de 30 dage (førprisreglen). Den gemmes i _pf_sale_ref.
+ * _pf_sale_percent (butikkens egen rabat) bruges kun til sortering.
  */
 final class Sales {
 
 	public const DAYS         = 14;
 	public const META_SALE    = '_pf_shop_sale';
 	public const META_PERCENT = '_pf_sale_percent';
+	public const META_REF     = '_pf_sale_ref';
+	public const REF_DAYS     = 30;
 
 	/** Genberegner tilbuds-felterne for alle produkter. Kaldes efter hver import (tilbud udløber med datoen). */
 	public static function refresh_all( string $today ): int {
@@ -25,7 +29,7 @@ final class Sales {
 
 		// Den billigste aktive butik på lager pr. produkt – samme som den, produktkortet viser.
 		$rows = $wpdb->get_results(
-			"SELECT product_id, price, list_price, sale_since FROM $t WHERE active = 1 AND in_stock = 1 AND product_id > 0 ORDER BY product_id, price ASC, id ASC",
+			"SELECT product_id, shop, price, list_price, sale_since FROM $t WHERE active = 1 AND in_stock = 1 AND product_id > 0 ORDER BY product_id, price ASC, id ASC",
 			ARRAY_A
 		) ?: [];
 		$sale = [];
@@ -39,7 +43,10 @@ final class Sales {
 			$price       = (float) $r['price'];
 			$list        = (float) $r['list_price'];
 			if ( $r['sale_since'] && $r['sale_since'] >= $cut && $list > $price && $price > 0 ) {
-				$sale[ $id ] = (int) round( ( $list - $price ) / $list * 100 );
+				$sale[ $id ] = [
+					'percent' => (int) round( ( $list - $price ) / $list * 100 ),
+					'ref'     => self::reference( $id, (string) $r['shop'], $price, (string) $r['sale_since'] ),
+				];
 			}
 		}
 
@@ -47,11 +54,42 @@ final class Sales {
 		foreach ( array_diff( $old, array_keys( $sale ) ) as $id ) {
 			delete_post_meta( $id, self::META_SALE );
 			delete_post_meta( $id, self::META_PERCENT );
+			delete_post_meta( $id, self::META_REF );
 		}
-		foreach ( $sale as $id => $percent ) {
+		foreach ( $sale as $id => $s ) {
 			update_post_meta( $id, self::META_SALE, 1 );
-			update_post_meta( $id, self::META_PERCENT, $percent );
+			update_post_meta( $id, self::META_PERCENT, $s['percent'] );
+			if ( $s['ref'] ) {
+				update_post_meta( $id, self::META_REF, $s['ref'] );
+			} else {
+				delete_post_meta( $id, self::META_REF );
+			}
 		}
 		return count( $sale );
+	}
+
+	/**
+	 * Kontrolleret førpris: den laveste pris hos butikken i de 30 dage før tilbuddet begyndte.
+	 * Kræver, at vores historik for butikken går mindst 30 dage tilbage fra tilbudsstarten. Ellers null.
+	 */
+	public static function reference( int $product_id, string $shop, float $price, string $since ): ?float {
+		global $wpdb;
+		$h    = PriceHistory::table();
+		$from = gmdate( 'Y-m-d', strtotime( $since . ' -' . self::REF_DAYS . ' days' ) );
+		$row  = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT MIN(recorded_on) AS first_day, MIN(CASE WHEN recorded_on >= %s AND recorded_on < %s THEN price END) AS ref FROM $h WHERE product_id = %d AND shop = %s",
+				$from,
+				$since,
+				$product_id,
+				$shop
+			),
+			ARRAY_A
+		);
+		if ( ! $row || ! $row['first_day'] || $row['first_day'] > $from || $row['ref'] === null ) {
+			return null;
+		}
+		$ref = (float) $row['ref'];
+		return $ref > $price ? $ref : null;
 	}
 }
