@@ -1,0 +1,34 @@
+name: Stille indholds-tjek
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        required: true
+      needle:
+        required: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tjek og commit resultat (fejler aldrig, så der ikke kommer mail)
+        run: |
+          set +e
+          html=$(curl -sL "${{ inputs.url }}")
+          mkdir -p .check
+          if echo "$html" | grep -qF "${{ inputs.needle }}"; then
+            echo "FUNDET" > .check/result.txt
+          else
+            echo "IKKE FUNDET" > .check/result.txt
+          fi
+          echo "$html" | grep -o 'main.css?ver=[^"'"'"']*' | head -1 >> .check/result.txt
+          set -e
+          git config user.name "check"
+          git config user.email "check@users.noreply.github.com"
+          git add .check/result.txt
+          git commit -m "check" || true
+          git push origin HEAD:refs/heads/check-result --force
