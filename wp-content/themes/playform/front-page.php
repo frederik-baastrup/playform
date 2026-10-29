@@ -27,8 +27,8 @@ function playform_front_products( string $which ): array {
 			$base['orderby'] = 'rand';
 			$base['tax_query'] = [ [ 'taxonomy' => 'product_cat', 'field' => 'slug', 'terms' => [ 'lobebaand', 'motionscykler', 'romaskiner-crosstrainere', 'styrke-baenke', 'restitution' ] ] ];
 		} else {
-			// "Populære": større maskiner og udstyr fra hovedkategorierne, blandet hver dag.
-			$base['tax_query']    = [ [ 'taxonomy' => 'product_cat', 'field' => 'slug', 'terms' => [ 'lobebaand', 'motionscykler', 'romaskiner-crosstrainere', 'vaegte-kettlebells', 'restitution' ] ] ];
+			// "Populære": de store træningsmaskiner fra hovedkategorierne, blandet hver dag.
+			$base['tax_query']    = [ [ 'taxonomy' => 'product_cat', 'field' => 'slug', 'terms' => [ 'lobebaand', 'motionscykler', 'romaskiner-crosstrainere', 'vaegte-kettlebells', 'styrke-baenke' ] ] ];
 			$base['meta_query'][] = [ 'key' => '_price', 'value' => 400, 'compare' => '>=', 'type' => 'NUMERIC' ];
 			$base['orderby']      = 'rand';
 		}

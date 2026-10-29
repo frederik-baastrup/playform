@@ -100,7 +100,7 @@
 					<?php endif; ?>
 				</div>
 			<?php endforeach; ?>
-			<a href="<?php echo esc_url( add_query_arg( 'egenskab', 'tilbud', get_permalink( wc_get_page_id( 'shop' ) ) ) ); ?>" class="mm__link mm__link--sale">Tilbud</a>
+			<a href="<?php echo esc_url( add_query_arg( [ 'egenskab' => 'tilbud', 'sortering' => 'rabat' ], get_permalink( wc_get_page_id( 'shop' ) ) ) ); ?>" class="mm__link mm__link--sale">Tilbud</a>
 		</nav>
 	</div>
 </header>

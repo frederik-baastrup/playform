@@ -19,6 +19,9 @@ add_action(
 		if ( get_option( 'playform_content_version' ) !== PLAYFORM_THEME_VERSION ) {
 			playform_seed_category_texts();
 			playform_restructure_menu_categories();
+			delete_transient( 'playform_front_popular' );
+			delete_transient( 'playform_front_deals' );
+			delete_transient( 'playform_front_new' );
 			$perma = (array) get_option( 'woocommerce_permalinks', [] );
 			if ( ( $perma['category_base'] ?? null ) !== '' ) {
 				$perma['category_base'] = '';

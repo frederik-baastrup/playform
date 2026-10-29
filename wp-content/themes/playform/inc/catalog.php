@@ -270,6 +270,10 @@ add_action(
 			case 'nyeste':
 				$q->set( 'orderby', [ 'stock' => 'DESC', 'date' => 'DESC' ] );
 				break;
+			case 'rabat':
+				$q->set( 'meta_query', [ 'stock' => [ 'key' => '_pf_in_stock', 'type' => 'NUMERIC' ], 'drop' => [ 'key' => '_pf_drop_percent', 'type' => 'DECIMAL(12,2)' ] ] );
+				$q->set( 'orderby', [ 'stock' => 'DESC', 'drop' => 'DESC' ] );
+				break;
 			default:
 				// "Mest populære": på lager først, derefter produkter med billede og højest pris (de vigtigste maskiner).
 				$q->set( 'meta_query', [ 'stock' => [ 'key' => '_pf_in_stock', 'type' => 'NUMERIC' ], 'price' => [ 'key' => '_price', 'type' => 'DECIMAL(12,2)' ] ] );
