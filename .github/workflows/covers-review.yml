@@ -2,7 +2,7 @@ name: Billedkandidater (Unsplash)
 on:
   push:
     branches: [covers-review]
-    paths: [tools/unsplash_candidates.py, tools/probe.sh]
+    paths: [tools/pexels_sheets.py]
 permissions:
   contents: write
 jobs:
@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: pip install pillow
-      - run: bash tools/probe.sh
+      - run: python tools/pexels_sheets.py
       - name: Gem kontaktark på grenen covers-result
         run: |
           git config user.name "github-actions"
