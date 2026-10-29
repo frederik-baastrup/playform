@@ -1,0 +1,43 @@
+name: Tjek SEO-tekst/FAQ (midlertidig)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Tjek hovedkategorier på det midlertidige SiteGround-domæne
+        shell: bash
+        run: |
+          set +e
+          HOST="https://frederikb7.sg-host.com"
+          SLUGS="lobebaand motionscykler romaskiner-crosstrainere vaegte-kettlebells styrke-baenke yoga-pilates restitution tilbehor"
+          {
+            echo "== css/js version på forsiden =="
+            curl -sS -k -o /dev/null -w "HTTP %{http_code}\n" "$HOST/"
+            curl -sS -k "$HOST/" | grep -o "main.css?ver=[0-9.]*"
+            echo ""
+            for s in $SLUGS; do
+              echo "== /kategori/$s/ =="
+              curl -sS -k -o "$s.html" -w "HTTP %{http_code}\n" "$HOST/kategori/$s/"
+              echo -n "Ofte stillede spørgsmål: "; grep -c "Ofte stillede" "$s.html"
+              echo -n "Købsguide-overskrift (h2 med 'Køb'): "; grep -c "<h2[^>]*>Køb" "$s.html"
+            done
+          } > resultat.txt 2>&1
+          exit 0
+
+      - name: Commit resultat til branch
+        shell: bash
+        run: |
+          git config user.name "verify-bot"
+          git config user.email "verify-bot@example.com"
+          git checkout -B verify-result
+          git add resultat.txt
+          git commit -m "Verify-resultat" --allow-empty
+          git push -f origin verify-result
