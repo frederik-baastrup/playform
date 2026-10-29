@@ -22,7 +22,7 @@
 	<div class="wrap">
 		<div class="site-header__row">
 			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="logo" aria-label="Fitbase forside">
-				<img src="<?php echo esc_url( playform_asset( 'logo.svg' ) ); ?>" alt="Fitbase" width="123" height="22">
+				<img src="<?php echo esc_url( playform_asset( 'logo.svg' ) ); ?>" alt="Fitbase" width="146" height="26">
 			</a>
 			<nav id="hovedmenu" class="mm" aria-label="Kategorier">
 				<button type="button" class="mm__back" hidden><?php echo playform_icon( 'chevron', 16 ); // phpcs:ignore ?><span>Tilbage</span></button>

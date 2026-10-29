@@ -4,7 +4,7 @@
 	<div class="wrap">
 		<div class="foot">
 			<div class="foot__about">
-				<img src="<?php echo esc_url( playform_asset( 'logo-white.svg' ) ); ?>" alt="Fitbase" width="123" height="22">
+				<img src="<?php echo esc_url( playform_asset( 'logo-white.svg' ) ); ?>" alt="Fitbase" width="146" height="26">
 				<p>Vi samler fitnessudstyr fra danske webshops ét sted, så du nemt kan finde rundt i hele udvalget.</p>
 				<span>kontakt@fitbase.dk</span>
 			</div>
