@@ -44,6 +44,12 @@ while ( have_posts() ) :
 
 	$crumbs = [ [ 'Forside', home_url( '/' ) ] ];
 	if ( $cat_term ) {
+		foreach ( array_reverse( get_ancestors( $cat_term->term_id, 'product_cat', 'taxonomy' ) ) as $aid ) {
+			$a = get_term( $aid, 'product_cat' );
+			if ( $a instanceof WP_Term ) {
+				$crumbs[] = [ $a->name, get_term_link( $a ) ];
+			}
+		}
 		$crumbs[] = [ $cat_term->name, get_term_link( $cat_term ) ];
 	}
 	$crumbs[] = [ $product->get_name(), '' ];

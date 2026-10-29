@@ -17,32 +17,38 @@ add_action(
 	'init',
 	static function () {
 		if ( get_option( 'playform_content_version' ) !== PLAYFORM_THEME_VERSION ) {
-			playform_seed_category_texts();
 			playform_restructure_menu_categories();
-			delete_transient( 'playform_front_popular' );
-			delete_transient( 'playform_front_deals' );
-			delete_transient( 'playform_front_new' );
+			playform_seed_category_texts();
+			foreach ( [ 'playform_front_popular', 'playform_front_deals', 'playform_front_new', 'playform_price_ranges' ] as $t ) {
+				delete_transient( $t );
+			}
+			// WooCommerce kræver et præfiks. Det bruges kun til gamle links, som omdirigeres (se permalinks.php).
 			$perma = (array) get_option( 'woocommerce_permalinks', [] );
-			if ( ( $perma['category_base'] ?? null ) !== '' ) {
-				$perma['category_base'] = '';
+			if ( ( $perma['category_base'] ?? '' ) !== 'kategori' ) {
+				$perma['category_base'] = 'kategori';
 				update_option( 'woocommerce_permalinks', $perma );
 			}
 			update_option( 'playform_content_version', PLAYFORM_THEME_VERSION, false );
-			flush_rewrite_rules();
+			flush_rewrite_rules( false );
 		}
 	},
 	20
 );
 
 /**
- * Opretter de "virtuelle" grupperings-kategorier (Kondiudstyr, Styrketræning) og flytter de
- * rigtige kategorier ind under dem, så menuen kan vise dem samlet. Kan køres igen sikkert.
+ * Opretter grupperingskategorierne (Træningsmaskiner, Styrketræning) og flytter de rigtige
+ * kategorier ind under dem. Kan køres igen sikkert.
  */
 function playform_restructure_menu_categories(): void {
+	// Kondiudstyr hed tidligere gruppen for maskiner.
+	$old = get_term_by( 'slug', 'kondiudstyr', 'product_cat' );
+	if ( $old && ! get_term_by( 'slug', 'traeningsmaskiner', 'product_cat' ) ) {
+		wp_update_term( $old->term_id, 'product_cat', [ 'name' => 'Træningsmaskiner', 'slug' => 'traeningsmaskiner' ] );
+	}
 	foreach ( playform_virtual_groups() as $slug => $group ) {
 		$parent = get_term_by( 'slug', $slug, 'product_cat' );
 		if ( ! $parent ) {
-			$result = wp_insert_term( $group['label'], 'product_cat', [ 'slug' => $slug ] );
+			$result    = wp_insert_term( $group['label'], 'product_cat', [ 'slug' => $slug ] );
 			$parent_id = is_wp_error( $result ) ? 0 : (int) $result['term_id'];
 		} else {
 			$parent_id = (int) $parent->term_id;
@@ -57,40 +63,12 @@ function playform_restructure_menu_categories(): void {
 			}
 		}
 	}
+	// Under Styrketræning er "Styrke & bænke" et dobbelt-ord – den hedder nu Bænke & racks.
+	$benches = get_term_by( 'slug', 'styrke-baenke', 'product_cat' );
+	if ( $benches && str_contains( wp_specialchars_decode( $benches->name ), 'Styrke & bænke' ) ) {
+		wp_update_term( $benches->term_id, 'product_cat', [ 'name' => 'Bænke & racks' ] );
+	}
 }
-
-/**
- * Omdirigerer gamle URL'er (med /kategori/-præfiks, og/eller uden Kondiudstyr/Styrketræning
- * som mellemled) til de nye, så vi ikke mister søgemaskine-trafik eller delte links.
- */
-add_action(
-	'template_redirect',
-	static function () {
-		$uri = (string) ( $_SERVER['REQUEST_URI'] ?? '' ); // phpcs:ignore
-		if ( ! str_starts_with( $uri, '/kategori/' ) ) {
-			return;
-		}
-		$rest             = substr( $uri, strlen( '/kategori/' ) );
-		[ $path, $query ] = array_pad( explode( '?', $rest, 2 ), 2, '' );
-		$segments         = array_values( array_filter( explode( '/', $path ) ) );
-		$map              = [
-			'motionscykler'            => [ 'kondiudstyr', 'motionscykler' ],
-			'romaskiner-crosstrainere' => [ 'kondiudstyr', 'romaskiner-crosstrainere' ],
-			'vaegte-kettlebells'       => [ 'styrketraening', 'vaegte-kettlebells' ],
-			'styrke-baenke'            => [ 'styrketraening', 'styrke-baenke' ],
-		];
-		if ( isset( $segments[0], $map[ $segments[0] ] ) ) {
-			array_splice( $segments, 0, 1, $map[ $segments[0] ] );
-		}
-		$new = '/' . implode( '/', $segments ) . '/';
-		if ( $query ) {
-			$new .= '?' . $query;
-		}
-		wp_safe_redirect( home_url( $new ), 301 );
-		exit;
-	},
-	1
-);
 
 function playform_setup_site(): void {
 	update_option( 'timezone_string', 'Europe/Copenhagen' );
@@ -100,9 +78,9 @@ function playform_setup_site(): void {
 	update_option( 'woocommerce_feature_order_attribution_enabled', 'no' );
 	update_option( 'date_format', 'j. F Y' );
 	update_option( 'WPLANG', 'da_DK' );
-	// Danske URL'er: /lobebaand/ (uden kategori-præfiks) og /produkt/navn/
+	// Danske URL'er: /produkt/navn/. Kategorier får flade URL'er (se permalinks.php).
 	$perma = (array) get_option( 'woocommerce_permalinks', [] );
-	$perma['category_base'] = '';
+	$perma['category_base'] = 'kategori';
 	$perma['tag_base']      = 'emne';
 	$perma['product_base']  = 'produkt';
 	update_option( 'woocommerce_permalinks', $perma );
@@ -202,6 +180,26 @@ function playform_sub_intros(): array {
 /** Introtekst, SEO-tekst og FAQ til kategorierne. Redaktøren kan rette dem under Produkter › Kategorier. */
 function playform_seed_category_texts(): void {
 	$texts = [
+		'traeningsmaskiner' => [
+			'intro' => 'Løbebånd, motionscykler, romaskiner og crosstrainere fra flere danske webshops samlet ét sted. Vælg en kategori og find maskinen, der passer til din træning og din plads.',
+			'seo'   => '<h2>Træningsmaskiner til hjemmet – find den rigtige</h2><p>En træningsmaskine derhjemme gør det nemt at træne kondition, når det passer dig, uanset vejret. Her har vi samlet løbebånd, motionscykler, romaskiner og crosstrainere fra flere danske webshops, så du kan sammenligne udvalget ét sted. Priser og lagerstatus opdateres to gange i døgnet, og du handler direkte hos butikken.</p><h3>Hvilken træningsmaskine passer til dig?</h3><p>Et <strong>løbebånd</strong> er det oplagte valg, hvis du vil gå eller løbe, og det minder mest om at træne udenfor. En <strong>motionscykel</strong> er skånsom for knæ og ankler og fylder typisk mindre. En <strong>romaskine</strong> træner både ben, ryg, mave og arme i samme bevægelse, mens en <strong>crosstrainer</strong> giver en blød bevægelse uden stød, hvor du også bruger armene.</p><h3>Tænk på plads og støj</h3><p>Mål op, før du vælger. Løbebånd og romaskiner er lange, men mange modeller kan klappes sammen eller stilles op ad væggen. Bor du i lejlighed, er det værd at se på støjen: Motionscykler og romaskiner med magnetmodstand er typisk de mest stille, mens løb på løbebånd og luftmodstand larmer mere.</p><h3>Hvad skal du ellers kigge efter?</h3><p>Tjek den maksimale brugervægt, så den passer til dig med god margin, og om maskinen kan justeres til din højde. Et display med tid, distans og puls gør det nemmere at følge med i træningen.</p>',
+			'faq'   => [
+				[ 'Hvilken træningsmaskine forbrænder mest?', 'Det afhænger mest af, hvor hårdt du træner, og hvor længe. Maskiner, der bruger både arme og ben, som romaskiner og crosstrainere, får mange muskler i gang på én gang. Den bedste maskine er i praksis den, du får brugt fast.' ],
+				[ 'Hvilken træningsmaskine er mest skånsom for leddene?', 'Motionscykler, crosstrainere og romaskiner er skånsomme, fordi der ikke er stød, når foden rammer underlaget. Gang på løbebånd er også skånsomt, mens løb belaster knæ og ankler mere.' ],
+				[ 'Hvilken træningsmaskine fylder mindst?', 'En motionscykel fylder som regel mindst på gulvet. Har du brug for et løbebånd, er et foldbart løbebånd eller et gåbånd det mest pladsbesparende valg, og mange romaskiner kan stilles lodret.' ],
+				[ 'Kan jeg have en træningsmaskine i en lejlighed?', 'Ja. Vælg en støjsvag model, fx en motionscykel eller romaskine med magnetmodstand, og læg en gummimåtte under maskinen, så vibrationer ikke forplanter sig til naboerne.' ],
+			],
+		],
+		'styrketraening' => [
+			'intro' => 'Håndvægte, kettlebells, vægtskiver, træningsbænke, racks og multigyms fra flere danske webshops samlet ét sted. Alt til styrketræning derhjemme.',
+			'seo'   => '<h2>Udstyr til styrketræning derhjemme</h2><p>Med lidt udstyr kan du lave effektiv styrketræning hjemme. Her har vi samlet vægte og kettlebells, bænke, racks og multigyms fra flere danske webshops, så du kan sammenligne udvalget ét sted. Priser og lagerstatus opdateres to gange i døgnet, og du handler direkte hos butikken.</p><h3>Hvor skal du starte?</h3><p>Et par håndvægte eller en kettlebell er et godt første køb: Det fylder lidt og dækker mange øvelser for hele kroppen. Justerbare håndvægte er en fordel, hvis du vil kunne øge vægten uden at købe flere sæt. Med en træningsbænk får du flere øvelser, fx bænkpres og rows.</p><h3>Når du vil løfte tungere</h3><p>Vil du træne med vægtstang, giver et power rack eller et half rack sikkerhed, når du squatter eller bænkpresser alene. Husk, at vægtskiver og stang skal passe sammen: Der findes skiver med lille hul (standard) og stort hul (olympisk). En multigym samler mange øvelser i én maskine og er nem og sikker at bruge alene.</p><h3>Plads og gulv</h3><p>Mål loftshøjden, før du vælger et rack, og læg en træningsmåtte eller gummifliser på gulvet, så det er beskyttet mod tabte vægte. Et vægtstativ holder styr på håndvægte og skiver.</p>',
+			'faq'   => [
+				[ 'Hvad skal jeg købe først til styrketræning derhjemme?', 'Et par håndvægte eller en kettlebell er et godt sted at starte, fordi de fylder lidt og kan bruges til mange øvelser. Bagefter giver en justerbar træningsbænk flest nye muligheder.' ],
+				[ 'Er justerbare håndvægte en god idé?', 'Ja, især hvis du har begrænset plads. Ét sæt justerbare håndvægte kan erstatte mange par faste håndvægte, og du kan øge vægten i takt med, at du bliver stærkere.' ],
+				[ 'Har jeg brug for et power rack?', 'Kun hvis du vil træne tungt med vægtstang, fx squat og bænkpres, uden en makker. Racket har sikkerhedsstænger, der tager vægten, hvis du ikke kan løfte den op igen.' ],
+				[ 'Hvordan beskytter jeg gulvet?', 'Læg en træningsmåtte eller gummifliser under det område, hvor du træner. Gummibelagte vægte og skiver er også mere skånsomme mod gulvet og larmer mindre, hvis de bliver sat hårdt ned.' ],
+			],
+		],
 		'lobebaand' => [
 			'intro' => 'Find løbebånd fra flere danske webshops samlet ét sted. Se foldbare løbebånd til lejligheden, gåbånd til hjemmekontoret og kraftige løbebånd til intervaltræning – med priser, der opdateres to gange i døgnet.',
 			'seo'   => '<h2>Køb løbebånd – find den bedste pris</h2><p>Her finder du løbebånd fra flere danske webshops samlet ét sted. Vi opdaterer priser og lagerstatus to gange i døgnet. Når du har fundet den rigtige model, sender vi dig videre til butikken, hvor du handler som normalt.</p><h3>Sådan vælger du det rigtige løbebånd</h3><p>Start med, hvordan du vil træne. Til gang og rolig jogging er 12 km/t som regel nok, mens du til løb og intervaller bør gå efter mindst 16 km/t og en kraftig motor. Kig også på løbefladen: Jo længere dine skridt er, jo længere skal båndet være.</p><h3>Foldbart løbebånd eller fast model?</h3><p>Et foldbart løbebånd er oplagt, hvis det skal stå i stuen eller i en lejlighed. De faste modeller er til gengæld ofte mere stabile og bedre til tunge brugere og hårde pas.</p><h3>Hvad betyder incline?</h3><p>Incline er båndets stigning. Et løbebånd med incline lader dig simulere bakker, hvilket øger forbrændingen og skåner leddene i forhold til at løbe hurtigere.</p>',

@@ -24,84 +24,92 @@
 			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="logo" aria-label="Playform forside">
 				<img src="<?php echo esc_url( playform_asset( 'logo.svg' ) ); ?>" alt="Playform" width="174" height="30">
 			</a>
-			<form role="search" method="get" class="search" action="<?php echo esc_url( home_url( '/' ) ); ?>">
+			<nav id="hovedmenu" class="mm" aria-label="Kategorier">
+				<button type="button" class="mm__back" hidden><?php echo playform_icon( 'chevron', 16 ); // phpcs:ignore ?><span>Tilbage</span></button>
+				<?php
+				$current = is_tax( 'product_cat' ) ? playform_current_top_slug() : '';
+				if ( is_singular( 'product' ) ) {
+					$current = playform_root_slug( (string) get_post_meta( get_the_ID(), '_pf_category', true ) );
+				}
+				foreach ( playform_menu() as $item ) :
+					?>
+					<div class="mm__item" data-mm>
+						<a href="<?php echo esc_url( $item['url'] ); ?>" class="mm__link<?php echo $current === $item['slug'] ? ' is-active' : ''; ?>" aria-haspopup="true"><?php echo esc_html( $item['label'] ); ?></a>
+						<div class="mm__panel">
+							<div class="mm__inner">
+								<div class="mm__cats">
+									<span class="mm__title">Kategorier</span>
+									<a class="mm__all" href="<?php echo esc_url( $item['url'] ); ?>">Se alle <?php echo esc_html( mb_strtolower( $item['label'] ) ); ?></a>
+									<?php foreach ( $item['primary'] as $i => $p ) : ?>
+										<a href="<?php echo esc_url( $p['url'] ); ?>" class="mm__cat<?php echo $i === 0 ? ' is-active' : ''; ?>" data-pane="<?php echo (int) $i; ?>"><?php echo esc_html( $p['label'] ); ?><?php echo playform_icon( 'chevron', 14 ); // phpcs:ignore ?></a>
+									<?php endforeach; ?>
+								</div>
+								<?php foreach ( $item['primary'] as $i => $p ) : ?>
+									<div class="mm__pane<?php echo $i === 0 ? ' is-active' : ''; ?>" data-pane="<?php echo (int) $i; ?>">
+										<?php if ( $p['subs'] ) : ?>
+											<div class="mm__col">
+												<span class="mm__title"><?php echo esc_html( $p['label'] ); ?></span>
+												<?php foreach ( $p['subs'] as [ $label, $url ] ) : ?>
+													<a href="<?php echo esc_url( $url ); ?>"><?php echo esc_html( $label ); ?></a>
+												<?php endforeach; ?>
+												<a href="<?php echo esc_url( $p['url'] ); ?>" class="mm__more">Se alle <?php echo esc_html( mb_strtolower( $p['label'] ) ); ?> &rarr;</a>
+											</div>
+											<?php if ( $p['prices'] ) : ?>
+												<div class="mm__col">
+													<span class="mm__title">Pris</span>
+													<?php foreach ( $p['prices'] as [ $label, $url ] ) : ?>
+														<a href="<?php echo esc_url( $url ); ?>"><?php echo esc_html( $label ); ?></a>
+													<?php endforeach; ?>
+												</div>
+											<?php endif; ?>
+										<?php else : ?>
+											<?php // Ingen underkategorier: pris står i midten, så panelet ikke ser tomt ud. ?>
+											<div class="mm__col">
+												<span class="mm__title"><?php echo esc_html( $p['label'] ); ?> efter pris</span>
+												<?php foreach ( $p['prices'] as [ $label, $url ] ) : ?>
+													<a href="<?php echo esc_url( $url ); ?>"><?php echo esc_html( $label ); ?></a>
+												<?php endforeach; ?>
+												<a href="<?php echo esc_url( $p['url'] ); ?>" class="mm__more">Se hele kategorien &rarr;</a>
+											</div>
+										<?php endif; ?>
+									</div>
+								<?php endforeach; ?>
+							</div>
+						</div>
+					</div>
+				<?php endforeach; ?>
+				<div class="mm__item mm__item--plain">
+					<a href="<?php echo esc_url( add_query_arg( [ 'egenskab' => 'tilbud', 'sortering' => 'rabat' ], get_permalink( wc_get_page_id( 'shop' ) ) ) ); ?>" class="mm__link mm__link--sale">Tilbud</a>
+				</div>
+				<div class="mm__knowledge">
+					<a href="<?php echo esc_url( home_url( '/viden/' ) ); ?>">Viden</a>
+					<a href="<?php echo esc_url( home_url( '/viden/' ) ); ?>">Guides</a>
+				</div>
+			</nav>
+			<form role="search" method="get" class="search" action="<?php echo esc_url( home_url( '/' ) ); ?>" data-search data-endpoint="<?php echo esc_url( rest_url( 'playform/v1/search' ) ); ?>">
 				<?php echo playform_icon( 'search', 18, 2 ); // phpcs:ignore ?>
 				<label for="site-search" class="sr-only">Søg efter produkter</label>
-				<input id="site-search" type="search" name="s" placeholder="Hvad leder du efter?" value="<?php echo esc_attr( get_search_query() ); ?>">
+				<input id="site-search" type="search" name="s" placeholder="Søg" autocomplete="off" value="<?php echo esc_attr( get_search_query() ); ?>">
 				<input type="hidden" name="post_type" value="product">
-				<button type="submit">Find produkter</button>
+				<button type="submit" class="search__go">Søg</button>
+				<div class="search__drop" hidden>
+					<div class="search__popular">
+						<span class="mm__title">Populære kategorier</span>
+						<div class="search__chips">
+							<?php foreach ( playform_search_shortcuts() as [ $label, $url ] ) : ?>
+								<a href="<?php echo esc_url( $url ); ?>"><?php echo esc_html( $label ); ?></a>
+							<?php endforeach; ?>
+						</div>
+					</div>
+					<div class="search__results" hidden></div>
+				</div>
 			</form>
 			<nav class="knowledge" aria-label="Viden">
 				<a href="<?php echo esc_url( home_url( '/viden/' ) ); ?>">Viden</a>
 				<a href="<?php echo esc_url( home_url( '/viden/' ) ); ?>">Guides</a>
-				<a href="<?php echo esc_url( home_url( '/viden/' ) ); ?>">Nyheder</a>
 			</nav>
 			<button type="button" class="menu-toggle" aria-expanded="false" aria-controls="hovedmenu" aria-label="Åbn menu"><?php echo playform_icon( 'menu', 22 ); // phpcs:ignore ?></button>
 		</div>
-		<nav id="hovedmenu" class="mm" aria-label="Kategorier">
-			<?php
-			$current = is_tax( 'product_cat' ) ? playform_current_top_slug() : '';
-			if ( is_singular( 'product' ) ) {
-				$current = (string) get_post_meta( get_the_ID(), '_pf_category', true );
-			}
-			foreach ( playform_menu() as $item ) :
-				$is_group = ! empty( $item['is_group'] );
-				$url      = $is_group ? '' : playform_category_url( $item['slug'] );
-				?>
-				<div class="mm__item<?php echo $is_group ? ' mm__item--group' : ''; ?>">
-					<?php if ( $is_group ) : ?>
-						<span class="mm__link<?php echo $current === $item['slug'] ? ' is-active' : ''; ?>" aria-haspopup="true"><?php echo esc_html( $item['label'] ); ?></span>
-					<?php else : ?>
-						<a href="<?php echo esc_url( $url ); ?>" class="mm__link<?php echo $current === $item['slug'] ? ' is-active' : ''; ?>"><?php echo esc_html( $item['label'] ); ?></a>
-					<?php endif; ?>
-
-					<?php if ( $is_group ) : ?>
-						<div class="mm__panel mm__panel--group">
-							<div class="mm__inner mm__inner--group">
-								<div class="mm__primary">
-									<?php foreach ( $item['primary'] as $p ) : ?>
-										<div class="mm__primary-item">
-											<a href="<?php echo esc_url( playform_category_url( $p['slug'] ) ); ?>" class="mm__primary-link"><?php echo esc_html( $p['label'] ); ?></a>
-											<?php if ( $p['subs'] ) : ?>
-												<div class="mm__secondary">
-													<span class="mm__title"><?php echo esc_html( $p['label'] ); ?></span>
-													<?php foreach ( $p['subs'] as [ $label, $args ] ) : ?>
-														<a href="<?php echo esc_url( playform_category_url( $p['slug'], $args ) ); ?>"><?php echo esc_html( $label ); ?></a>
-													<?php endforeach; ?>
-													<a href="<?php echo esc_url( playform_category_url( $p['slug'] ) ); ?>" class="mm__secondary-all">Se alle <?php echo esc_html( mb_strtolower( $p['label'] ) ); ?> →</a>
-												</div>
-											<?php endif; ?>
-										</div>
-									<?php endforeach; ?>
-								</div>
-								<a href="<?php echo esc_url( playform_category_url( $item['primary'][0]['slug'] ?? '' ) ); ?>" class="mm__promo">
-									<img src="<?php echo esc_url( playform_asset( $item['img'] ) ); ?>" alt="" loading="lazy">
-									<span>Se alle <?php echo esc_html( mb_strtolower( $item['label'] ) ); ?> →</span>
-								</a>
-							</div>
-						</div>
-					<?php else : ?>
-						<div class="mm__panel">
-							<div class="mm__inner">
-								<?php foreach ( $item['cols'] as $col ) : ?>
-									<div class="mm__col">
-										<span class="mm__title"><?php echo esc_html( $col['title'] ); ?></span>
-										<?php foreach ( $col['links'] as [ $label, $args ] ) : ?>
-											<a href="<?php echo esc_url( playform_category_url( $item['slug'], $args ) ); ?>"><?php echo esc_html( $label ); ?></a>
-										<?php endforeach; ?>
-									</div>
-								<?php endforeach; ?>
-								<a href="<?php echo esc_url( $url ); ?>" class="mm__promo">
-									<img src="<?php echo esc_url( playform_asset( $item['img'] ) ); ?>" alt="" loading="lazy">
-									<span>Se alle <?php echo esc_html( mb_strtolower( $item['label'] ) ); ?> →</span>
-								</a>
-							</div>
-						</div>
-					<?php endif; ?>
-				</div>
-			<?php endforeach; ?>
-			<a href="<?php echo esc_url( add_query_arg( [ 'egenskab' => 'tilbud', 'sortering' => 'rabat' ], get_permalink( wc_get_page_id( 'shop' ) ) ) ); ?>" class="mm__link mm__link--sale">Tilbud</a>
-		</nav>
 	</div>
 </header>
 <?php if ( isset( $_GET['nyhedsbrev'] ) && $_GET['nyhedsbrev'] === 'bekraeftet' ) : // phpcs:ignore ?>

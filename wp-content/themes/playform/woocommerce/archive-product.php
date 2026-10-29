@@ -5,17 +5,30 @@
 defined( 'ABSPATH' ) || exit;
 get_header();
 
-$state = playform_catalog_state();
-$term  = get_queried_object();
+$term   = get_queried_object();
 $is_cat = $term instanceof WP_Term && $term->taxonomy === 'product_cat';
+
+// Træningsmaskiner og Styrketræning: oversigtsside med kategorikort i stedet for produkter.
+if ( $is_cat && playform_is_virtual_category( $term->slug ) ) {
+	get_template_part( 'template-parts/category-overview', null, [ 'term' => $term ] );
+	get_footer();
+	return;
+}
+
+$state  = playform_catalog_state();
 $search = get_search_query();
 
-$parent = $is_cat && $term->parent ? get_term( $term->parent, 'product_cat' ) : null;
-if ( $parent instanceof WP_Term && playform_is_virtual_category( $parent->slug ) ) {
-	// Virtuelle grupperingskategorier (Kondiudstyr, Styrketræning) har ingen egen side –
-	// behandl den rigtige kategori som toppen, som før de blev samlet i menuen.
-	$parent = null;
+// $top = den kategori, hvis underkategorier vises som faner (stopper ved grupperingskategorierne).
+// $parent sættes, når vi står på en underkategori.
+$top = $is_cat ? $term : null;
+while ( $top && $top->parent ) {
+	$up = get_term( $top->parent, 'product_cat' );
+	if ( ! $up instanceof WP_Term || playform_is_virtual_category( $up->slug ) ) {
+		break;
+	}
+	$top = $up;
 }
+$parent = $is_cat && $top && $top->term_id !== $term->term_id ? $top : null;
 if ( $is_cat ) {
 	$title = $term->name;
 	$intro = $term->description ?: sprintf(
@@ -30,10 +43,14 @@ if ( $is_cat ) {
 	$intro = $title === 'Tilbud' ? 'Produkter, hvor vi selv har målt et prisfald i forhold til den laveste pris de foregående 30 dage.' : '';
 }
 
-$top   = $parent ?: ( $is_cat ? $term : null );
 $crumb = [ [ 'Forside', home_url( '/' ) ] ];
-if ( $parent ) {
-	$crumb[] = [ $parent->name, get_term_link( $parent ) ];
+if ( $is_cat ) {
+	foreach ( array_reverse( get_ancestors( $term->term_id, 'product_cat', 'taxonomy' ) ) as $aid ) {
+		$a = get_term( $aid, 'product_cat' );
+		if ( $a instanceof WP_Term ) {
+			$crumb[] = [ $a->name, get_term_link( $a ) ];
+		}
+	}
 }
 $crumb[] = [ $title, '' ];
 $tabs    = $top ? playform_sub_links( $top->slug ) : [];
@@ -50,7 +67,7 @@ global $wp_query;
 	<?php if ( $tabs ) : ?>
 		<nav class="tabs" aria-label="Underkategorier">
 			<?php $on = ! $parent; ?>
-			<a href="<?php echo esc_url( get_term_link( $top ) ); ?>" class="tab<?php echo $on ? ' is-active' : ''; ?>"<?php echo $on ? ' aria-current="page"' : ''; ?>>Alle <?php echo esc_html( mb_strtolower( $top->name ) ); ?><span class="tab__n"><?php echo (int) $state['total']; ?></span></a>
+			<a href="<?php echo esc_url( get_term_link( $top ) ); ?>" class="tab<?php echo $on ? ' is-active' : ''; ?>"<?php echo $on ? ' aria-current="page"' : ''; ?>>Alle <?php echo esc_html( mb_strtolower( $top->name ) ); ?><span class="tab__n"><?php echo (int) ( $parent ? $top->count : $state['total'] ); ?></span></a>
 			<?php foreach ( $tabs as [ $label, $args, $count ] ) : ?>
 				<?php $on = $parent && $term->slug === $args['sub']; ?>
 				<a href="<?php echo esc_url( playform_category_url( $top->slug, $args ) ); ?>" class="tab<?php echo $on ? ' is-active' : ''; ?>"<?php echo $on ? ' aria-current="page"' : ''; ?>><?php echo esc_html( $label ); ?><span class="tab__n"><?php echo (int) $count; ?></span></a>

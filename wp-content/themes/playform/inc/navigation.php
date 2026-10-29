@@ -1,26 +1,25 @@
 <?php
 /**
- * Hovedmenu og mega-menu. Kategorierne svarer til Playform Feeds' kategoritræ.
- * Links i mega-menuen peger på kategorien med et filter. De bliver til egne landingssider senere.
+ * Hovedmenu og mega-menu.
+ *
+ * Alle menupunkter har samme panel: Kategorier (venstre) | underkategorier for den markerede (midt) | Pris (højre).
+ * Træningsmaskiner og Styrketræning er grupperingskategorier: de samler rigtige kategorier og har en
+ * oversigtsside i stedet for et produktgitter.
  */
 
 defined( 'ABSPATH' ) || exit;
 
-/**
- * "Virtuelle" kategorier findes kun for at gruppere menuen (fx Kondiudstyr samler
- * Motionscykler og Romaskiner & crosstrainere). De har ingen egne produkter eller
- * landingsside – kun rigtige kategorier og underkategorier har det.
- */
-function playform_is_virtual_category( string $slug ): bool {
-	return in_array( $slug, [ 'kondiudstyr', 'styrketraening' ], true );
-}
-
-/** De virtuelle gruppers rigtige underkategorier, i den rækkefølge de skal vises. */
+/** Grupperingskategorier og de rigtige kategorier, de samler (bruges også af opsætningen). */
 function playform_virtual_groups(): array {
 	return [
-		'kondiudstyr'   => [ 'label' => 'Kondiudstyr', 'img' => 'mm-crosstrainer.jpg', 'children' => [ 'motionscykler', 'romaskiner-crosstrainere' ] ],
-		'styrketraening' => [ 'label' => 'Styrketræning', 'img' => 'mm-vaegte.jpg', 'children' => [ 'vaegte-kettlebells', 'styrke-baenke' ] ],
+		'traeningsmaskiner' => [ 'label' => 'Træningsmaskiner', 'children' => [ 'lobebaand', 'motionscykler', 'romaskiner-crosstrainere' ] ],
+		'styrketraening'    => [ 'label' => 'Styrketræning', 'children' => [ 'vaegte-kettlebells', 'styrke-baenke' ] ],
 	];
+}
+
+/** Er det en grupperingskategori (oversigtsside uden egne produkter)? */
+function playform_is_virtual_category( string $slug ): bool {
+	return isset( playform_virtual_groups()[ $slug ] ) || $slug === 'kondiudstyr';
 }
 
 function playform_category_url( string $slug, array $args = [] ): string {
@@ -49,11 +48,94 @@ function playform_sub_links( string $parent ): array {
 	return $out;
 }
 
+/** Den øverste kategori (menupunktet) for en kategori-slug. */
+function playform_root_slug( string $slug ): string {
+	$term = get_term_by( 'slug', $slug, 'product_cat' );
+	if ( ! $term ) {
+		return '';
+	}
+	foreach ( get_ancestors( $term->term_id, 'product_cat', 'taxonomy' ) as $id ) {
+		$a = get_term( $id, 'product_cat' );
+		if ( $a instanceof WP_Term ) {
+			$term = $a;
+		}
+	}
+	return $term->slug;
+}
+
 /**
- * Topmenuen. To slags punkter:
- * - almindelige: egen landingsside, ét niveau med underkategorier + pris + genveje (som før).
- * - grupper ('is_group'): ingen egen side, kun en hover-menu med de rigtige kategorier den
- *   samler ('primary'). Hver af dem åbner sine egne underkategorier i et andet panel ved hover.
+ * Prisintervaller med produkter i en kategori (inkl. underkategorier). Caches, da de kræver en optælling.
+ *
+ * @return array<int,array{0:string,1:string}> [ [ label, nøgle til ?pris= ], … ]
+ */
+function playform_price_ranges( WP_Term $term ): array {
+	$ranges = [
+		'0-1000'     => [ 'Under 1.000 kr', 0, 1000 ],
+		'1000-3000'  => [ '1.000–3.000 kr', 1000, 3000 ],
+		'3000-6000'  => [ '3.000–6.000 kr', 3000, 6000 ],
+		'6000-10000' => [ '6.000–10.000 kr', 6000, 10000 ],
+		'10000-'     => [ 'Over 10.000 kr', 10000, PHP_INT_MAX ],
+	];
+	$all = get_transient( 'playform_price_ranges' );
+	if ( ! is_array( $all ) ) {
+		$all = [];
+	}
+	if ( ! isset( $all[ $term->term_id ] ) ) {
+		global $wpdb;
+		$ids   = array_merge( [ $term->term_id ], array_map( 'intval', (array) get_term_children( $term->term_id, 'product_cat' ) ) );
+		$tt    = array_map( 'intval', (array) get_terms( [ 'taxonomy' => 'product_cat', 'include' => $ids, 'hide_empty' => false, 'fields' => 'tt_ids' ] ) );
+		$found = [];
+		if ( $tt ) {
+			$in    = implode( ',', $tt );
+			$cases = [];
+			$i = 0;
+			foreach ( $ranges as [ , $min, $max ] ) {
+				$cases[] = $wpdb->prepare( 'SUM(CASE WHEN pm.meta_value + 0 >= %d AND pm.meta_value + 0 < %d THEN 1 ELSE 0 END)', $min, min( $max, 999999999 ) ) . ' AS r' . $i++;
+			}
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$row = $wpdb->get_row(
+				'SELECT ' . implode( ', ', $cases ) . " FROM (SELECT DISTINCT tr.object_id FROM {$wpdb->term_relationships} tr WHERE tr.term_taxonomy_id IN ($in)) x
+				JOIN {$wpdb->posts} p ON p.ID = x.object_id AND p.post_status = 'publish'
+				JOIN {$wpdb->postmeta} pm ON pm.post_id = x.object_id AND pm.meta_key = '_price'",
+				ARRAY_A
+			);
+			$i = 0;
+			foreach ( array_keys( $ranges ) as $key ) {
+				if ( (int) ( $row[ 'r' . $i++ ] ?? 0 ) > 0 ) {
+					$found[] = $key;
+				}
+			}
+		}
+		$all[ $term->term_id ] = $found;
+		set_transient( 'playform_price_ranges', $all, 12 * HOUR_IN_SECONDS );
+	}
+	$out = [];
+	foreach ( $all[ $term->term_id ] as $key ) {
+		$out[] = [ $ranges[ $key ][0], $key ];
+	}
+	return $out;
+}
+
+/** Billede til oversigtssidernes kategorikort. */
+function playform_category_image( string $slug ): string {
+	$map = [
+		'lobebaand'                => 'hero-lobebaand.jpg',
+		'motionscykler'            => 'hero-motionscykler.jpg',
+		'romaskine'                => 't-romaskine.jpg',
+		'crosstrainer'             => 'mm-crosstrainer.jpg',
+		'romaskiner-crosstrainere' => 'mm-crosstrainer.jpg',
+		'vaegte-kettlebells'       => 'hero-kettlebells.jpg',
+		'styrke-baenke'            => 'mm-baenk.jpg',
+		'yoga-pilates'             => 'mm-pilates.jpg',
+		'restitution'              => 'mm-restitution.jpg',
+		'tilbehor'                 => 'mm-tilbehor.jpg',
+	];
+	return playform_asset( $map[ $slug ] ?? 't-hjemmegym.jpg' );
+}
+
+/**
+ * Topmenuen. Hvert punkt: label, slug, url og 'primary' = kategorierne i venstre kolonne. Hver af dem har
+ * 'subs' (midterkolonnen) og 'prices' (højre kolonne).
  *
  * @return array<int,array>
  */
@@ -62,53 +144,65 @@ function playform_menu(): array {
 	if ( $menu !== null ) {
 		return $menu;
 	}
-	$price = [
-		'title' => 'Pris',
-		'links' => [
-			[ 'Under 1.000 kr', [ 'pris' => '0-1000' ] ],
-			[ '1.000–3.000 kr', [ 'pris' => '1000-3000' ] ],
-			[ '3.000–6.000 kr', [ 'pris' => '3000-6000' ] ],
-			[ 'Over 6.000 kr', [ 'pris' => '6000-10000,10000-' ] ],
-		],
-	];
-	$shortcuts = [ 'title' => 'Genveje', 'links' => [ [ 'På lager', [ 'egenskab' => 'lager' ] ], [ 'Laveste pris først', [ 'sortering' => 'pris-lav' ] ], [ 'Nyeste', [ 'sortering' => 'nyeste' ] ] ] ];
-	$names     = [
-		'motionscykler'            => [ 'Motionscykler', 'hero-motionscykler.jpg' ],
-		'romaskiner-crosstrainere' => [ 'Romaskiner & crosstrainere', 'mm-crosstrainer.jpg' ],
-		'vaegte-kettlebells'       => [ 'Vægte & kettlebells', 'mm-vaegte.jpg' ],
-		'styrke-baenke'            => [ 'Styrke & bænke', 'mm-baenk.jpg' ],
-	];
-	$items = [
-		[ 'Løbebånd', 'lobebaand', 'hero-lobebaand.jpg' ],
+	// [ menupunkt, kategorier i venstre kolonne ]. null = menupunktets egne underkategorier.
+	// En kategori kan angives som [ slug, visningsnavn ], fx når en underkategori står for sig selv.
+	$spec = [
+		[ 'traeningsmaskiner', [ 'lobebaand', 'motionscykler', [ 'romaskine', 'Romaskiner' ], [ 'crosstrainer', 'Crosstrainere' ] ] ],
+		[ 'styrketraening', [ 'vaegte-kettlebells', 'styrke-baenke' ] ],
+		[ 'yoga-pilates', null ],
+		[ 'restitution', null ],
+		[ 'tilbehor', null ],
 	];
 	$menu = [];
-	foreach ( $items as [ $label, $slug, $img ] ) {
-		$cols = [];
-		$subs = playform_sub_links( $slug );
-		if ( $subs ) {
-			$cols[] = [ 'title' => 'Kategorier', 'links' => $subs ];
+	foreach ( $spec as [ $slug, $cats ] ) {
+		$term = get_term_by( 'slug', $slug, 'product_cat' );
+		if ( ! $term ) {
+			continue;
 		}
-		$cols[] = $price;
-		$cols[] = $shortcuts;
-		$menu[] = [ 'is_group' => false, 'label' => $label, 'slug' => $slug, 'img' => $img, 'cols' => $cols ];
-	}
-	foreach ( playform_virtual_groups() as $group_slug => $group ) {
+		if ( $cats === null ) {
+			$cats = array_map( static fn( $s ) => $s[1]['sub'], playform_sub_links( $slug ) );
+		}
 		$primary = [];
-		foreach ( $group['children'] as $child_slug ) {
-			[ $label, $img ] = $names[ $child_slug ];
-			$primary[] = [ 'label' => $label, 'slug' => $child_slug, 'img' => $img, 'subs' => playform_sub_links( $child_slug ) ];
+		foreach ( $cats as $c ) {
+			[ $cslug, $label ] = is_array( $c ) ? $c : [ $c, null ];
+			$ct = get_term_by( 'slug', $cslug, 'product_cat' );
+			if ( ! $ct || $ct->count < 1 ) {
+				continue;
+			}
+			$subs = [];
+			foreach ( playform_sub_links( $cslug ) as [ $sl, $args ] ) {
+				$subs[] = [ $sl, playform_category_url( $args['sub'] ) ];
+			}
+			$prices = [];
+			foreach ( playform_price_ranges( $ct ) as [ $pl, $key ] ) {
+				$prices[] = [ $pl, playform_category_url( $cslug, [ 'pris' => $key ] ) ];
+			}
+			$primary[] = [
+				'label'  => $label ?: $ct->name,
+				'slug'   => $cslug,
+				'url'    => playform_category_url( $cslug ),
+				'subs'   => $subs,
+				'prices' => $prices,
+			];
 		}
-		$menu[] = [ 'is_group' => true, 'label' => $group['label'], 'slug' => $group_slug, 'img' => $group['img'], 'primary' => $primary ];
-	}
-	foreach ( [ [ 'Yoga & pilates', 'yoga-pilates', 'mm-pilates.jpg' ], [ 'Restitution', 'restitution', 'mm-restitution.jpg' ], [ 'Tilbehør', 'tilbehor', 'mm-tilbehor.jpg' ] ] as [ $label, $slug, $img ] ) {
-		$cols = [];
-		$subs = playform_sub_links( $slug );
-		if ( $subs ) {
-			$cols[] = [ 'title' => 'Kategorier', 'links' => $subs ];
-		}
-		$cols[] = $price;
-		$cols[] = $shortcuts;
-		$menu[] = [ 'is_group' => false, 'label' => $label, 'slug' => $slug, 'img' => $img, 'cols' => $cols ];
+		$menu[] = [
+			'label'   => playform_virtual_groups()[ $slug ]['label'] ?? $term->name,
+			'slug'    => $slug,
+			'url'     => playform_category_url( $slug ),
+			'primary' => $primary,
+		];
 	}
 	return $menu;
+}
+
+/** Populære kategorier, der vises i søgefeltet, før man har skrevet noget. */
+function playform_search_shortcuts(): array {
+	$out = [];
+	foreach ( [ 'lobebaand', 'gaabaand', 'spinningcykel', 'romaskine', 'kettlebell', 'haandvaegte', 'massagepistol', 'yogamaatte' ] as $slug ) {
+		$t = get_term_by( 'slug', $slug, 'product_cat' );
+		if ( $t && $t->count > 0 ) {
+			$out[] = [ $t->name, get_term_link( $t ) ];
+		}
+	}
+	return $out;
 }
