@@ -103,7 +103,7 @@ $pf_shops = count( playform_shop_names() );
 			<form role="search" method="get" class="search" action="<?php echo esc_url( home_url( '/' ) ); ?>" data-search data-endpoint="<?php echo esc_url( rest_url( 'playform/v1/search' ) ); ?>">
 				<?php echo playform_icon( 'search', 18, 2 ); // phpcs:ignore ?>
 				<label for="site-search" class="sr-only">Søg efter produkter</label>
-				<input id="site-search" type="search" name="s" placeholder="Søg" autocomplete="off" value="<?php echo esc_attr( get_search_query() ); ?>">
+				<input id="site-search" type="search" name="s" placeholder="Søg efter produkter, mærker …" autocomplete="off" value="<?php echo esc_attr( get_search_query() ); ?>">
 				<input type="hidden" name="post_type" value="product">
 				<button type="submit" class="search__go">Søg</button>
 				<div class="search__drop" hidden>

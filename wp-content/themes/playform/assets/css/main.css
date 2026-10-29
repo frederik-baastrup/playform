@@ -63,7 +63,7 @@ button, input, select { font-family: inherit; }
 .menu-toggle { display: none; margin-left: auto; width: 44px; height: 44px; border: 1px solid var(--line-2); border-radius: 50%; background: #fff; align-items: center; justify-content: center; cursor: pointer; color: var(--ink); }
 
 /* Søgning: lille felt, der vokser hen over menuen */
-.search { position: relative; flex: 0 1 180px; margin-left: auto; display: flex; align-items: center; gap: 8px; height: 42px; padding: 0 5px 0 14px; border-radius: 999px; background: var(--soft); border: 1px solid #E4E4DF; color: var(--muted); transition: flex-grow .35s ease, background-color .2s ease, border-color .2s ease; }
+.search { position: relative; flex: 0 1 300px; min-width: 150px; margin-left: auto; display: flex; align-items: center; gap: 10px; height: 46px; padding: 0 6px 0 16px; border-radius: 999px; background: var(--soft); border: 1px solid #E4E4DF; color: var(--muted); transition: flex-grow .35s ease, background-color .2s ease, border-color .2s ease; }
 .search > svg { flex: 0 0 auto; }
 .search input { flex: 1; width: 0; min-width: 0; height: 100%; border: 0; background: transparent; font-size: 14px; color: var(--ink); outline: none; }
 .search input::-webkit-search-cancel-button { display: none; }
@@ -564,3 +564,5 @@ a.usp__item:hover b { text-decoration: underline; text-underline-offset: 3px; }
 }
 @media (max-width: 1180px) { .topbar__usp li:nth-child(3) { display: none; } }
 .topbar a.topbar__mob, .topbar a.topbar__mob:hover { color: #D9D9D4; }
+@media (min-width: 1081px) { .mm { flex-shrink: 0; } }
+.search input { text-overflow: ellipsis; } .search input::placeholder { text-overflow: ellipsis; }
