@@ -42,6 +42,7 @@ function playform_run_upgrades(): void {
 	}
 	playform_restructure_menu_categories();
 	playform_seed_category_texts();
+	playform_seed_articles();
 	foreach ( [ 'playform_front_popular', 'playform_front_deals', 'playform_front_new', 'playform_price_ranges' ] as $t ) {
 		delete_transient( $t );
 	}
@@ -320,6 +321,55 @@ function playform_seed_category_texts(): void {
 		if ( ! get_term_meta( $term->term_id, 'pf_seo_text', true ) ) {
 			update_term_meta( $term->term_id, 'pf_seo_text', $t['seo'] );
 			update_term_meta( $term->term_id, 'pf_faq', $t['faq'] );
+		}
+	}
+}
+
+/**
+ * Opretter artiklerne i content/articles-*.php som KLADDER, hvis de ikke findes i forvejen
+ * (uanset status). Eksisterende indlæg røres aldrig, så redaktørens rettelser bevares.
+ */
+function playform_seed_articles(): void {
+	$articles = [];
+	foreach ( glob( get_template_directory() . '/content/articles-*.php' ) ?: [] as $file ) {
+		$articles = array_merge( $articles, (array) require $file );
+	}
+	if ( ! $articles ) {
+		return;
+	}
+	require_once ABSPATH . 'wp-admin/includes/media.php';
+	require_once ABSPATH . 'wp-admin/includes/file.php';
+	require_once ABSPATH . 'wp-admin/includes/image.php';
+	$author = get_users( [ 'role' => 'administrator', 'number' => 1, 'fields' => 'ID' ] );
+	foreach ( $articles as $a ) {
+		$exists = get_posts( [ 'name' => $a['slug'], 'post_type' => 'post', 'post_status' => 'any', 'numberposts' => 1, 'fields' => 'ids' ] );
+		if ( $exists ) {
+			continue;
+		}
+		$cat = term_exists( $a['cat'], 'category' ) ?: wp_insert_term( $a['cat'], 'category' );
+		$id  = wp_insert_post(
+			[
+				'post_type'     => 'post',
+				'post_status'   => 'draft',
+				'post_name'     => $a['slug'],
+				'post_title'    => $a['title'],
+				'post_excerpt'  => $a['excerpt'],
+				'post_content'  => trim( $a['html'] ),
+				'post_category' => is_wp_error( $cat ) ? [] : [ (int) ( is_array( $cat ) ? $cat['term_id'] : $cat ) ],
+				'post_author'   => $author ? (int) $author[0] : 1,
+			]
+		);
+		if ( ! $id || is_wp_error( $id ) ) {
+			continue;
+		}
+		$src = get_template_directory() . '/assets/img/' . $a['img'];
+		if ( is_readable( $src ) ) {
+			$tmp = wp_tempnam( $a['img'] );
+			copy( $src, $tmp );
+			$att = media_handle_sideload( [ 'name' => $a['slug'] . '.jpg', 'tmp_name' => $tmp ], $id );
+			if ( ! is_wp_error( $att ) ) {
+				set_post_thumbnail( $id, $att );
+			}
 		}
 	}
 }
