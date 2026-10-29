@@ -30,6 +30,8 @@ function playform_icon( string $name, int $size = 20, float $stroke = 1.6 ): str
 		'store'       => '<path d="M3 9l1.5-5h15L21 9"/><path d="M3 9v11h18V9"/><path d="M3 9h18"/><path d="M9 20v-6h6v6"/>',
 		'filter'      => '<path d="M4 6h16M7 12h10M10 18h4"/>',
 		'menu'        => '<path d="M4 7h16M4 12h16M4 17h16"/>',
+		'clock'       => '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+		'calendar'    => '<rect x="4" y="5.5" width="16" height="14" rx="2"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/>',
 		'product'     => '<rect x="4" y="15" width="15" height="3" rx="1.5"/><path d="M15 15l2-8h3"/><path d="M16 11h3"/>',
 	];
 	return sprintf(
@@ -209,3 +211,19 @@ add_filter(
 		);
 	}
 );
+
+/**
+ * Indlæggets udvalgte billede – men kun hvis det er stort nok til at stå skarpt.
+ * Et lille billede strakt ud bliver pixeleret; så hellere intet billede (eller et reservebillede).
+ */
+function playform_post_image( $post, int $min_width, string $size = 'large' ): string {
+	$id = get_post_thumbnail_id( $post );
+	if ( ! $id ) {
+		return '';
+	}
+	$meta = wp_get_attachment_metadata( $id );
+	if ( (int) ( $meta['width'] ?? 0 ) < $min_width ) {
+		return '';
+	}
+	return (string) wp_get_attachment_image_url( $id, $size );
+}

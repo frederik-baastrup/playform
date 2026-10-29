@@ -26,6 +26,7 @@ Siden hed Playform. Synlige tekster og logo siger nu Fitbase (`playform_rebrand(
   - `inc/navigation.php` – menuen (`playform_menu_spec()`): Træningsmaskiner, Styrketræning, Yoga & pilates, Restitution, Tilbehør, Tilbud. Træningsmaskiner og Styrketræning er grupperingskategorier med oversigtsside.
   - `template-parts/mobile-menu.php` – mobilmenuen (≤1080 px): skuffe med lag, menupunkt → kategori (underkategorier, pris, tilbud). Bygges ud fra `playform_menu()` ligesom mega-menuen.
   - `inc/permalinks.php` – flade kategori-URL'er (`/traeningsmaskiner/lobebaand/gaabaand/`) og `/…/tilbud/`-sider. WooCommerce' præfiks `kategori` bruges kun til gamle links, som omdirigeres.
+  - `inc/authors.php` – forfattere (E-E-A-T): navn i byline, forfatterside `/viden/forfatter/navn/`, forfatterboks under artikler, JSON-LD (Article, ProfilePage/Person). Ingen Gravatar – profilbillede via feltet `pf_photo`. Påstå aldrig kvalifikationer, ejeren ikke selv har skrevet i sin profil.
   - `inc/search.php` – søgeforslag (`/wp-json/playform/v1/search`).
 - `dev/setup-local.sh` – lokal WordPress med SQLite i `.local/` (ignoreres af git).
 
@@ -36,8 +37,9 @@ Siden hed Playform. Synlige tekster og logo siger nu Fitbase (`playform_rebrand(
 3. **Affiliate-links** har `rel="sponsored nofollow"`, og siden skal tydeligt oplyse, at den indeholder annoncer.
 4. **Udsolgte produkter slettes ikke.** Siden bliver liggende som "ikke på lager". Eksterne produkter kan ikke have WooCommerce-lagerstatus, så vi bruger metafeltet `_pf_in_stock`.
 5. **Prissammenligning er en bonus.** De fleste produkter sælges af én butik. Produktsiden viser "Sælges af [butik]" ved én butik og prislisten ved flere.
-6. **Ingen tredjepartskald fra den offentlige side.** Skrift ligger i `themes/playform/assets/fonts/`, billeder caches lokalt, WooCommerce' scripts og sporings-cookies er slået fra.
-7. **Redaktørens rettelser vinder.** Metafeltet `_pf_locks` (`name`, `category`) forhindrer importen i at overskrive.
+6. **Ingen pixelerede billeder.** `playform_post_image()` viser kun et indlægsbillede, hvis det er stort nok (hero ≥ 1200 px, kort ≥ 700 px).
+7. **Ingen tredjepartskald fra den offentlige side.** Skrift ligger i `themes/playform/assets/fonts/`, billeder caches lokalt, WooCommerce' scripts og sporings-cookies er slået fra.
+8. **Redaktørens rettelser vinder.** Metafeltet `_pf_locks` (`name`, `category`) forhindrer importen i at overskrive.
 
 ## Kommandoer
 

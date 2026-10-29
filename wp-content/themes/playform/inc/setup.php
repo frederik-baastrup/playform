@@ -44,6 +44,7 @@ function playform_run_upgrades(): void {
 	playform_seed_category_texts();
 	playform_seed_articles();
 	playform_rebrand();
+	playform_fix_author_name();
 	if ( class_exists( '\Playform\Feeds\Sales' ) ) {
 		\Playform\Feeds\Sales::refresh_all( current_time( 'Y-m-d' ) ); // kontrollerede førpriser
 	}

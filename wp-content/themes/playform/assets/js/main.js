@@ -51,6 +51,29 @@
 		});
 	});
 
+	// Indholdsfortegnelse: markér afsnittet, man læser, og fyld stregen ned til det
+	var toc = document.querySelector('[data-toc]');
+	if (toc && 'IntersectionObserver' in window) {
+		var links = Array.prototype.slice.call(toc.querySelectorAll('a[href^="#"]'));
+		var heads = links.map(function (a) { return document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1))); });
+		var list = toc.querySelector('ol');
+		var setActive = function (i) {
+			links.forEach(function (a, j) { a.classList.toggle('is-active', j === i); });
+			if (i < 0) { list.style.setProperty('--toc-fill', '0px'); return; }
+			var a = links[i];
+			list.style.setProperty('--toc-fill', (a.offsetTop + a.offsetHeight) + 'px');
+		};
+		var pick = function () {
+			var cur = -1;
+			heads.forEach(function (h, i) { if (h && h.getBoundingClientRect().top < window.innerHeight * 0.3) cur = i; });
+			setActive(cur);
+		};
+		var io = new IntersectionObserver(pick, { rootMargin: '0px 0px -70% 0px' });
+		heads.forEach(function (h) { if (h) io.observe(h); });
+		window.addEventListener('scroll', function () { requestAnimationFrame(pick); }, { passive: true });
+		pick();
+	}
+
 	// Topbar på mobil: fordelene skifter roligt hvert 4. sekund
 	var msgs = document.querySelectorAll('.topbar__msg');
 	if (msgs.length > 1 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -299,7 +322,7 @@
 	document.querySelectorAll('[data-seo-toggle]').forEach(function (btn) {
 		var text = btn.parentNode.querySelector('[data-seo]');
 		if (!text) return;
-		if (text.scrollHeight <= 240) { text.classList.remove('is-collapsed'); btn.hidden = true; return; }
+		if (text.scrollHeight <= 560) { text.classList.remove('is-collapsed'); btn.hidden = true; return; }
 		btn.addEventListener('click', function () {
 			var collapsed = text.classList.toggle('is-collapsed');
 			btn.textContent = collapsed ? 'Læs mere' : 'Vis mindre';

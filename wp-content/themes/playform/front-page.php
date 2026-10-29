@@ -127,7 +127,7 @@ if ( $posts ) {
 		$items[] = [
 			'title' => get_the_title( $post_item ),
 			'tag'   => $cats ? $cats[0]->name : 'Guide',
-			'img'   => get_the_post_thumbnail_url( $post_item, 'large' ) ?: playform_asset( 'guide-lobebaand.jpg' ),
+			'img'   => playform_post_image( $post_item, 700 ) ?: playform_asset( 'guide-lobebaand.jpg' ),
 			'url'   => get_permalink( $post_item ),
 			'date'  => get_the_date( 'j. M Y', $post_item ),
 		];

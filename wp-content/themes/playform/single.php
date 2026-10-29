@@ -13,32 +13,55 @@ while ( have_posts() ) :
 	$tag           = $cats ? $cats[0]->name : 'Guide';
 	$blog          = get_option( 'page_for_posts' ) ? get_permalink( (int) get_option( 'page_for_posts' ) ) : home_url( '/viden/' );
 	$updated       = get_the_modified_date( 'j. F Y' );
+	$author        = playform_author( (int) get_the_author_meta( 'ID' ) );
 	?>
 	<article class="guide">
 		<header class="wrap guide__head">
 			<?php playform_breadcrumbs( [ [ 'Forside', home_url( '/' ) ], [ 'Viden & guides', $blog ], [ get_the_title(), '' ] ] ); ?>
-			<span class="tag-accent"><?php echo esc_html( $tag ); ?></span>
+			<span class="kicker"><i aria-hidden="true"></i><?php echo esc_html( $tag ); ?></span>
 			<h1><?php the_title(); ?></h1>
 			<?php if ( has_excerpt() ) : ?><p class="guide__lead"><?php echo esc_html( get_the_excerpt() ); ?></p><?php endif; ?>
-			<span class="guide__meta">Af <?php the_author(); ?> · Opdateret <?php echo esc_html( $updated ); ?> · <?php echo (int) playform_read_minutes( $html ); ?> min. læsning</span>
+			<div class="guide__meta">
+				<a class="guide__author" href="<?php echo esc_url( $author['url'] ); ?>" rel="author">
+					<?php echo playform_author_avatar( $author, 40 ); // phpcs:ignore ?>
+					<span><b><?php echo esc_html( $author['name'] ); ?></b><small><?php echo esc_html( $author['role'] ); ?></small></span>
+				</a>
+				<span class="guide__facts">
+					<span><?php echo playform_icon( 'calendar', 15, 1.4 ); // phpcs:ignore ?>Opdateret <time datetime="<?php echo esc_attr( get_the_modified_date( 'c' ) ); ?>"><?php echo esc_html( $updated ); ?></time></span>
+					<span><?php echo playform_icon( 'clock', 15, 1.4 ); // phpcs:ignore ?><?php echo (int) playform_read_minutes( $html ); ?> min. læsning</span>
+				</span>
+			</div>
 		</header>
-		<?php if ( has_post_thumbnail() ) : ?>
-			<div class="wrap"><div class="guide__hero"><?php the_post_thumbnail( 'large' ); ?></div></div>
+		<?php $hero = playform_post_image( get_the_ID(), 1200 ); ?>
+		<?php if ( $hero ) : ?>
+			<div class="wrap"><div class="guide__hero"><img src="<?php echo esc_url( $hero ); ?>" alt="" fetchpriority="high"></div></div>
 		<?php endif; ?>
 		<div class="wrap guide__layout">
 			<aside class="guide__toc">
 				<?php if ( count( $toc ) > 1 ) : ?>
-					<nav aria-label="Indhold">
-						<span class="guide__toc-title">Indhold</span>
-						<?php foreach ( $toc as [ $id, $text ] ) : ?>
-							<a href="#<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $text ); ?></a>
-						<?php endforeach; ?>
+					<nav class="toc" aria-label="Indhold" data-toc>
+						<div class="toc__head"><span class="toc__title">Indhold</span><span class="toc__count"><?php echo count( $toc ); ?> afsnit</span></div>
+						<ol>
+							<?php foreach ( $toc as $i => [ $id, $text ] ) : ?>
+								<li><a href="#<?php echo esc_attr( $id ); ?>"><span class="toc__n"><?php echo esc_html( str_pad( (string) ( $i + 1 ), 2, '0', STR_PAD_LEFT ) ); ?></span><span class="toc__t"><?php echo esc_html( $text ); ?></span></a></li>
+							<?php endforeach; ?>
+						</ol>
 					</nav>
 				<?php endif; ?>
 			</aside>
 			<div class="guide__body prose">
 				<p class="guide__note">Guiden indeholder links til butikker. Køber du via et link, kan vi få en provision – det koster ikke dig noget ekstra og påvirker ikke vores råd.</p>
 				<?php echo $html; // phpcs:ignore -- indholdet er allerede filtreret af the_content ?>
+				<aside class="author-box" aria-label="Om forfatteren">
+					<?php echo playform_author_avatar( $author, 64 ); // phpcs:ignore ?>
+					<div>
+						<span class="author-box__label">Skrevet af</span>
+						<a class="author-box__name" href="<?php echo esc_url( $author['url'] ); ?>" rel="author"><?php echo esc_html( $author['name'] ); ?></a>
+						<span class="author-box__role"><?php echo esc_html( $author['role'] ); ?></span>
+						<p><?php echo esc_html( $author['bio'] ); ?></p>
+						<a class="author-box__more" href="<?php echo esc_url( $author['url'] ); ?>">Om <?php echo esc_html( strtok( $author['name'], ' ' ) ); ?> og vores guides &rarr;</a>
+					</div>
+				</aside>
 			</div>
 		</div>
 	</article>

@@ -21,7 +21,7 @@ get_header();
 				$cats = get_the_category();
 				?>
 				<a href="<?php the_permalink(); ?>" class="guide-card">
-					<span class="guide-card__img"><img src="<?php echo esc_url( get_the_post_thumbnail_url( null, 'large' ) ?: playform_asset( 'guide-lobebaand.jpg' ) ); ?>" alt="" loading="lazy"></span>
+					<span class="guide-card__img"><img src="<?php echo esc_url( playform_post_image( get_the_ID(), 700 ) ?: playform_asset( 'guide-lobebaand.jpg' ) ); ?>" alt="" loading="lazy"></span>
 					<span class="guide-side__tag"><?php echo esc_html( $cats ? $cats[0]->name : 'Guide' ); ?></span>
 					<span class="guide-side__title"><?php the_title(); ?></span>
 					<span class="guide-side__meta"><?php echo esc_html( get_the_date( 'j. F Y' ) ); ?></span>
