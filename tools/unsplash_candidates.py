@@ -20,20 +20,27 @@ TOPICS = {
 UA = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/124 Safari/537.36", "Accept": "application/json"}
 os.makedirs("out", exist_ok=True)
 summary = {}
+import re, html as htmlmod
 for key, q in TOPICS.items():
-    url = "https://unsplash.com/napi/search/photos?" + urllib.parse.urlencode({"query": q, "per_page": 30, "orientation": "landscape"})
+    url = "https://unsplash.com/s/photos/" + urllib.parse.quote(q.replace(" ", "-")) + "?orientation=landscape&license=free"
     try:
-        data = json.load(urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=30))
+        page = urllib.request.urlopen(urllib.request.Request(url, headers={**UA, "Accept": "text/html"}), timeout=30).read().decode("utf-8", "replace")
     except Exception as e:
         summary[key] = {"error": str(e)}
         continue
-    picks = []
-    for r in data.get("results", []):
-        if r.get("premium") or r.get("plus") or "plus.unsplash.com" in r["urls"]["raw"]:
+    picks, seen = [], set()
+    # Gratis billeder ligger på images.unsplash.com/photo-…; Unsplash+ på plus.unsplash.com (springes over).
+    for m in re.finditer(r'<img[^>]+>', page):
+        tag = m.group(0)
+        src = re.search(r'src="(https://images\.unsplash\.com/photo-[^"?]+)', tag)
+        if not src:
             continue
-        if r.get("width", 0) < 2400:
+        base = src.group(1)
+        if base in seen:
             continue
-        picks.append({"id": r["id"], "alt": r.get("alt_description") or "", "w": r["width"], "h": r["height"], "user": r["user"]["name"], "raw": r["urls"]["raw"], "thumb": r["urls"]["small"]})
+        seen.add(base)
+        alt = re.search(r'alt="([^"]*)"', tag)
+        picks.append({"base": base, "alt": htmlmod.unescape(alt.group(1)) if alt else "", "thumb": base + "?w=420&q=70&auto=format&fit=crop&h=260"})
         if len(picks) == 9:
             break
     summary[key] = picks

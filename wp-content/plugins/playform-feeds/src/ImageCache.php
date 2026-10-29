@@ -29,6 +29,16 @@ final class ImageCache {
 		return is_file( "$dir/$file" ) ? "$url/$file" : '';
 	}
 
+	/** Sti på serveren til det lokale billede, hvis det er hentet – ellers tom streng. */
+	public static function local_path( string $remote ): string {
+		if ( $remote === '' ) {
+			return '';
+		}
+		[ $dir ] = self::dir();
+		$file    = $dir . '/' . self::name( $remote );
+		return is_file( $file ) ? $file : '';
+	}
+
 	/** Henter og nedskalerer ét billede. */
 	public static function fetch( string $remote ): bool {
 		[ $dir ] = self::dir();
