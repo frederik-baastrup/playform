@@ -1,0 +1,45 @@
+name: Tjek udrulning (midlertidig)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Hent forside og kategorisider på det midlertidige SiteGround-domæne
+        shell: bash
+        run: |
+          set +e
+          HOST="https://frederikb7.sg-host.com"
+          {
+            echo "== Forside (css/js version) =="
+            curl -sS -k -o forside.html -w "curl-status %{http_code}\n" "$HOST/"
+            grep -o "main.css?ver=[0-9.]*" forside.html
+            grep -o "main.js?ver=[0-9.]*" forside.html
+            echo ""
+            echo "== /kategori/motionscykler/ (skal 301) =="
+            curl -sS -k -o /dev/null -D - "$HOST/kategori/motionscykler/" | grep -i "^HTTP\|^location"
+            echo ""
+            echo "== /motionscykler/ (ny flad URL) =="
+            curl -sS -k -o motionscykler.html -w "HTTP %{http_code}\n" "$HOST/motionscykler/"
+            echo ""
+            echo "== /kondiudstyr/romaskiner-crosstrainere/ bund (SEO/FAQ) =="
+            curl -sS -k "$HOST/kondiudstyr/romaskiner-crosstrainere/" -o side.html -w "HTTP %{http_code}\n"
+            grep -c "pf_seo_text\|Ofte stillede\|seo-text\|guide__faq\|faq" side.html
+          } > resultat.txt 2>&1
+
+      - name: Commit resultat til branch
+        shell: bash
+        run: |
+          git config user.name "verify-bot"
+          git config user.email "verify-bot@example.com"
+          git checkout -B verify-result
+          git add resultat.txt
+          git commit -m "Verify-resultat" --allow-empty
+          git push -f origin verify-result
