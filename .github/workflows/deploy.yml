@@ -5,6 +5,8 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# Sitet ligger i mappen frederikb7.sg-host.com/public_html på FTP-kontoen.
+# Når playform.dk bliver hoveddomæne, kan SiteGround omdøbe mappen – så skal stien rettes her.
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -20,7 +22,7 @@ jobs:
           port: 21
           protocol: ftps
           local-dir: ./wp-content/plugins/playform-feeds/
-          server-dir: ${{ secrets.FTP_REMOTE_PATH }}/wp-content/plugins/playform-feeds/
+          server-dir: frederikb7.sg-host.com/public_html/wp-content/plugins/playform-feeds/
           dangerous-clean-slate: false
 
       - name: Udrul temaet
@@ -32,5 +34,5 @@ jobs:
           port: 21
           protocol: ftps
           local-dir: ./wp-content/themes/playform/
-          server-dir: ${{ secrets.FTP_REMOTE_PATH }}/wp-content/themes/playform/
+          server-dir: frederikb7.sg-host.com/public_html/wp-content/themes/playform/
           dangerous-clean-slate: false
