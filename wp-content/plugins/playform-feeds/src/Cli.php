@@ -38,6 +38,13 @@ final class Cli {
 			$rows[] = [ 'shop' => $s['name'], 'læst' => $s['read'], 'fravalgt' => $s['excluded'], 'nye' => $s['new'], 'ændret' => $s['updated'], 'uændret' => $s['unchanged'], 'væk' => $s['removed'], 'fejl' => $s['error'] ];
 		}
 		\WP_CLI\Utils\format_items( 'table', $rows, array_keys( $rows[0] ?? [ 'shop' => '' ] ) );
+		if ( $only === null && ! $files && empty( $assoc['limit'] ) ) {
+			ImageCache::run( 1500 );
+			$texts = Cron::after_import();
+			if ( $texts ) {
+				\WP_CLI::log( "$texts nye produkttekster skrevet." );
+			}
+		}
 		\WP_CLI::success( sprintf( 'Færdig på %ds. %d produkter opdateret.', microtime( true ) - $t0, $summary['products_refreshed'] ) );
 	}
 

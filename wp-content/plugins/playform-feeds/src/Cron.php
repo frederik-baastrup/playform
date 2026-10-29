@@ -38,19 +38,28 @@ final class Cron {
 		try {
 			( new Importer() )->run();
 			ImageCache::run( 1500 );
-			if ( Ai::enabled() ) {
-				AiClassifier::run( 400 );
-				$n = (int) get_option( 'playform_ai_texts_per_run', 0 );
-				foreach ( $n > 0 ? AiWriter::queue( $n ) : [] as $id ) {
-					try {
-						AiWriter::generate( (int) $id );
-					} catch ( \Throwable $e ) {
-						break; // fx manglende kredit – prøv igen næste gang
-					}
-				}
-			}
+			self::after_import();
 		} finally {
 			delete_transient( 'playform_feeds_running' );
 		}
+	}
+
+	/** AI-sortering og nye produkttekster. Kører efter hver fuld import (både WP-cron og `wp playform import`). */
+	public static function after_import(): int {
+		if ( ! Ai::enabled() ) {
+			return 0;
+		}
+		AiClassifier::run( 400 );
+		$n    = (int) get_option( 'playform_ai_texts_per_run', 100 );
+		$done = 0;
+		foreach ( $n > 0 ? AiWriter::queue( $n ) : [] as $id ) {
+			try {
+				AiWriter::generate( (int) $id );
+				++$done;
+			} catch ( \Throwable $e ) {
+				break; // fx manglende kredit eller dagens loft – prøv igen næste gang
+			}
+		}
+		return $done;
 	}
 }

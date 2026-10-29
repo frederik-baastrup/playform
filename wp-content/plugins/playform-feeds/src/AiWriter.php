@@ -2,8 +2,11 @@
 namespace Playform\Feeds;
 
 /**
- * Skriver produkttekster med Claude. Teksterne gemmes som udkast og skal godkendes,
- * før de vises på siden (de lægges først i post_content ved godkendelse).
+ * Skriver produkttekster med Claude.
+ *
+ * Ejeren godkender ikke hver tekst. I stedet faktatjekkes teksten automatisk (check()): alle tal skal
+ * stå i butikkens data, og der må ikke være reklamesuperlativer. Består den, udgives den med det samme.
+ * Ellers venter den under "Tekster til godkendelse" med en forklaring.
  */
 final class AiWriter {
 
@@ -60,12 +63,42 @@ TXT;
 			'cons'    => array_slice( array_map( 'sanitize_text_field', (array) ( $answer['ulemper'] ?? [] ) ), 0, 3 ),
 			'sources' => $facts,
 		];
+		$draft['problems'] = self::check( $draft, $facts );
 		update_post_meta( $product_id, self::META_DRAFT, $draft );
 		update_post_meta( $product_id, self::META_STATUS, 'pending' );
 		update_post_meta( $product_id, self::META_DATE, current_time( 'mysql' ) );
 		$used = array_slice( [ $today => ( $used[ $today ] ?? 0 ) + 1 ] + $used, 0, 60, true );
 		update_option( 'playform_ai_usage', $used, false );
+		if ( ! $draft['problems'] && get_option( 'playform_ai_autopublish', '1' ) === '1' ) {
+			self::approve( $product_id );
+		}
 		return $draft;
+	}
+
+	/**
+	 * Automatisk faktatjek. Returnerer en liste med problemer (tom = teksten må udgives).
+	 * - Hvert tal i teksten skal findes i produktdataene (ellers kan det være opfundet).
+	 * - Ingen reklamesuperlativer.
+	 */
+	public static function check( array $draft, array $facts ): array {
+		$text   = wp_strip_all_tags( ( $draft['html'] ?? '' ) . ' ' . implode( ' ', (array) ( $draft['pros'] ?? [] ) ) . ' ' . implode( ' ', (array) ( $draft['cons'] ?? [] ) ) );
+		$source = wp_json_encode( $facts, JSON_UNESCAPED_UNICODE );
+		$nums   = static function ( string $s ): array {
+			preg_match_all( '/\d+(?:[.,]\d+)*/u', $s, $m );
+			// "1.500" og "1500" er samme tal; "2,5" og "2.5" også.
+			return array_unique( array_map( static fn( $n ) => preg_match( '/^\d{1,3}(\.\d{3})+$/', $n ) ? str_replace( '.', '', $n ) : str_replace( ',', '.', $n ), $m[0] ) );
+		};
+		$known    = array_flip( $nums( $source ) );
+		$problems = [];
+		foreach ( $nums( $text ) as $n ) {
+			if ( ! isset( $known[ $n ] ) ) {
+				$problems[] = "Tallet $n står ikke i butikkens data.";
+			}
+		}
+		if ( preg_match( '/\b(markedets bedste|bedste på markedet|perfekt|perfekte|uovertruffen|verdens bedste|garanteret)\b/iu', $text, $m ) ) {
+			$problems[] = 'Reklameord: "' . $m[1] . '".';
+		}
+		return $problems;
 	}
 
 	/** Godkender udkastet (evt. rettet af redaktøren) og viser det på siden. */

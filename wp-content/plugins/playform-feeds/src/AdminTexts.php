@@ -80,12 +80,15 @@ final class AdminTexts {
 			echo '<p>Der er ingen tekster, der venter.</p></div>';
 			return;
 		}
-		echo '<p>' . count( $ids ) . ' tekster venter. Godkend direkte her, eller åbn produktet for at rette teksten først.</p>';
+		echo '<p>' . count( $ids ) . ' tekster venter. Tekster, der består faktatjekket, udgives automatisk – disse faldt igennem. Godkend direkte her, ret dem, eller afvis.</p>';
 		foreach ( $ids as $id ) {
 			$draft = (array) get_post_meta( $id, AiWriter::META_DRAFT, true );
 			$url   = wp_nonce_url( admin_url( 'admin-post.php?action=playform_text_action&id=' . $id ), 'playform_text_' . $id );
 			echo '<div style="background:#fff;border:1px solid #dcdcde;border-radius:8px;padding:16px 20px;margin:12px 0;max-width:900px">';
 			echo '<h2 style="margin:0 0 8px"><a href="' . esc_url( get_edit_post_link( $id ) ) . '">' . esc_html( get_the_title( $id ) ) . '</a></h2>';
+			if ( ! empty( $draft['problems'] ) ) {
+				echo '<p style="color:#b42318"><strong>Faktatjek:</strong> ' . esc_html( implode( ' ', $draft['problems'] ) ) . '</p>';
+			}
 			echo wp_kses_post( $draft['html'] ?? '' );
 			if ( ! empty( $draft['pros'] ) || ! empty( $draft['cons'] ) ) {
 				echo '<p><strong>Fordele:</strong> ' . esc_html( implode( ' · ', $draft['pros'] ?? [] ) ) . '<br><strong>Ulemper:</strong> ' . esc_html( implode( ' · ', $draft['cons'] ?? [] ) ) . '</p>';
