@@ -50,6 +50,9 @@ button, input, select { font-family: inherit; }
 .logo { flex: 0 0 auto; }
 .logo img { height: 28px; width: auto; }
 .knowledge { flex: 0 0 auto; display: flex; gap: 20px; font-size: 14px; font-weight: 500; }
+.knowledge .knowledge__sale { color: var(--sale); }
+/* Tilbud står yderst til højre ved Viden og Guides; er de skjult (smal skærm), står det i menuen. */
+@media (min-width: 1181px) { .mm > .mm__item--plain { display: none; } }
 .menu-toggle { display: none; margin-left: auto; width: 44px; height: 44px; border: 1px solid var(--line-2); border-radius: 50%; background: #fff; align-items: center; justify-content: center; cursor: pointer; color: var(--ink); }
 
 /* Søgning: lille felt, der vokser hen over menuen */
@@ -262,7 +265,7 @@ button, input, select { font-family: inherit; }
 
 /* SEO-tekst */
 .seo-wrap { padding-bottom: 80px; }
-.seo { border-top: 1px solid #E4E4DF; padding-top: 48px; }
+.seo { padding-top: 8px; }
 .seo--right { display: flex; flex-direction: column; align-items: flex-end; }
 .seo--right > * { width: 75%; }
 .seo--right .btn-ghost { width: auto; align-self: flex-start; margin-left: 25%; }

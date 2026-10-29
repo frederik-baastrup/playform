@@ -111,6 +111,7 @@
 			<nav class="knowledge" aria-label="Viden">
 				<a href="<?php echo esc_url( home_url( '/viden/' ) ); ?>">Viden</a>
 				<a href="<?php echo esc_url( home_url( '/viden/' ) ); ?>">Guides</a>
+				<a href="<?php echo esc_url( playform_tilbud_url() ); ?>" class="knowledge__sale">Tilbud</a>
 			</nav>
 			<button type="button" class="menu-toggle" aria-expanded="false" aria-controls="hovedmenu" aria-label="Åbn menu"><?php echo playform_icon( 'menu', 22 ); // phpcs:ignore ?></button>
 		</div>

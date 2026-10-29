@@ -300,6 +300,9 @@ function playform_seed_category_texts(): void {
 			],
 		],
 	];
+	// Underkategoriernes tekster ligger i content/category-texts.php.
+	$texts += require get_template_directory() . '/content/category-texts.php';
+
 	foreach ( playform_sub_intros() as $slug => $intro ) {
 		$term = get_term_by( 'slug', $slug, 'product_cat' );
 		if ( $term && ! $term->description ) {
@@ -311,7 +314,7 @@ function playform_seed_category_texts(): void {
 		if ( ! $term ) {
 			continue;
 		}
-		if ( ! $term->description ) {
+		if ( ! $term->description && ! empty( $t['intro'] ) ) {
 			wp_update_term( $term->term_id, 'product_cat', [ 'description' => $t['intro'] ] );
 		}
 		if ( ! get_term_meta( $term->term_id, 'pf_seo_text', true ) ) {
