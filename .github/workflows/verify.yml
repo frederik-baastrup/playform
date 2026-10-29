@@ -10,26 +10,33 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Hent forside og kategorisider, tjek version og omdirigering
+        shell: bash
         run: |
-          echo "== Forside ==" > resultat.txt
-          curl -s https://playform.dk/ | grep -o 'main\.\(css\|js\)?ver=[^"'"'"']*' >> resultat.txt || true
-          echo "" >> resultat.txt
-          echo "== /kategori/motionscykler/ (skal 301 til /kondiudstyr/motionscykler/) ==" >> resultat.txt
-          curl -s -o /dev/null -w "HTTP %{http_code} -> %{redirect_url}\n" https://playform.dk/kategori/motionscykler/ >> resultat.txt
-          echo "" >> resultat.txt
-          echo "== /motionscykler/ (ny flad URL, skal give 200) ==" >> resultat.txt
-          curl -s -o /dev/null -w "HTTP %{http_code}\n" https://playform.dk/motionscykler/ >> resultat.txt
-          echo "" >> resultat.txt
-          echo "== Bund af /romaskiner-crosstrainere/romaskiner/ (SEO-tekst/FAQ?) ==" >> resultat.txt
-          curl -s https://playform.dk/kondiudstyr/romaskiner-crosstrainere/ -o side.html || true
-          grep -q "pf_seo_text\|Ofte stillede spørgsmål\|seo-text" side.html && echo "FUNDET SEO/FAQ-markør" >> resultat.txt || echo "INGEN SEO/FAQ-markør fundet" >> resultat.txt
+          set +e
+          {
+            echo "== Forside (css/js version) =="
+            curl -s https://playform.dk/ -o forside.html
+            grep -o "main.css?ver=[0-9.]*" forside.html
+            grep -o "main.js?ver=[0-9.]*" forside.html
+            echo ""
+            echo "== /kategori/motionscykler/ (skal 301) =="
+            curl -s -o /dev/null -D - https://playform.dk/kategori/motionscykler/ | grep -i "^HTTP\|^location"
+            echo ""
+            echo "== /motionscykler/ (ny flad URL) =="
+            curl -s -o /dev/null -w "HTTP %{http_code}\n" https://playform.dk/motionscykler/
+            echo ""
+            echo "== /kondiudstyr/romaskiner-crosstrainere/ bund (SEO/FAQ) =="
+            curl -s https://playform.dk/kondiudstyr/romaskiner-crosstrainere/ -o side.html
+            grep -c "pf_seo_text\|Ofte stillede" side.html
+          } > resultat.txt 2>&1
           cat resultat.txt
 
       - name: Commit resultat til branch
+        shell: bash
         run: |
           git config user.name "verify-bot"
           git config user.email "verify-bot@example.com"
-          git checkout -b verify-result
+          git checkout -B verify-result
           git add resultat.txt
-          git commit -m "Verify-resultat"
+          git commit -m "Verify-resultat" --allow-empty
           git push -f origin verify-result
