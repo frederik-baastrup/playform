@@ -63,6 +63,18 @@
 		}, 4000);
 	}
 
+	// Menuens faktiske bredde, så den folder sig jævnt sammen, når søgefeltet vokser
+	if (menu && header) {
+		menu.querySelectorAll(':scope > .mm__item').forEach(function (it, i) { it.style.setProperty('--i', i); });
+		var measure = function () {
+			if (header.classList.contains('is-searching')) return;
+			header.style.setProperty('--mm-w', menu.scrollWidth + 'px');
+		};
+		measure();
+		window.addEventListener('resize', measure);
+		if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+	}
+
 	// Smal skærm: luppen folder søgefeltet ud under logoet
 	var searchToggle = document.querySelector('.search-toggle');
 	var closeSearch = function () {
