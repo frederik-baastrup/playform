@@ -352,6 +352,16 @@ button, input, select { font-family: inherit; }
 .pd__brand { font-size: 13px; font-weight: 600; color: var(--muted); }
 .pd h1 { font-size: 40px; letter-spacing: -.8px; line-height: 1.05; }
 .pd__facts { font-size: 15px; color: var(--ink-2); }
+.pd__chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 0; padding: 0; list-style: none; }
+.pd__chips li { padding: 6px 12px 5px; border-radius: 999px; background: var(--soft); font-size: 13px; font-weight: 500; }
+.pd__trust { display: flex; flex-direction: column; gap: 16px; margin: 4px 0 0; padding: 20px 0 0; list-style: none; border-top: 1px solid var(--line); }
+.pd__trust li { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 14px; align-items: center; }
+.pd__trust svg { width: 40px; height: 40px; padding: 9px; border-radius: 50%; background: var(--soft); }
+.pd__trust span { display: flex; flex-direction: column; gap: 2px; font-size: 13px; color: var(--muted-2); }
+.pd__trust b { font-size: 14px; font-weight: 600; color: var(--ink); }
+.specs__note { margin: 16px 0 0; font-size: 12px; line-height: 1.5; color: var(--muted-2); }
+.two--half > div { grid-column: 1; }
+.section--end { padding-bottom: 104px; }
 .pricebox { border: 1px solid var(--line); border-radius: var(--r-l); padding: 24px; display: flex; flex-direction: column; gap: 16px; }
 .pricebox__top { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
 .pricebox__top > div { display: flex; flex-direction: column; gap: 4px; font-size: 13px; }

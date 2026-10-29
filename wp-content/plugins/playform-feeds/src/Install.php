@@ -6,8 +6,12 @@ final class Install {
 	public static function activate(): void {
 		self::tables();
 		self::categories();
-		// Nye underkategorier under Romaskine (0.3.0): sortér de eksisterende produkter med det samme.
-		self::refresh_category( 'romaskiner-crosstrainere' );
+		// Engangs-omsorteringer, når reglerne ændres (tælleren sikrer, at de kun kører én gang).
+		if ( (int) get_option( 'playform_feeds_migration' ) < 1 ) {
+			// 0.3.0: nye underkategorier under Romaskine, og tabletter flyttet til tilbehør.
+			self::refresh_category( 'romaskiner-crosstrainere' );
+			update_option( 'playform_feeds_migration', 1, false );
+		}
 		Cron::schedule();
 		update_option( 'playform_feeds_db_version', PLAYFORM_FEEDS_VERSION );
 	}

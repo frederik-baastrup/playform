@@ -27,12 +27,12 @@ jobs:
           mkdir -p logs
           {
             UA="Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36"
-            for u in / /tilbud/ /traeningsmaskiner/; do
-              echo "== GET $u =="; curl -sS -A "$UA" -o body.html -w "HTTP %{http_code} %{size_download} bytes\n" "https://frederikb7.sg-host.com$u"; head -c 300 body.html; echo
+            H=https://frederikb7.sg-host.com
+            curl -sS -A "$UA" -o /dev/null -w "forside HTTP %{http_code} %{time_total}s\n" "$H/"
+            for u in /tilbud/ /traeningsmaskiner/lobebaand/tilbud/ /traeningsmaskiner/romaskiner-crosstrainere/romaskine/ /produkt/powr-4-pro-kettlebell-ab16/; do
+              curl -sS -A "$UA" -o b.html -w "$u HTTP %{http_code}: " "$H$u"
+              grep -o '<h1>[^<]*</h1>\|<b>[0-9]*</b> produkter\|class="pd__trust"\|Romaskine med vand\|Lignende [a-zæøå &;]*' b.html | sort -u | tr '\n' ' '; echo
             done
-            sleep 5
-            L "get -O logs $R/wp-content/uploads/playform-diag.json" >/dev/null
-            echo "== playform-diag.json =="; cat logs/playform-diag.json
           } > diag.txt 2>&1
           exit 0
 
