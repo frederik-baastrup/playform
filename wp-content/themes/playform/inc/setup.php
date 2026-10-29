@@ -43,6 +43,7 @@ function playform_run_upgrades(): void {
 	playform_restructure_menu_categories();
 	playform_seed_category_texts();
 	playform_seed_articles();
+	playform_rebrand();
 	foreach ( [ 'playform_front_popular', 'playform_front_deals', 'playform_front_new', 'playform_price_ranges' ] as $t ) {
 		delete_transient( $t );
 	}
@@ -88,6 +89,35 @@ function playform_restructure_menu_categories(): void {
 	if ( $benches && str_contains( wp_specialchars_decode( $benches->name ), 'Styrke & bænke' ) ) {
 		wp_update_term( $benches->term_id, 'product_cat', [ 'name' => 'Bænke & racks' ] );
 	}
+}
+
+/**
+ * Navneskiftet Playform → Fitbase: sidens titel og tekster, der allerede ligger i databasen
+ * (faste sider og artikeludkast). Kører én gang.
+ */
+function playform_rebrand(): void {
+	if ( get_option( 'playform_brand' ) === 'fitbase' ) {
+		return;
+	}
+	update_option( 'blogname', 'Fitbase' );
+	$posts = get_posts(
+		[
+			'post_type'      => [ 'page', 'post' ],
+			'post_status'    => 'any',
+			'posts_per_page' => -1,
+			's'              => 'Playform',
+		]
+	);
+	$old_sale = '<p>Vi viser kun rabatter, som vi selv har målt i vores prishistorik – aldrig butikkernes egne "førpriser".</p>';
+	$new_sale = '<p>Som tilbud viser vi kun butikkernes egne tilbud, og kun i højst 14 dage. Vi viser aldrig butikkernes førpriser eller rabatter i procent.</p>';
+	foreach ( $posts as $p ) {
+		$content = str_replace( [ 'Playform', 'playform.dk', $old_sale ], [ 'Fitbase', 'fitbase.dk', $new_sale ], $p->post_content );
+		$title   = str_replace( 'Playform', 'Fitbase', $p->post_title );
+		if ( $content !== $p->post_content || $title !== $p->post_title ) {
+			wp_update_post( [ 'ID' => $p->ID, 'post_content' => $content, 'post_title' => $title ] );
+		}
+	}
+	update_option( 'playform_brand', 'fitbase', false );
 }
 
 function playform_setup_site(): void {
@@ -147,9 +177,9 @@ function playform_setup_site(): void {
 
 function playform_default_text( string $which ): string {
 	if ( $which === 'butikker' ) {
-		return '<p>Playform samler fitnessudstyr fra flere danske webshops ét sted. Vi henter produkter, priser og lagerstatus direkte fra butikkerne to gange i døgnet. Når du klikker på "Gå til butik", sendes du videre til butikken, hvor du handler som normalt.</p><h2>Butikker på Playform</h2><p>[Listen over butikker vises automatisk her.]</p>';
+		return '<p>Fitbase samler fitnessudstyr fra flere danske webshops ét sted. Vi henter produkter, priser og lagerstatus direkte fra butikkerne to gange i døgnet. Når du klikker på "Gå til butik", sendes du videre til butikken, hvor du handler som normalt.</p><h2>Butikker på Fitbase</h2><p>[Listen over butikker vises automatisk her.]</p>';
 	}
-	return '<p>Playform er gratis at bruge. Når du klikker videre til en butik og handler, får vi en lille provision fra butikken. Det koster ikke dig noget ekstra, og det påvirker ikke, hvilke produkter vi viser, eller hvordan vi sorterer dem.</p><p>Vi viser kun rabatter, som vi selv har målt i vores prishistorik – aldrig butikkernes egne "førpriser".</p>';
+	return '<p>Fitbase er gratis at bruge. Når du klikker videre til en butik og handler, får vi en lille provision fra butikken. Det koster ikke dig noget ekstra, og det påvirker ikke, hvilke produkter vi viser, eller hvordan vi sorterer dem.</p><p>Som tilbud viser vi kun butikkernes egne tilbud, og kun i højst 14 dage. Vi viser aldrig butikkernes førpriser eller rabatter i procent.</p>';
 }
 
 /** Korte introtekster til underkategorierne. De finjusteres efter søgeordsanalysen. */

@@ -1,4 +1,4 @@
-/* Playform – samme udtryk som designet: hvid, sort, BDO Grotesk, afrundede hjørner, tynde streger. */
+/* Fitbase – samme udtryk som designet: hvid, sort, BDO Grotesk, afrundede hjørner, tynde streger. */
 :root {
 	--ink: #111111;
 	--ink-2: #3F3F3B;
@@ -48,7 +48,7 @@ button, input, select { font-family: inherit; }
 .site-header { background: #fff; border-bottom: 1px solid #EDEDE8; position: relative; z-index: 50; }
 .site-header__row { position: relative; display: flex; align-items: center; gap: 28px; height: 72px; }
 .logo { flex: 0 0 auto; }
-.logo img { height: 28px; width: auto; }
+.logo img { height: 22px; width: auto; display: block; }
 .knowledge { flex: 0 0 auto; display: flex; gap: 20px; font-size: 14px; font-weight: 500; }
 .knowledge .knowledge__sale { color: var(--sale); }
 /* Tilbud står yderst til højre ved Viden og Guides; er de skjult (smal skærm), står det i menuen. */
@@ -469,7 +469,7 @@ a.usp__item:hover b { text-decoration: underline; text-underline-offset: 3px; }
 .site-footer .wrap { padding-top: 64px; padding-bottom: 40px; }
 .foot { display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(4, minmax(0, 1fr)); gap: 32px; }
 .foot__about { display: flex; flex-direction: column; gap: 14px; font-size: 13px; color: #B8B8B2; }
-.foot__about img { height: 28px; width: auto; align-self: flex-start; }
+.foot__about img { height: 22px; width: auto; align-self: flex-start; }
 .foot__about p { margin: 0; line-height: 1.6; }
 .foot__col { display: flex; flex-direction: column; gap: 10px; font-size: 13px; }
 .foot__col a { color: #B8B8B2; }

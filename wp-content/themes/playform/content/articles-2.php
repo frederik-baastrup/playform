@@ -55,7 +55,7 @@ return [
 <p>Se <a href="/restitution/massagepistol/">alle massagepistoler</a> og resten af <a href="/restitution/">restitutionsudstyret</a>.</p>
 
 <h2>Hvad koster en massagepistol?</h2>
-<p>Da vi skrev artiklen, lå de fleste massagepistoler hos butikkerne på Playform mellem ca. 400 og 1.300 kr. Mini-modeller ligger i den billige ende, mens større modeller med mere kraft og flere hoveder koster mere. Til almindelig brug efter træning behøver du sjældent den dyreste.</p>
+<p>Da vi skrev artiklen, lå de fleste massagepistoler hos butikkerne på Fitbase mellem ca. 400 og 1.300 kr. Mini-modeller ligger i den billige ende, mens større modeller med mere kraft og flere hoveder koster mere. Til almindelig brug efter træning behøver du sjældent den dyreste.</p>
 
 <h2>Sådan bruger du den på de enkelte muskler</h2>
 <ul>
@@ -140,7 +140,7 @@ HTML,
 <p>Se alt <a href="/restitution/kuldeterapi/">til kuldeterapi og isbad</a> og resten af <a href="/restitution/">restitutionsudstyret</a>.</p>
 
 <h2>Hvad koster et isbad?</h2>
-<p>Da vi skrev artiklen, spændte produkterne til kuldeterapi hos butikkerne på Playform fra tilbehør til et par hundrede kroner over oppustelige kar til faste kar med køling til mange tusinde kroner. De fleste lå mellem ca. 100 og 2.400 kr, mens kar med køleenhed lå markant højere. Start gerne billigt, og opgrader, hvis isbad bliver en fast vane.</p>
+<p>Da vi skrev artiklen, spændte produkterne til kuldeterapi hos butikkerne på Fitbase fra tilbehør til et par hundrede kroner over oppustelige kar til faste kar med køling til mange tusinde kroner. De fleste lå mellem ca. 100 og 2.400 kr, mens kar med køleenhed lå markant højere. Start gerne billigt, og opgrader, hvis isbad bliver en fast vane.</p>
 
 <h2>En enkel rutine for begyndere</h2>
 <ol>
@@ -229,7 +229,7 @@ HTML,
 <p>Se <a href="/yoga-pilates/yogamaatte/">alle yogamåtter</a> og <a href="/yoga-pilates/yogatilbehor/">yogatilbehør</a> som blokke og stropper.</p>
 
 <h2>Hvad koster en yogamåtte?</h2>
-<p>Da vi skrev artiklen, lå de fleste yogamåtter hos butikkerne på Playform mellem ca. 80 og 600 kr. Enkle PVC- og TPE-måtter ligger i den billige ende, mens måtter i naturgummi og kork typisk koster mere. Bruger du måtten flere gange om ugen, mærker du forskellen på grebet og holdbarheden.</p>
+<p>Da vi skrev artiklen, lå de fleste yogamåtter hos butikkerne på Fitbase mellem ca. 80 og 600 kr. Enkle PVC- og TPE-måtter ligger i den billige ende, mens måtter i naturgummi og kork typisk koster mere. Bruger du måtten flere gange om ugen, mærker du forskellen på grebet og holdbarheden.</p>
 
 <h2>Hvilken måtte passer til din yoga?</h2>
 <table>
@@ -431,7 +431,7 @@ HTML,
 <p>Det lyder banalt, men en kort snak kan forebygge mange problemer. Spørg, om de hører noget, og om der er tidspunkter, de helst vil have ro. De fleste er langt mere forstående, når de ved, hvad lyden er – og at du tager hensyn.</p>
 
 <h2>Prisniveauer for støjsvagt udstyr</h2>
-<p>Da vi skrev artiklen, lå de fleste motionscykler hos butikkerne på Playform mellem ca. 2.200 og 9.000 kr, gåbånd mellem ca. 3.500 og 9.000 kr og magnetiske romaskiner fra ca. 2.800 kr og op. En god træningsmåtte koster typisk et par hundrede kroner – den billigste og mest effektive investering i naboskab.</p>
+<p>Da vi skrev artiklen, lå de fleste motionscykler hos butikkerne på Fitbase mellem ca. 2.200 og 9.000 kr, gåbånd mellem ca. 3.500 og 9.000 kr og magnetiske romaskiner fra ca. 2.800 kr og op. En god træningsmåtte koster typisk et par hundrede kroner – den billigste og mest effektive investering i naboskab.</p>
 
 <h2>Beton- eller trægulv?</h2>
 <p>Gulvet betyder meget for, hvor meget naboerne hører. I nyere byggeri med betondæk forplanter stød og vibrationer sig typisk mindre end i ældre ejendomme med træbjælkelag, hvor gulvet kan svaje og fungere som en trommeskind. Bor du i en ældre ejendom, er gummifliser og magnetiske maskiner endnu vigtigere.</p>

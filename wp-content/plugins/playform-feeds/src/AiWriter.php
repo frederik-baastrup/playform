@@ -12,7 +12,7 @@ final class AiWriter {
 	public const META_DATE   = '_pf_ai_date';
 
 	private const SYSTEM = <<<TXT
-Du skriver produkttekster på dansk til Playform, en side der samler fitnessudstyr fra flere danske webshops. Læseren overvejer at købe produktet til brug derhjemme.
+Du skriver produkttekster på dansk til Fitbase, en side der samler fitnessudstyr fra flere danske webshops. Læseren overvejer at købe produktet til brug derhjemme.
 
 Regler – de er vigtigere end alt andet:
 1. Brug KUN fakta, der står i produktdataene. Opfind aldrig mål, vægt, hastighed, motorkraft, materialer, garanti, programmer eller andre specifikationer.

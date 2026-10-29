@@ -1,8 +1,10 @@
-# Playform – projektnoter til Claude
+# Fitbase – projektnoter til Claude
 
-Playform (playform.dk) er en affiliate-side, der ligner en webshop. Den samler fitnessudstyr fra flere danske shops via Partner-ads-produktfeeds. Man køber ikke på siden: "Gå til butik" sender brugeren videre til shoppen via et affiliate-link.
+Fitbase (fitbase.dk, tidligere Playform) er en affiliate-side, der ligner en webshop. Den samler fitnessudstyr fra flere danske shops via Partner-ads-produktfeeds. Man køber ikke på siden: "Gå til butik" sender brugeren videre til shoppen via et affiliate-link.
 
 Ejer: Frederik Baastrup. Al tekst på siden er på dansk.
+
+Siden hed Playform. Synlige tekster og logo siger nu Fitbase (`playform_rebrand()` i `inc/setup.php` rettede databasen én gang). Kodenavne er bevidst bevaret: mappenavne `playform`/`playform-feeds`, namespace `Playform\Feeds`, funktioner `playform_*`, metafelter `_pf_*` og shortcoden `[playform_produkter]` – omdøb dem ikke, det bryder udrulning og data.
 
 ## Opbygning
 

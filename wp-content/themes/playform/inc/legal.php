@@ -12,10 +12,10 @@ function playform_legal_privacy(): string {
 <p><em>Senest opdateret: [dato]</em></p>
 
 <h2>Hvem er ansvarlig?</h2>
-<p>Playform (playform.dk) drives af [navn/firmanavn], [adresse], CVR [CVR-nummer]. Du kan altid kontakte os på [e-mail].</p>
+<p>Fitbase (fitbase.dk) drives af [navn/firmanavn], [adresse], CVR [CVR-nummer]. Du kan altid kontakte os på [e-mail].</p>
 
-<h2>Hvad Playform er</h2>
-<p>Playform samler fitnessudstyr fra flere danske webshops ét sted. Du kan ikke købe noget direkte hos os. Når du klikker på "Gå til butik", sendes du videre til butikken, og det er butikken, der behandler dit køb og dine oplysninger i forbindelse med det.</p>
+<h2>Hvad Fitbase er</h2>
+<p>Fitbase samler fitnessudstyr fra flere danske webshops ét sted. Du kan ikke købe noget direkte hos os. Når du klikker på "Gå til butik", sendes du videre til butikken, og det er butikken, der behandler dit køb og dine oplysninger i forbindelse med det.</p>
 
 <h2>Hvilke oplysninger vi behandler</h2>
 <h3>Når du besøger siden</h3>
@@ -30,7 +30,7 @@ function playform_legal_privacy(): string {
 <p>Skriver du til os, bruger vi dine oplysninger til at svare dig. Vi sletter korrespondancen, når den ikke længere er relevant, og senest efter [antal] måneder.</p>
 
 <h2>Når du klikker videre til en butik</h2>
-<p>Linkene til butikkerne går gennem affiliate-netværket Partner-ads. Partner-ads registrerer klikket, så butikken kan se, at du kom fra Playform, og så vi kan få provision, hvis du handler. Det sker hos Partner-ads og butikken – ikke på playform.dk – og er omfattet af deres egne privatlivspolitikker. Vi får ingen oplysninger om, hvem du er, eller hvad du køber, kun at der er sket et salg.</p>
+<p>Linkene til butikkerne går gennem affiliate-netværket Partner-ads. Partner-ads registrerer klikket, så butikken kan se, at du kom fra Fitbase, og så vi kan få provision, hvis du handler. Det sker hos Partner-ads og butikken – ikke på fitbase.dk – og er omfattet af deres egne privatlivspolitikker. Vi får ingen oplysninger om, hvem du er, eller hvad du køber, kun at der er sket et salg.</p>
 
 <h2>Produktbilleder</h2>
 <p>Produktbillederne er leveret af butikkerne og gemmes på vores egen server. Når du ser et produkt, sendes din IP-adresse derfor ikke til butikkerne.</p>
@@ -52,8 +52,8 @@ function playform_legal_cookies(): string {
 	return <<<'HTML'
 <p><em>Senest opdateret: [dato]</em></p>
 
-<h2>Bruger Playform cookies?</h2>
-<p>Playform bruger ikke cookies til statistik, markedsføring eller til at følge dig. Derfor beder vi dig heller ikke om samtykke, når du besøger siden.</p>
+<h2>Bruger Fitbase cookies?</h2>
+<p>Fitbase bruger ikke cookies til statistik, markedsføring eller til at følge dig. Derfor beder vi dig heller ikke om samtykke, når du besøger siden.</p>
 
 <h2>Nødvendige cookies</h2>
 <p>Siden sætter kun cookies, hvis du logger ind som redaktør i administrationen. De er nødvendige for, at login fungerer, og bruges ikke på den offentlige del af siden.</p>

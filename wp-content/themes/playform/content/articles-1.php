@@ -78,7 +78,7 @@ return [
 <p>Er du i tvivl, så start med at se, hvilke maskiner butikkerne beskriver <a href="/traeningsmaskiner/romaskiner-crosstrainere/romaskine/romaskine-til-hjemmetraening/">til hjemmetræning</a>, eller se <a href="/traeningsmaskiner/romaskiner-crosstrainere/romaskine/">alle romaskiner</a>.</p>
 
 <h2>Hvad koster en romaskine?</h2>
-<p>Da vi skrev artiklen, lå de fleste romaskiner hos butikkerne på Playform mellem ca. 3.000 og 15.000 kr. Magnetiske modeller findes fra den billigere ende, mens vandromaskiner i træ og kraftige luftromaskiner typisk ligger fra omkring 5.000 kr og op. Prisen afhænger især af byggekvalitet, skinnens længde, displayet og om maskinen kan klappes sammen.</p>
+<p>Da vi skrev artiklen, lå de fleste romaskiner hos butikkerne på Fitbase mellem ca. 3.000 og 15.000 kr. Magnetiske modeller findes fra den billigere ende, mens vandromaskiner i træ og kraftige luftromaskiner typisk ligger fra omkring 5.000 kr og op. Prisen afhænger især af byggekvalitet, skinnens længde, displayet og om maskinen kan klappes sammen.</p>
 <p>Et godt råd: Spar hellere på ekstra funktioner end på stabiliteten. En maskine, der står roligt og har et jævnt træk, bliver brugt mere end en vakkelvorn model med mange programmer. Se også, om der er <a href="/traeningsmaskiner/romaskiner-crosstrainere/romaskine/tilbud/">tilbud på romaskiner</a> lige nu.</p>
 
 <h2>Sådan ror du rigtigt</h2>
@@ -192,7 +192,7 @@ HTML,
 </table>
 
 <h2>Hvad koster de?</h2>
-<p>Da vi skrev artiklen, lå de fleste løbebånd hos butikkerne på Playform mellem ca. 6.000 og 20.000 kr, mens de fleste crosstrainere lå mellem ca. 5.000 og 17.000 kr. Gåbånd findes typisk billigere, fra omkring 3.500 kr. Prisen afhænger især af motor og løbeflade på løbebåndet og af svinghjul, skridtlængde og stabilitet på crosstraineren.</p>
+<p>Da vi skrev artiklen, lå de fleste løbebånd hos butikkerne på Fitbase mellem ca. 6.000 og 20.000 kr, mens de fleste crosstrainere lå mellem ca. 5.000 og 17.000 kr. Gåbånd findes typisk billigere, fra omkring 3.500 kr. Prisen afhænger især af motor og løbeflade på løbebåndet og af svinghjul, skridtlængde og stabilitet på crosstraineren.</p>
 <p>Billigere modeller kan sagtens være fine til gang og rolig træning. Skal maskinen bruges hårdt eller af flere i husstanden, betaler det sig at vælge en mere robust model. Tjek også <a href="/traeningsmaskiner/tilbud/">tilbud på træningsmaskiner</a>.</p>
 
 <h2>Sådan træner du på et løbebånd</h2>
@@ -306,7 +306,7 @@ HTML,
 </ul>
 
 <h2>Hvad koster udstyret? (prisniveauer)</h2>
-<p>Da vi skrev artiklen, så prisniveauet sådan ud for størstedelen af produkterne hos butikkerne på Playform:</p>
+<p>Da vi skrev artiklen, så prisniveauet sådan ud for størstedelen af produkterne hos butikkerne på Fitbase:</p>
 <table>
 <thead><tr><th>Udstyr</th><th>Typisk prisniveau</th></tr></thead>
 <tbody>
@@ -458,7 +458,7 @@ HTML,
 <p>Se <a href="/styrketraening/vaegte-kettlebells/haandvaegte/">alle håndvægte</a>, eller kombinér med en <a href="/styrketraening/styrke-baenke/traeningsbaenk/">træningsbænk</a> for flere øvelser.</p>
 
 <h2>Hvad koster håndvægte?</h2>
-<p>Da vi skrev artiklen, lå de fleste håndvægte hos butikkerne på Playform mellem ca. 200 og 1.800 kr. Lette vinylvægte koster få hundrede kroner pr. par, mens tunge hexagon-vægte og justerbare sæt ligger højere. Justerbare håndvægte kan virke dyre, men erstatter ofte mange par faste vægte.</p>
+<p>Da vi skrev artiklen, lå de fleste håndvægte hos butikkerne på Fitbase mellem ca. 200 og 1.800 kr. Lette vinylvægte koster få hundrede kroner pr. par, mens tunge hexagon-vægte og justerbare sæt ligger højere. Justerbare håndvægte kan virke dyre, men erstatter ofte mange par faste vægte.</p>
 
 <h2>Et eksempel på et ugeprogram med håndvægte</h2>
 <p>Lav 3 sæt af 10–12 gentagelser af hver øvelse, 2–3 gange om ugen:</p>
@@ -558,7 +558,7 @@ HTML,
 <p>Se <a href="/styrketraening/styrke-baenke/power-rack/">alle power racks</a> og <a href="/styrketraening/">alt til styrketræning</a>.</p>
 
 <h2>Hvad koster et power rack?</h2>
-<p>Da vi skrev artiklen, lå de fleste power racks, half racks og squat stands hos butikkerne på Playform mellem ca. 2.000 og 13.000 kr. De billigste er typisk squat stands og lettere racks, mens solide power racks med mange huller, pull-up-stang og tilbehør ligger i den høje ende. Husk at regne stang, skiver og bænk med i budgettet.</p>
+<p>Da vi skrev artiklen, lå de fleste power racks, half racks og squat stands hos butikkerne på Fitbase mellem ca. 2.000 og 13.000 kr. De billigste er typisk squat stands og lettere racks, mens solide power racks med mange huller, pull-up-stang og tilbehør ligger i den høje ende. Husk at regne stang, skiver og bænk med i budgettet.</p>
 
 <h2>Sådan sætter du racket op</h2>
 <ol>
@@ -588,7 +588,7 @@ HTML,
 </ul>
 
 <h2>Hvad koster det samlet?</h2>
-<p>Et rack er kun begyndelsen. Da vi skrev artiklen, så prisniveauet for størstedelen af produkterne hos butikkerne på Playform sådan ud:</p>
+<p>Et rack er kun begyndelsen. Da vi skrev artiklen, så prisniveauet for størstedelen af produkterne hos butikkerne på Fitbase sådan ud:</p>
 <table>
 <thead><tr><th>Udstyr</th><th>Typisk prisniveau</th></tr></thead>
 <tbody>

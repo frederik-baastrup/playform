@@ -1,6 +1,6 @@
 <?php
 /**
- * Playform-temaet.
+ * Fitbase-temaet.
  */
 
 defined( 'ABSPATH' ) || exit;

@@ -1,4 +1,4 @@
-/* Playform – lidt JavaScript til sliders, menu, sortering og foldbar tekst. Siden virker også uden. */
+/* Fitbase – lidt JavaScript til sliders, menu, sortering og foldbar tekst. Siden virker også uden. */
 (function () {
 	// Sliders: pilene scroller én kortbredde ad gangen
 	document.querySelectorAll('[data-slider-arrows]').forEach(function (wrap) {

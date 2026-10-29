@@ -172,7 +172,7 @@ while ( have_posts() ) :
 		?>
 		<div>
 			<h2>Prishistorik</h2>
-			<p class="muted">Laveste pris pr. dag, målt af Playform</p>
+			<p class="muted">Laveste pris pr. dag, målt af Fitbase</p>
 			<?php get_template_part( 'template-parts/price-chart', null, [ 'history' => $history ] ); ?>
 		</div>
 		<?php

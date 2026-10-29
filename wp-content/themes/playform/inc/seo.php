@@ -43,7 +43,7 @@ add_filter(
 		} elseif ( is_singular( 'product' ) ) {
 			$parts['title'] = get_the_title() . ' – se pris';
 		}
-		$parts['site'] = 'Playform';
+		$parts['site'] = 'Fitbase';
 		unset( $parts['tagline'] );
 		return $parts;
 	}
@@ -68,7 +68,7 @@ add_action(
 			$id   = get_the_ID();
 			$p    = wc_get_product( $id );
 			$shop = playform_shop_name( (string) get_post_meta( $id, '_pf_best_shop', true ) );
-			$desc = $p ? sprintf( '%s til %s hos %s. Se pris, lagerstatus og prishistorik på Playform.', $p->get_name(), playform_kr( (float) $p->get_price() ), $shop ) : '';
+			$desc = $p ? sprintf( '%s til %s hos %s. Se pris, lagerstatus og prishistorik på Fitbase.', $p->get_name(), playform_kr( (float) $p->get_price() ), $shop ) : '';
 		}
 		if ( $desc ) {
 			echo '<meta name="description" content="' . esc_attr( mb_substr( $desc, 0, 160 ) ) . '">' . "\n";
