@@ -30,8 +30,15 @@ jobs:
             H=https://frederikb7.sg-host.com
             curl -sS -A "$UA" -o /dev/null -w "forside HTTP %{http_code} %{time_total}s\n" "$H/"
             for u in /tilbud/ /traeningsmaskiner/lobebaand/tilbud/ /traeningsmaskiner/romaskiner-crosstrainere/romaskine/ /produkt/powr-4-pro-kettlebell-ab16/; do
-              curl -sS -A "$UA" -o b.html -w "$u HTTP %{http_code}: " "$H$u"
-              grep -o '<h1>[^<]*</h1>\|<b>[0-9]*</b> produkter\|class="pd__trust"\|Romaskine med vand\|Lignende [a-zæøå &;]*' b.html | sort -u | tr '\n' ' '; echo
+              curl -sS -A "$UA" -o b.html -w "$u HTTP %{http_code} %{size_download}b\n" "$H$u"
+              python3 - <<'PY'
+          import re
+          h = open('b.html', encoding='utf-8', errors='replace').read()
+          print('   h1:', re.findall(r'<h1[^>]*>(.*?)</h1>', h, re.S)[:1])
+          print('   antal:', re.findall(r'<b>(\d+)</b> produkter', h)[:1])
+          print('   trust:', 'pd__trust' in h, '| faner:', re.findall(r'class="tab[^"]*"[^>]*>([^<]+)', h)[:8])
+          print('   lignende:', re.findall(r'<h2>(Lignende[^<]*)</h2>', h)[:1], '| cache:', re.findall(r'(?i)x-proxy-cache|sg-optimizer|cached', h)[:2])
+          PY
             done
           } > diag.txt 2>&1
           exit 0
