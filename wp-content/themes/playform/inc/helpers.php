@@ -26,6 +26,7 @@ function playform_icon( string $name, int $size = 20, float $stroke = 1.6 ): str
 		'plus'        => '<path d="M12 5v14M5 12h14"/>',
 		'grid'        => '<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>',
 		'refresh'     => '<path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 4v5h-5"/>',
+		'tag'         => '<path d="M3 12V4h8l9 9-8 8-9-9z"/><circle cx="7.5" cy="7.5" r="1.2"/>',
 		'store'       => '<path d="M3 9l1.5-5h15L21 9"/><path d="M3 9v11h18V9"/><path d="M3 9h18"/><path d="M9 20v-6h6v6"/>',
 		'filter'      => '<path d="M4 6h16M7 12h10M10 18h4"/>',
 		'menu'        => '<path d="M4 7h16M4 12h16M4 17h16"/>',

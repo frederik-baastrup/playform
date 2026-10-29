@@ -75,6 +75,7 @@ $has_deals = count( $deals ) >= 4;
 		<div class="usp__item"><span class="usp__icon"><?php echo playform_icon( 'grid', 22, 1.4 ); // phpcs:ignore ?></span><span><b>Alt udstyr ét sted</b><span>Produkter fra flere danske shops</span></span></div>
 		<div class="usp__item"><span class="usp__icon"><?php echo playform_icon( 'refresh', 22, 1.4 ); // phpcs:ignore ?></span><span><b>Opdateret 2× dagligt</b><span>Aktuelle priser og lagerstatus</span></span></div>
 		<div class="usp__item"><span class="usp__icon"><?php echo playform_icon( 'store', 22, 1.4 ); // phpcs:ignore ?></span><span><b>Køb direkte i butikken</b><span>Du handler hos shoppen som normalt</span></span></div>
+		<a class="usp__item" href="<?php echo esc_url( playform_tilbud_url() ); ?>"><span class="usp__icon"><?php echo playform_icon( 'tag', 22, 1.4 ); // phpcs:ignore ?></span><span><b>Butikkernes tilbud</b><span>Aktuelle tilbud samlet ét sted</span></span></a>
 	</div>
 </section>
 

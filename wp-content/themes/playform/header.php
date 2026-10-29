@@ -74,7 +74,8 @@
 										<?php endif; ?>
 										<a href="<?php echo esc_url( $p['tilbud'] ); ?>" class="mm__promo">
 											<img src="<?php echo esc_url( $p['img'] ); ?>" alt="" loading="lazy">
-											<span>Tilbud på <?php echo esc_html( mb_strtolower( $p['label'] ) ); ?></span>
+											<span class="mm__promo-body"><span class="mm__promo-title">Tilbud på <?php echo esc_html( mb_strtolower( $p['label'] ) ); ?></span><span class="mm__promo-sub">Butikkernes aktuelle tilbud</span></span>
+											<span class="mm__promo-arrow" aria-hidden="true"><?php echo playform_icon( 'arrow-right', 18, 1.4 ); // phpcs:ignore ?></span>
 										</a>
 									</div>
 								<?php endforeach; ?>
