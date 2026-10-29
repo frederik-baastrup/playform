@@ -1,0 +1,18 @@
+forside HTTP 200 5.161898s: <title>Playform | Playform</title>
+forside HTTP 200 0.926860s: <title>Playform | Playform</title>
+forside HTTP 200 0.847061s: <title>Playform | Playform</title>
+-rw-r--r-- 1306     1306         3634 Oct 28 18:14 frederikb7.sg-host.com/public_html/wp-config.php
+-rw-r--r-- 1306     1306          636 Oct 28 18:14 frederikb7.sg-host.com/public_html/php_errorlog
+-rw-r--r-- 1306     1306           53 Oct 29 11:43 frederikb7.sg-host.com/public_html/wp-content/playform-deploy.txt
+== seneste linjer i php_errorlog (filtreret) ==
+[31-Jul-2026 06:52:53 UTC] wp_auto_login: trying to login user_id==1 loginusername=frederikbaastrup@gmail.com to admin_url=https://frederikb7.sg-host.com/wp-admin/?sg_auto=1
+[19-Aug-2026 08:10:40 UTC] Fejl i Cron unschedule event for hook: siteground_optimizer_purge_cron_cache, Fejlkode: could_not_set, Fejlmeddelelse: Listen over Cron begivenheder kunne ikke gemmes., Data: {"schedule":false,"args":[]}
+[28-Oct-2026 18:14:16 UTC] Event reschedule cron-fejl for hook: action_scheduler_run_queue, fejlkode: invalid_schedule, Fejlbesked: Begivenheden er ikke planlagt., Data: {"schedule":"every_minute","args":["WP Cron"],"interval":60}
+== wp-config (kun navne på DB-konstanter, ingen værdier) ==
+define( 'DB_NAME'
+define( 'DB_USER'
+define( 'DB_PASSWORD'
+define( 'DB_HOST'
+define( 'DB_CHARSET'
+define( 'DB_COLLATE'
+1
