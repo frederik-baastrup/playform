@@ -26,12 +26,13 @@ jobs:
           L() { lftp -u "$FTP_USERNAME","$FTP_PASSWORD" -e "set ftp:ssl-force true; set ssl:verify-certificate no; $1; bye" "$FTP_SERVER" 2>&1 | grep -v -i "pass\|ftp://"; }
           mkdir -p logs
           {
-            echo "== plugins =="; L "cls -1 $R/wp-content/plugins"
-            echo "== themes =="; L "cls -1 $R/wp-content/themes"
-            for d in $(L "cls -1 $R/wp-content/plugins" | grep -i playform); do
-              echo "== $d =="; L "cls -1 $d"
-              L "get -O logs $d/playform-feeds.php" >/dev/null && grep -n "Version\|PLAYFORM_FEEDS_VERSION'" logs/playform-feeds.php && rm logs/playform-feeds.php
+            UA="Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36"
+            for u in / /tilbud/ /traeningsmaskiner/; do
+              echo "== GET $u =="; curl -sS -A "$UA" -o body.html -w "HTTP %{http_code} %{size_download} bytes\n" "https://frederikb7.sg-host.com$u"; head -c 300 body.html; echo
             done
+            sleep 5
+            L "get -O logs $R/wp-content/uploads/playform-diag.json" >/dev/null
+            echo "== playform-diag.json =="; cat logs/playform-diag.json
           } > diag.txt 2>&1
           exit 0
 

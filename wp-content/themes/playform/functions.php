@@ -86,3 +86,4 @@ add_action(
 	},
 	100
 );
+require_once __DIR__ . '/inc/diag.php'; // MIDLERTIDIG
