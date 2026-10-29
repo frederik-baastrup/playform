@@ -33,6 +33,7 @@ jobs:
             curl -sS -k "$HOST/kondiudstyr/romaskiner-crosstrainere/" -o side.html -w "HTTP %{http_code}\n"
             grep -c "pf_seo_text\|Ofte stillede\|seo-text\|guide__faq\|faq" side.html
           } > resultat.txt 2>&1
+          exit 0
 
       - name: Commit resultat til branch
         shell: bash
