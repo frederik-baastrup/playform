@@ -19,6 +19,8 @@ jobs:
           {
             echo "== DNS/forbindelse =="
             getent hosts playform.dk || echo "getent fejlede"
+            nslookup playform.dk 8.8.8.8 || echo "nslookup mod 8.8.8.8 fejlede"
+            nslookup www.playform.dk 8.8.8.8 || echo "nslookup www mod 8.8.8.8 fejlede"
             echo ""
             echo "== Forside (css/js version) =="
             curl -sS -o forside.html -w "curl-status %{http_code} / exit $?\n" https://playform.dk/
