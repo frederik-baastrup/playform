@@ -51,6 +51,24 @@
 		});
 	});
 
+	// Smal skærm: luppen folder søgefeltet ud under logoet
+	var searchToggle = document.querySelector('.search-toggle');
+	var closeSearch = function () {
+		if (!header || !header.classList.contains('is-search-open')) return;
+		header.classList.remove('is-search-open');
+		if (searchToggle) searchToggle.setAttribute('aria-expanded', 'false');
+	};
+	if (searchToggle && header) {
+		searchToggle.addEventListener('click', function () {
+			if (header.classList.contains('is-search-open')) { closeSearch(); return; }
+			if (drawer && drawer.classList.contains('is-open')) toggle.click();
+			header.classList.add('is-search-open');
+			searchToggle.setAttribute('aria-expanded', 'true');
+			var field = document.getElementById('site-search');
+			if (field) field.focus();
+		});
+	}
+
 	// Mobilmenu: skuffe med lag (menupunkt → kategori). Links med data-to åbner næste lag i stedet for siden.
 	var toggle = document.querySelector('.menu-toggle');
 	var drawer = document.getElementById('mobilmenu');
@@ -66,13 +84,18 @@
 			});
 		};
 		var openDrawer = function () {
+			if (header) {
+				header.classList.remove('is-tucked');
+				closeSearch();
+				document.documentElement.style.setProperty('--dr-top', Math.max(0, header.getBoundingClientRect().bottom) + 'px');
+			}
 			drawer.removeAttribute('inert');
 			drawer.setAttribute('aria-hidden', 'false');
 			drawer.classList.add('is-open');
 			if (drawerBg) { drawerBg.hidden = false; requestAnimationFrame(function () { drawerBg.classList.add('is-open'); }); }
 			document.documentElement.classList.add('dr-lock');
 			toggle.setAttribute('aria-expanded', 'true');
-			setTimeout(function () { drawer.querySelector('.dr__close').focus({ preventScroll: true }); }, 50);
+			toggle.setAttribute('aria-label', 'Luk menu');
 		};
 		var closeDrawer = function () {
 			drawer.classList.remove('is-open');
@@ -81,10 +104,11 @@
 			drawer.setAttribute('inert', '');
 			document.documentElement.classList.remove('dr-lock');
 			toggle.setAttribute('aria-expanded', 'false');
+			toggle.setAttribute('aria-label', 'Åbn menu');
 			// Start forfra næste gang, når skuffen er gledet ud
 			setTimeout(function () { if (!drawer.classList.contains('is-open')) { stack = ['root']; paint(); drawer.querySelectorAll('.dr__view').forEach(function (v) { v.scrollTop = 0; }); } }, 350);
 		};
-		toggle.addEventListener('click', openDrawer);
+		toggle.addEventListener('click', function () { if (drawer.classList.contains('is-open')) closeDrawer(); else openDrawer(); });
 		if (drawerBg) drawerBg.addEventListener('click', closeDrawer);
 		drawer.addEventListener('click', function (e) {
 			var to = e.target.closest('[data-to]');
@@ -98,8 +122,7 @@
 				if (b) setTimeout(function () { b.focus({ preventScroll: true }); }, 50);
 				return;
 			}
-			if (e.target.closest('[data-back]')) { if (stack.length > 1) { stack.pop(); paint(); } return; }
-			if (e.target.closest('[data-close]')) closeDrawer();
+			if (e.target.closest('[data-back]') && stack.length > 1) { stack.pop(); paint(); }
 		});
 		document.addEventListener('keydown', function (e) {
 			if (e.key !== 'Escape' || !drawer.classList.contains('is-open')) return;

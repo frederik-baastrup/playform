@@ -115,7 +115,8 @@
 				<a href="<?php echo esc_url( home_url( '/viden/' ) ); ?>">Guides</a>
 				<a href="<?php echo esc_url( playform_tilbud_url() ); ?>" class="knowledge__sale">Tilbud</a>
 			</nav>
-			<button type="button" class="menu-toggle" aria-expanded="false" aria-controls="mobilmenu" aria-label="Åbn menu"><?php echo playform_icon( 'menu', 24, 1.6 ); // phpcs:ignore ?></button>
+			<button type="button" class="search-toggle" aria-expanded="false" aria-controls="site-search" aria-label="Søg"><?php echo playform_icon( 'search', 22, 1.6 ); // phpcs:ignore ?></button>
+			<button type="button" class="menu-toggle" aria-expanded="false" aria-controls="mobilmenu" aria-label="Åbn menu"><span class="burger" aria-hidden="true"><i></i><i></i><i></i></span></button>
 		</div>
 	</div>
 </header>

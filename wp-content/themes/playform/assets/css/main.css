@@ -16,6 +16,7 @@
 	--r-s: 10px;
 	--r: 14px;
 	--r-l: 18px;
+	--top-gap: 48px; /* luft fra menuen til brødkrummer/overskrift */
 	--font: 'BDO Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 *, *::before, *::after { box-sizing: border-box; }
@@ -53,6 +54,7 @@ button, input, select { font-family: inherit; }
 .knowledge .knowledge__sale { color: var(--sale); }
 /* Tilbud står yderst til højre ved Viden og Guides; er de skjult (smal skærm), står det i menuen. */
 @media (min-width: 1181px) { .mm > .mm__item--plain { display: none; } }
+.search-toggle { display: none; }
 .menu-toggle { display: none; margin-left: auto; width: 44px; height: 44px; border: 1px solid var(--line-2); border-radius: 50%; background: #fff; align-items: center; justify-content: center; cursor: pointer; color: var(--ink); }
 
 /* Søgning: lille felt, der vokser hen over menuen */
@@ -136,32 +138,44 @@ button, input, select { font-family: inherit; }
 
 /* Smal skærm: logo + menuknap på første linje, søgning under. Menuen er skuffen nedenfor. */
 @media (max-width: 1080px) {
+	:root { --top-gap: 32px; }
 	.site-header { position: sticky; top: 0; transition: transform .3s ease; }
 	.site-header.is-tucked { transform: translateY(-100%); }
 	.site-header__row { flex-wrap: wrap; height: auto; gap: 10px 12px; padding: 10px 0 12px; }
 	.logo img { height: 22px; }
 	.mm { display: none; }
-	.menu-toggle { display: inline-flex; width: 44px; height: 44px; margin-right: -10px; border: 0; border-radius: 12px; background: none; }
-	.menu-toggle:active { background: var(--soft); }
-	.search { order: 3; flex: 0 0 100%; margin-left: 0; height: 44px; }
+	.menu-toggle, .search-toggle { display: inline-flex; width: 44px; height: 44px; border: 0; border-radius: 12px; background: none; }
+	.search-toggle { margin-left: auto; align-items: center; justify-content: center; color: var(--ink); cursor: pointer; }
+	.menu-toggle { margin: 0 -10px 0 0; }
+	.menu-toggle:active, .search-toggle:active { background: var(--soft); }
+	/* Søgefeltet er gemt bag luppen og folder sig ud under logoet */
+	.search { display: none; order: 3; flex: 0 0 100%; margin-left: 0; height: 44px; }
+	.site-header.is-search-open .search { display: flex; }
 	.search input { font-size: 16px; } /* 16 px: iPhone zoomer ikke ind */
 	.search__drop { top: calc(100% + 8px); padding: 18px 16px 20px; max-height: calc(100dvh - 160px); overflow-y: auto; }
 	.search__prods { grid-template-columns: minmax(0, 1fr); }
 }
 
-/* Mobilmenu (skuffe) */
-.dr { position: fixed; inset: 0; z-index: 200; display: flex; flex-direction: column; background: #fff; transform: translateX(100%); visibility: hidden; transition: transform .32s cubic-bezier(.32,.72,0,1), visibility 0s linear .32s; }
+/* Hamburger, der bliver til et kryds */
+.burger { position: relative; display: block; width: 22px; height: 16px; }
+.burger i { position: absolute; left: 0; width: 100%; height: 1.6px; border-radius: 2px; background: currentColor; transition: transform .3s cubic-bezier(.32,.72,0,1), opacity .2s ease, top .3s cubic-bezier(.32,.72,0,1); }
+.burger i:nth-child(1) { top: 0; }
+.burger i:nth-child(2) { top: 7.2px; }
+.burger i:nth-child(3) { top: 14.4px; }
+.menu-toggle[aria-expanded="true"] .burger i:nth-child(1) { top: 7.2px; transform: rotate(45deg); }
+.menu-toggle[aria-expanded="true"] .burger i:nth-child(2) { opacity: 0; transform: scaleX(.3); }
+.menu-toggle[aria-expanded="true"] .burger i:nth-child(3) { top: 7.2px; transform: rotate(-45deg); }
+
+/* Mobilmenu (skuffe) – åbner under headeren, så hamburgeren kan lukke den igen */
+.dr { position: fixed; top: var(--dr-top, 0); right: 0; bottom: 0; left: 0; z-index: 45; display: flex; flex-direction: column; background: #fff; transform: translateX(100%); visibility: hidden; transition: transform .32s cubic-bezier(.32,.72,0,1), visibility 0s linear .32s; }
 .dr.is-open { transform: none; visibility: visible; transition: transform .32s cubic-bezier(.32,.72,0,1), visibility 0s; }
 @media (min-width: 1081px) { .dr { display: none !important; } }
 html.dr-lock, html.dr-lock body { overflow: hidden; }
-.dr-bg { position: fixed; inset: 0; z-index: 199; background: rgba(17,17,17,.4); opacity: 0; transition: opacity .3s ease; }
+.dr-bg { position: fixed; top: var(--dr-top, 0); right: 0; bottom: 0; left: 0; z-index: 44; background: rgba(17,17,17,.4); opacity: 0; transition: opacity .3s ease; }
 .dr-bg.is-open { opacity: 1; }
 @media (min-width: 600px) { .dr { left: auto; width: 440px; box-shadow: -24px 0 48px rgba(17,17,17,.12); } }
 @media (max-width: 599px), (min-width: 1081px) { .dr-bg { display: none !important; } }
-.dr__top { flex: 0 0 auto; display: flex; align-items: center; justify-content: space-between; height: 64px; padding: 0 6px 0 16px; border-bottom: 1px solid #EDEDE8; }
-.dr__top .logo img { height: 22px; }
-.dr__close { width: 44px; height: 44px; border: 0; border-radius: 12px; background: none; display: inline-flex; align-items: center; justify-content: center; color: var(--ink); cursor: pointer; }
-.dr__close:active, .dr__back:active { background: var(--soft); }
+.dr__back:active { background: var(--soft); }
 .dr__views { position: relative; flex: 1 1 auto; overflow: hidden; }
 .dr__view { position: absolute; inset: 0; visibility: hidden; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding: 8px 16px 32px; background: #fff; transform: translateX(100%); transition: transform .32s cubic-bezier(.32,.72,0,1), visibility 0s linear .32s; }
 .dr__view.is-active, .dr__view.is-behind { visibility: visible; transition: transform .32s cubic-bezier(.32,.72,0,1), visibility 0s; }
@@ -322,8 +336,8 @@ a.usp__item:hover b { text-decoration: underline; text-underline-offset: 3px; }
 .crumbs { display: flex; flex-wrap: wrap; gap: 8px; font-size: 13px; color: var(--muted-2); }
 .crumbs a { color: var(--muted-2); }
 .crumbs [aria-current] { color: var(--ink); }
-.cat-top { padding-top: 24px; }
-.cat-top__head { display: flex; flex-direction: column; gap: 12px; max-width: 720px; margin-top: 16px; }
+.cat-top { padding-top: var(--top-gap); }
+.cat-top__head { display: flex; flex-direction: column; gap: 14px; max-width: 720px; margin-top: 22px; }
 .cat-top h1 { font-size: 48px; letter-spacing: -1px; line-height: 1; }
 .cat-top p { margin: 0; color: var(--ink-2); line-height: 1.6; }
 .tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; overflow-x: auto; scrollbar-width: none; }
@@ -385,7 +399,7 @@ a.usp__item:hover b { text-decoration: underline; text-underline-offset: 3px; }
 .faq p { margin: 0 0 20px; max-width: 720px; line-height: 1.7; color: var(--ink-2); }
 
 /* Produktside */
-.pd-top { padding-top: 24px; }
+.pd-top { padding-top: var(--top-gap); }
 .pd { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 56px; align-items: start; margin-top: 20px; }
 .pd__media { position: relative; aspect-ratio: 1 / 1; border-radius: var(--r-l); background: var(--img); display: flex; align-items: center; justify-content: center; overflow: hidden; }
 .pd__media img { width: 84%; height: 84%; object-fit: contain; mix-blend-mode: multiply; }
@@ -460,7 +474,7 @@ a.usp__item:hover b { text-decoration: underline; text-underline-offset: 3px; }
 .pc__minus { font-weight: 700; color: var(--sale); }
 
 /* Guides */
-.guide__head { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; padding-top: 24px; max-width: 900px; }
+.guide__head { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; padding-top: var(--top-gap); max-width: 900px; }
 .guide__head h1 { font-size: 48px; letter-spacing: -1px; line-height: 1.05; }
 .guide__lead { margin: 0; font-size: 18px; line-height: 1.6; color: var(--ink-2); max-width: 720px; }
 .guide__meta { font-size: 13px; color: var(--muted-2); }
@@ -494,7 +508,7 @@ a.usp__item:hover b { text-decoration: underline; text-underline-offset: 3px; }
 .guide-more { padding-bottom: 96px; }
 
 /* Indholdssider */
-.page-wrap { padding-top: 40px; padding-bottom: 96px; max-width: 820px; }
+.page-wrap { padding-top: var(--top-gap); padding-bottom: 96px; max-width: 820px; }
 .page-wrap h1 { font-size: 44px; letter-spacing: -1px; margin-bottom: 24px; }
 
 /* Footer */

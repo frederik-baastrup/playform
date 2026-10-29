@@ -35,13 +35,6 @@ $head = static function ( string $title ) use ( $back ): void {
 ?>
 <div class="dr-bg" data-close-bg hidden></div>
 <div class="dr" id="mobilmenu" aria-label="Menu" role="dialog" aria-modal="true" aria-hidden="true" inert>
-	<div class="dr__top">
-		<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="logo" aria-label="Fitbase forside">
-			<img src="<?php echo esc_url( playform_asset( 'logo.svg' ) ); ?>" alt="Fitbase" width="124" height="22">
-		</a>
-		<button type="button" class="dr__close" data-close aria-label="Luk menu"><?php echo playform_icon( 'close', 22, 1.6 ); // phpcs:ignore ?></button>
-	</div>
-
 	<div class="dr__views">
 		<?php // Lag 1: menupunkterne ?>
 		<section class="dr__view is-active" data-view="root">
