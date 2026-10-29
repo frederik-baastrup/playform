@@ -669,3 +669,6 @@ a.usp__item:hover b { text-decoration: underline; text-underline-offset: 3px; }
 .guides-index a.page-numbers:hover { border-color: var(--ink); }
 /* Faner på mobil: én linje, der kan skubbes sidelæns */
 @media (max-width: 640px) { .tabs { flex-wrap: nowrap; margin-right: -16px; padding-right: 16px; } .tab { flex: 0 0 auto; } }
+/* Søgefelt: tydelig kant ved hover, så det føles klikbart */
+.search:hover { border-color: var(--ink); background: #fff; cursor: text; }
+.search:hover > svg { color: var(--ink); }
