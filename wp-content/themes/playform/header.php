@@ -12,20 +12,31 @@
 
 <?php
 $pf_money = home_url( '/saadan-tjener-vi-penge/' );
-$pf_ico   = static fn( string $n ): string => playform_icon( $n, 13, 1.5 );
-$pf_shops = count( playform_shop_names() );
+$pf_usps  = [
+	[ 'grid', 'Flere danske shops', 'samlet ét sted' ],
+	[ 'tag', 'Aktuelle tilbud', 'fra butikkerne' ],
+	[ 'refresh', 'Friske priser', 'to gange dagligt' ],
+	[ 'store', 'Køb direkte', 'hos butikken' ],
+];
 ?>
 <div class="topbar">
 	<div class="wrap topbar__in">
 		<ul class="topbar__usp">
-			<li><?php echo $pf_ico( 'grid' ); // phpcs:ignore ?><?php echo $pf_shops ? esc_html( $pf_shops ) . ' danske shops samlet ét sted' : 'Danske shops samlet ét sted'; ?></li>
-			<li class="topbar__extra"><a href="<?php echo esc_url( playform_tilbud_url() ); ?>"><?php echo $pf_ico( 'tag' ); // phpcs:ignore ?>Butikkernes tilbud samlet ét sted</a></li>
-			<li class="topbar__extra"><?php echo $pf_ico( 'refresh' ); // phpcs:ignore ?>Priser opdateres 2× dagligt</li>
-			<li class="topbar__extra"><?php echo $pf_ico( 'store' ); // phpcs:ignore ?>Du handler direkte hos butikken</li>
+			<?php foreach ( $pf_usps as [ $icon, $lead, $rest ] ) : ?>
+				<li><?php echo playform_icon( $icon, 14, 1.5 ); // phpcs:ignore ?><span><b><?php echo esc_html( $lead ); ?></b> <?php echo esc_html( $rest ); ?></span></li>
+			<?php endforeach; ?>
 		</ul>
 		<a class="topbar__ad" href="<?php echo esc_url( $pf_money ); ?>"><span class="topbar__tag">Annonce</span>Siden indeholder affiliate-links</a>
 	</div>
-	<a class="topbar__mob" href="<?php echo esc_url( $pf_money ); ?>"><span class="topbar__tag">Annonce</span><?php echo $pf_ico( 'refresh' ); // phpcs:ignore ?>Priser opdateres 2× dagligt</a>
+	<?php // Mobil: én linje, hvor fordelene skifter roligt ?>
+	<div class="topbar__mob">
+		<a class="topbar__tag" href="<?php echo esc_url( $pf_money ); ?>">Annonce</a>
+		<span class="topbar__rot" aria-live="off">
+			<?php foreach ( $pf_usps as $i => [ $icon, $lead, $rest ] ) : ?>
+				<span class="topbar__msg<?php echo $i === 0 ? ' is-on' : ''; ?>"><?php echo playform_icon( $icon, 13, 1.5 ); // phpcs:ignore ?><b><?php echo esc_html( $lead ); ?></b> <?php echo esc_html( $rest ); ?></span>
+			<?php endforeach; ?>
+		</span>
+	</div>
 </div>
 
 <header class="site-header">

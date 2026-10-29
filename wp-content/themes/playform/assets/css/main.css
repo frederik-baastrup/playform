@@ -37,14 +37,15 @@ button, input, select { font-family: inherit; }
 :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
 /* Topbar */
-.topbar { background: var(--ink); color: #A8A8A2; font-size: 11.5px; line-height: 1; letter-spacing: .1px; }
-.topbar__in { display: flex; align-items: center; justify-content: space-between; gap: 24px; height: 32px; }
-.topbar__usp { display: flex; gap: 24px; margin: 0; padding: 0; list-style: none; }
-.topbar__usp li a { display: inline-flex; align-items: center; gap: 7px; color: inherit; transition: color .2s ease; }
-.topbar__usp li a:hover { color: #fff; }
-.topbar__usp li, .topbar__mob { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
-.topbar svg { flex: 0 0 auto; color: #7E7E78; }
-.topbar__ad { display: inline-flex; align-items: center; gap: 8px; color: #A8A8A2; white-space: nowrap; transition: color .2s ease; }
+.topbar { background: var(--ink); color: rgba(255,255,255,.58); font-size: 11.5px; line-height: 1; letter-spacing: .1px; }
+.topbar b { font-weight: 600; color: #fff; }
+.topbar__in { display: flex; align-items: center; justify-content: space-between; gap: 24px; height: 34px; }
+.topbar__usp { display: flex; align-items: center; margin: 0; padding: 0; list-style: none; }
+.topbar__usp li { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+/* Tynd lodret streg mellem fordelene */
+.topbar__usp li + li { margin-left: 18px; padding-left: 18px; border-left: 1px solid rgba(255,255,255,.14); }
+.topbar svg { flex: 0 0 auto; color: #fff; }
+.topbar__ad { display: inline-flex; align-items: center; gap: 8px; color: rgba(255,255,255,.58); white-space: nowrap; transition: color .2s ease; }
 .topbar__ad:hover { color: #fff; }
 .topbar__tag { padding: 3px 6px 2px; border: 1px solid rgba(255,255,255,.2); border-radius: 999px; font-size: 9.5px; font-weight: 600; letter-spacing: .5px; text-transform: uppercase; color: #D9D9D4; }
 
@@ -138,10 +139,14 @@ button, input, select { font-family: inherit; }
 /* Topbar på mobil: én kort linje */
 .topbar__mob { display: none !important; }
 @media (max-width: 700px) { .topbar__mob { display: flex !important; } }
+.topbar__mob { align-items: center; justify-content: center; gap: 10px; height: 32px; padding: 0 16px; }
+.topbar__mob .topbar__tag:hover { color: #fff; }
+.topbar__rot { position: relative; display: inline-grid; }
+.topbar__msg { grid-area: 1 / 1; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; opacity: 0; transform: translateY(6px); transition: opacity .45s ease, transform .45s ease; }
+.topbar__msg.is-on { opacity: 1; transform: none; }
+.topbar__msg svg { margin-right: 4px; }
 @media (max-width: 700px) {
 	.topbar__in { display: none; }
-	.topbar__mob { display: flex; justify-content: center; gap: 7px; height: 30px; padding: 0 16px; font-size: 11px; }
-	.topbar__mob .topbar__tag { margin-right: 4px; }
 }
 
 /* Smal skærm: logo + menuknap på første linje, søgning under. Menuen er skuffen nedenfor. */
@@ -564,8 +569,8 @@ a.usp__item:hover b { text-decoration: underline; text-underline-offset: 3px; }
 	.foot { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 	.section__head h2 { white-space: normal; }
 }
-@media (max-width: 1320px) { .topbar__usp li:nth-child(4) { display: none; } }
+@media (max-width: 1360px) { .topbar__usp li:nth-child(4) { display: none; } }
 @media (max-width: 1180px) { .topbar__usp li:nth-child(3) { display: none; } }
-.topbar a.topbar__mob, .topbar a.topbar__mob:hover { color: #A8A8A2; }
+@media (max-width: 900px) { .topbar__usp li:nth-child(2) { display: none; } }
 @media (min-width: 1081px) { .mm { flex-shrink: 0; } }
 .search input { text-overflow: ellipsis; } .search input::placeholder { text-overflow: ellipsis; }

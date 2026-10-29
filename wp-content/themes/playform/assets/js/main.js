@@ -51,6 +51,18 @@
 		});
 	});
 
+	// Topbar på mobil: fordelene skifter roligt hvert 4. sekund
+	var msgs = document.querySelectorAll('.topbar__msg');
+	if (msgs.length > 1 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+		var cur = 0;
+		setInterval(function () {
+			if (document.hidden) return;
+			msgs[cur].classList.remove('is-on');
+			cur = (cur + 1) % msgs.length;
+			msgs[cur].classList.add('is-on');
+		}, 4000);
+	}
+
 	// Smal skærm: luppen folder søgefeltet ud under logoet
 	var searchToggle = document.querySelector('.search-toggle');
 	var closeSearch = function () {
