@@ -732,7 +732,6 @@ a.usp__item:hover b { text-decoration: underline; text-underline-offset: 3px; }
 	.tldr__item img, .tldr__ph { width: 48px; height: 48px; }
 	.tldr__price { grid-column: 3; font-size: 14px; }
 }
-.guide__body .pick-verdict { padding-left: 14px; border-left: 2px solid var(--accent); font-size: 17px; color: var(--ink); }
 .guide__body .guide-products { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px 16px; }
 .guide__body .btn-ghost { display: inline-flex; align-items: center; height: 44px; padding: 0 20px; border: 1px solid var(--line-2); border-radius: 999px; font-size: 14px; font-weight: 600; }
 .guide__body .btn-ghost:hover { border-color: var(--ink); }
@@ -786,3 +785,8 @@ ul.guide__facts { display: inline-flex; flex-wrap: wrap; align-items: center; ma
 .pick-alt__item b { font-size: 14px; font-weight: 600; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pick-alt__item small { font-size: 12.5px; color: var(--muted-2); }
 .guide__body a.pick-alt__cta { padding: 8px 16px 7px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 13px; font-weight: 600; text-decoration: none; }
+/* "Kort sagt" hænger sammen med produktkortet som en fod – ikke som et citat */
+.pick:has(+ .pick-verdict) { margin-bottom: 0; border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+.guide__body .pick-verdict { display: flex; flex-direction: column; gap: 6px; margin: 0 0 28px; padding: 16px 20px 18px; border: 1px solid var(--line-2); border-top: 0; border-radius: 0 0 var(--r-l) var(--r-l); background: var(--soft); font-size: 16px; line-height: 1.55; color: var(--ink); }
+.guide__body .pick-verdict b { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; color: var(--muted); }
+.guide__body .pick-verdict b::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
