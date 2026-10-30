@@ -797,18 +797,20 @@ ul.guide__facts { display: inline-flex; flex-wrap: wrap; align-items: center; ma
 .guide__body .pick__facts { padding: 0 !important; margin: 0 !important; }
 @media (max-width: 760px) { .guide__body h2[id^="valg-"] { margin-top: 64px; } .guide__body h2#valg-1 { margin-top: 44px; } }
 
-/* Artikelhoved: kompakt linje med forfatter og fakta */
-.guide__head .guide__meta--line { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 0; max-width: none; margin-top: 4px; padding-top: 0; border-top: 0; font-size: 13.5px; color: var(--muted-2); }
-.guide__meta--line .byline { gap: 10px; margin-right: 18px; }
-.guide__meta--line .byline .avatar-pf { box-shadow: none; }
-.guide__meta--line .byline b { font-size: 14px; font-weight: 600; color: var(--ink); }
-.guide__fact { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; color: var(--muted-2); }
-.guide__fact + .guide__fact::before { content: ""; width: 3px; height: 3px; margin: 0 10px; border-radius: 50%; background: currentColor; opacity: .5; }
-.guide__fact--ok svg { color: var(--accent); }
-a.guide__fact--ad { color: var(--muted-2); text-decoration: underline; text-decoration-color: var(--line-2); text-underline-offset: 3px; }
-a.guide__fact--ad:hover { color: var(--ink); text-decoration-color: currentColor; }
+/* Artikelhoved: brødkrumme uden titel (den står lige under), emne i infolinjen */
+.guide__head .crumbs [aria-current], .guide__head .crumbs span[aria-hidden]:nth-last-child(2) { display: none; }
+.guide__head .crumbs { margin-bottom: 4px; }
+.byline__txt b span { font-weight: 400; color: var(--muted-2); }
+.guide__cat { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; color: var(--ink); }
+.guide__cat i { width: 6px; height: 6px; margin: 0 2px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px rgba(35,210,0,.15); }
+.guide__cat:hover { text-decoration: underline; text-underline-offset: 3px; }
+@media (min-width: 1081px) {
+	.guide__head { max-width: 1080px; }
+	.guide__head .guide__lead { max-width: 720px; }
+	.guide__head .guide__meta { max-width: none; gap: 16px 28px; }
+	.guide__head .guide__trust { margin-left: auto; }
+}
 @media (max-width: 760px) {
-	.guide__meta--line .byline { flex-basis: 100%; margin: 0 0 4px; }
-	.guide__head .guide__meta--line { gap: 6px 14px; font-size: 13px; }
-	.guide__fact + .guide__fact::before { display: none; }
+	ul.guide__facts { gap: 8px 16px; }
+	.guide__facts > li + li { margin-left: 0; padding-left: 0; border-left: 0; }
 }
