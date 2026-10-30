@@ -25,19 +25,17 @@ while ( have_posts() ) :
 			<h1><?php the_title(); ?></h1>
 			<?php if ( has_excerpt() ) : ?><p class="guide__lead"><?php echo esc_html( get_the_excerpt() ); ?></p><?php endif; ?>
 			<?php $checked = (string) get_post_meta( get_the_ID(), '_pf_checked', true ); ?>
-			<div class="guide__meta">
+			<div class="guide__meta guide__meta--line">
 				<a class="byline" href="<?php echo esc_url( $author['url'] ); ?>" rel="author">
-					<?php echo playform_author_avatar( $author, 46 ); // phpcs:ignore ?>
-					<span class="byline__txt"><b><?php echo esc_html( $author['name'] ); ?></b><em><?php echo esc_html( $author['role'] ); ?> hos Fitbase</em></span>
+					<?php echo playform_author_avatar( $author, 30 ); // phpcs:ignore ?>
+					<b><?php echo esc_html( $author['name'] ); ?></b>
 				</a>
-				<ul class="guide__facts">
-					<li><?php echo playform_icon( 'calendar', 15, 1.4 ); // phpcs:ignore ?>Opdateret <time datetime="<?php echo esc_attr( get_the_modified_date( 'c' ) ); ?>"><?php echo esc_html( $updated ); ?></time></li>
-					<li><?php echo playform_icon( 'clock', 15, 1.4 ); // phpcs:ignore ?><?php echo (int) playform_read_minutes( $html ); ?> min. læsning</li>
-					<?php if ( $checked && playform_picks() ) : ?>
-						<li><?php echo playform_icon( 'refresh', 15, 1.4 ); // phpcs:ignore ?>Produkter tjekket <?php echo esc_html( wp_date( 'j. M', strtotime( $checked ) ) ); ?></li>
-					<?php endif; ?>
-				</ul>
-				<a class="guide__trust" href="<?php echo esc_url( home_url( '/saadan-tjener-vi-penge/' ) ); ?>"><?php echo playform_icon( 'tag', 14, 1.6 ); // phpcs:ignore ?>Indeholder affiliate-links</a>
+				<span class="guide__fact">Opdateret <time datetime="<?php echo esc_attr( get_the_modified_date( 'c' ) ); ?>"><?php echo esc_html( get_the_modified_date( 'j. M Y' ) ); ?></time></span>
+				<span class="guide__fact"><?php echo (int) playform_read_minutes( $html ); ?> min. læsning</span>
+				<?php if ( $checked && playform_picks() ) : ?>
+					<span class="guide__fact guide__fact--ok"><?php echo playform_icon( 'check', 13, 2 ); // phpcs:ignore ?>Produkter tjekket <?php echo esc_html( wp_date( 'j. M', strtotime( $checked ) ) ); ?></span>
+				<?php endif; ?>
+				<a class="guide__fact guide__fact--ad" href="<?php echo esc_url( home_url( '/saadan-tjener-vi-penge/' ) ); ?>">Indeholder affiliate-links</a>
 			</div>
 		</header>
 		<?php $hero = playform_post_image( get_the_ID(), 1200 ); ?>
