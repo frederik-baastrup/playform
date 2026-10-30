@@ -1,1 +1,7 @@
-romaskine-med-vand 6389867
+magnetisk-romaskine 6551083
+romaskine-til-hjemmetraening 6551076
+foldbar-romaskine 6551053
+foldbart-loebebaand 5411023
+loebebaand-med-stigning 4944983
+x-alt-1 4944975
+x-alt-2 11175793
