@@ -1,0 +1,1 @@
+sitemaps: ['https://fitbase.dk/category-sitemap.xml', 'https://fitbase.dk/page-sitemap.xml', 'https://fitbase.dk/post-sitemap.xml', 'https://fitbase.dk/sitemap_index.xml']
