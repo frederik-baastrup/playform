@@ -18,23 +18,24 @@ while ( have_posts() ) :
 	<article class="guide">
 		<header class="wrap guide__head">
 			<?php playform_breadcrumbs( [ [ 'Forside', home_url( '/' ) ], [ 'Viden & guides', $blog ], [ get_the_title(), '' ] ] ); ?>
-			<span class="kicker"><i aria-hidden="true"></i><?php echo esc_html( $tag ); ?></span>
 			<h1><?php the_title(); ?></h1>
 			<?php if ( has_excerpt() ) : ?><p class="guide__lead"><?php echo esc_html( get_the_excerpt() ); ?></p><?php endif; ?>
 			<?php $checked = (string) get_post_meta( get_the_ID(), '_pf_checked', true ); ?>
 			<div class="guide__meta">
 				<a class="byline" href="<?php echo esc_url( $author['url'] ); ?>" rel="author">
-					<?php echo playform_author_avatar( $author, 46 ); // phpcs:ignore ?>
-					<span class="byline__txt"><small>Skrevet af</small><b><?php echo esc_html( $author['name'] ); ?></b><em><?php echo esc_html( $author['role'] ); ?> hos Fitbase</em></span>
+					<?php echo playform_author_avatar( $author, 44 ); // phpcs:ignore ?>
+					<span class="byline__txt"><b><?php echo esc_html( $author['name'] ); ?></b><em><?php echo esc_html( $author['role'] ); ?> hos Fitbase</em></span>
 				</a>
-				<ul class="guide__facts">
-					<li><?php echo playform_icon( 'calendar', 15, 1.4 ); // phpcs:ignore ?>Opdateret <time datetime="<?php echo esc_attr( get_the_modified_date( 'c' ) ); ?>"><?php echo esc_html( $updated ); ?></time></li>
-					<li><?php echo playform_icon( 'clock', 15, 1.4 ); // phpcs:ignore ?><?php echo (int) playform_read_minutes( $html ); ?> min. læsning</li>
-					<?php if ( $checked && playform_picks() ) : ?>
-						<li><?php echo playform_icon( 'refresh', 15, 1.4 ); // phpcs:ignore ?>Produkter tjekket <?php echo esc_html( wp_date( 'j. M', strtotime( $checked ) ) ); ?></li>
+				<dl class="guide__facts">
+					<?php if ( $cats ) : ?>
+						<div><dt>Emne</dt><dd><a class="guide__topic" href="<?php echo esc_url( get_category_link( $cats[0] ) ); ?>"><i aria-hidden="true"></i><?php echo esc_html( $tag ); ?></a></dd></div>
 					<?php endif; ?>
-				</ul>
-				<a class="guide__trust" href="<?php echo esc_url( home_url( '/saadan-tjener-vi-penge/' ) ); ?>"><?php echo playform_icon( 'check', 14, 1.8 ); // phpcs:ignore ?>Ingen betalte placeringer</a>
+					<div><dt>Opdateret</dt><dd><time datetime="<?php echo esc_attr( get_the_modified_date( 'c' ) ); ?>"><?php echo esc_html( get_the_modified_date( 'j. M Y' ) ); ?></time></dd></div>
+					<div><dt>Læsetid</dt><dd><?php echo (int) playform_read_minutes( $html ); ?> min.</dd></div>
+					<?php if ( $checked && playform_picks() ) : ?>
+						<div><dt>Produkter tjekket</dt><dd><?php echo esc_html( wp_date( 'j. M', strtotime( $checked ) ) ); ?></dd></div>
+					<?php endif; ?>
+				</dl>
 			</div>
 		</header>
 		<?php $hero = playform_post_image( get_the_ID(), 1200 ); ?>
