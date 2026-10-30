@@ -62,7 +62,7 @@ HTML,
 <h2>Sådan vælger du den rigtige siddecykel</h2>
 <p>"Siddecykel" bruges om flere slags udstyr. Start med at finde ud af, hvilken type du har brug for.</p>
 <h3>Pedaltræner, siddecykel eller liggecykel?</h3>
-<p>En <strong>pedaltræner</strong> er bare pedaler på et lille stativ, som du bruger fra en stol. En <strong>siddecykel med ryglæn</strong> er en lav motionscykel, hvor du sidder i et sæde med støtte i ryggen. En <strong>liggecykel</strong> er en større maskine, hvor du sidder tilbagelænet med benene foran dig. Er det til ældre eller genoptræning, så se også vores bud på <a href="/motionscykel-til-aeldre/">den bedste motionscykel til ældre</a>.</p>
+<p>En <strong>pedaltræner</strong> er bare pedaler på et lille stativ, som du bruger fra en stol. En <strong>siddecykel med ryglæn</strong> er en lav motionscykel, hvor du sidder i et sæde med støtte i ryggen. En <strong>liggecykel</strong> er en større maskine, hvor du sidder tilbagelænet med benene foran dig. Er det til ældre eller genoptræning, så se også vores bud på <a href="/koebsguide/motionscykel-til-aeldre/">den bedste motionscykel til ældre</a>.</p>
 <h3>Modstand eller ej?</h3>
 <p>Uden modstand er cyklen til skånsom bevægelse og genoptræning. Med magnetisk modstand kan du skrue op, efterhånden som du bliver stærkere – og bruge den til egentlig kondition.</p>
 <h3>Stabilitet</h3>

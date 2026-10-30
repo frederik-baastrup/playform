@@ -70,7 +70,7 @@ HTML,
 <h3>Mål sammenfoldet</h3>
 <p>Tjek målene, når cyklen er foldet sammen, og om den kan stå stabilt i den stilling. Transporthjul gør det meget nemmere at få den af vejen.</p>
 <h3>Hvor meget skal du give?</h3>
-<p>Sammenklappelige motionscykler koster typisk mellem 1.000 og 3.000 kr. hos de danske butikker. Se alle <a href="/traeningsmaskiner/motionscykler/">motionscykler</a> med aktuelle priser, eller se vores bud på <a href="/siddecykel/">den bedste siddecykel</a>.</p>
+<p>Sammenklappelige motionscykler koster typisk mellem 1.000 og 3.000 kr. hos de danske butikker. Se alle <a href="/traeningsmaskiner/motionscykler/">motionscykler</a> med aktuelle priser, eller se vores bud på <a href="/koebsguide/siddecykel/">den bedste siddecykel</a>.</p>
 HTML,
 	'faq'      => [
 		[ 'Hvad er en X-bike?', 'X-bike er et populært navn for en sammenklappelig motionscykel, hvor stellet folder sig sammen som et X.' ],

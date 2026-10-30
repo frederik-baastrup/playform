@@ -17,7 +17,10 @@ while ( have_posts() ) :
 	?>
 	<article class="guide">
 		<header class="wrap guide__head">
-			<?php playform_breadcrumbs( [ [ 'Forside', home_url( '/' ) ], [ 'Viden & guides', $blog ], [ get_the_title(), '' ] ] ); ?>
+			<?php
+			$is_best = (int) ( playform_root_posts()[ get_post_field( 'post_name' ) ] ?? 0 ) === get_the_ID();
+			playform_breadcrumbs( [ [ 'Forside', home_url( '/' ) ], $is_best ? [ 'Købsguides', playform_guide_url() ] : [ 'Viden & guides', $blog ], [ get_the_title(), '' ] ] );
+			?>
 			<h1><?php the_title(); ?></h1>
 			<?php if ( has_excerpt() ) : ?><p class="guide__lead"><?php echo esc_html( get_the_excerpt() ); ?></p><?php endif; ?>
 			<?php $checked = (string) get_post_meta( get_the_ID(), '_pf_checked', true ); ?>

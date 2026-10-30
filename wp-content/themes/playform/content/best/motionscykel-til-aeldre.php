@@ -70,7 +70,7 @@ HTML,
 <h3>Skærm og knapper</h3>
 <p>Store tal og få, tydelige knapper gør cyklen nemmere at bruge. Pulsmåling kan være nyttig, især hvis lægen har anbefalet at holde pulsen inden for et bestemt område.</p>
 <h3>Alternativ: pedaltræner</h3>
-<p>Er en hel cykel for meget, kan en lille pedaltræner foran en stol være en god start. Se vores bud på <a href="/siddecykel/">den bedste siddecykel og pedaltræner</a>.</p>
+<p>Er en hel cykel for meget, kan en lille pedaltræner foran en stol være en god start. Se vores bud på <a href="/koebsguide/siddecykel/">den bedste siddecykel og pedaltræner</a>.</p>
 <h3>Hvor meget skal du give?</h3>
 <p>Siddecykler med ryglæn koster typisk fra ca. 5.000 kr. hos de danske butikker; en god pedaltræner kan fås for under 2.000 kr. Se alle <a href="/traeningsmaskiner/motionscykler/liggecykel/">liggecykler</a> og <a href="/traeningsmaskiner/motionscykler/">motionscykler</a> med aktuelle priser.</p>
 <p><em>Har du en sygdom eller er i genoptræning, så tal med din læge eller fysioterapeut om, hvilken træning der passer til dig.</em></p>

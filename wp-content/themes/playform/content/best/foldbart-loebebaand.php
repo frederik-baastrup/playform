@@ -65,7 +65,7 @@ HTML,
 <h2>Sådan vælger du det rigtige foldbare løbebånd</h2>
 <p>Foldbare løbebånd spænder fra flade gåbånd til fuldt udstyrede løbebånd, der klappes op. Start med at afgøre, hvad du skal bruge det til.</p>
 <h3>Skal du gå eller løbe?</h3>
-<p>Skal du mest gå – fx under et skrivebord – er et fladt gåbånd nok, og det kan gemmes under sofaen. Skal du løbe, har du brug for en kraftigere motor, højere tophastighed, en længere løbeflade og håndtag. Se også vores bud på <a href="/lille-loebebaand/">det bedste lille løbebånd</a> og <a href="/traeningsmaskiner/lobebaand/gaabaand/">gåbånd</a>.</p>
+<p>Skal du mest gå – fx under et skrivebord – er et fladt gåbånd nok, og det kan gemmes under sofaen. Skal du løbe, har du brug for en kraftigere motor, højere tophastighed, en længere løbeflade og håndtag. Se også vores bud på <a href="/koebsguide/lille-loebebaand/">det bedste lille løbebånd</a> og <a href="/traeningsmaskiner/lobebaand/gaabaand/">gåbånd</a>.</p>
 <h3>Motor</h3>
 <p>Kig efter den kontinuerlige effekt (ofte angivet i HK), ikke kun spidseffekten. En stærkere motor arbejder roligere og holder typisk længere – især hvis I er flere, eller hvis du vejer meget.</p>
 <h3>Løbeflade</h3>
@@ -73,7 +73,7 @@ HTML,
 <h3>Foldning</h3>
 <p>Der er to typer: løbebånd, hvor løbefladen klappes op mod konsollen, og flade bånd, der lægges ned eller stilles på højkant. Tjek målene sammenfoldet, og om der er transporthjul. Mange løbebånd har også en dæmper, så løbefladen sænkes langsomt – det gør dem sikrere at folde ud.</p>
 <h3>Stigning</h3>
-<p>Stigning gør gåture og løb hårdere uden højere tempo og skåner leddene. Er det vigtigt for dig, så se vores bud på <a href="/loebebaand-med-stigning/">løbebånd med stigning</a>.</p>
+<p>Stigning gør gåture og løb hårdere uden højere tempo og skåner leddene. Er det vigtigt for dig, så se vores bud på <a href="/koebsguide/loebebaand-med-stigning/">løbebånd med stigning</a>.</p>
 <h3>Hvor meget skal du give?</h3>
 <p>Foldbare løbebånd koster fra ca. 4.000 kr. til over 20.000 kr. hos de danske butikker. Under 8.000 kr. er de bedst til gang og let løb; mellem 8.000 og 15.000 kr. får du typisk kraftigere motor og stigning; over det er du i klassen af løbebånd til seriøs løbetræning. Se alle <a href="/traeningsmaskiner/lobebaand/foldbart-lobebaand/">foldbare løbebånd</a> med aktuelle priser.</p>
 HTML,

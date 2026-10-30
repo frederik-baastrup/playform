@@ -109,7 +109,7 @@ $pf_usps  = [
 				</div>
 				<div class="mm__knowledge">
 					<a href="<?php echo esc_url( home_url( '/viden/' ) ); ?>">Viden</a>
-					<a href="<?php echo esc_url( home_url( '/viden/emne/kobsguide/' ) ); ?>">Købsguides</a>
+					<a href="<?php echo esc_url( playform_guide_url() ); ?>">Købsguides</a>
 				</div>
 			</nav>
 			<form role="search" method="get" class="search" action="<?php echo esc_url( home_url( '/' ) ); ?>" data-search data-endpoint="<?php echo esc_url( rest_url( 'playform/v1/search' ) ); ?>">
@@ -132,7 +132,7 @@ $pf_usps  = [
 			</form>
 			<nav class="knowledge" aria-label="Viden">
 				<a href="<?php echo esc_url( home_url( '/viden/' ) ); ?>">Viden</a>
-				<a href="<?php echo esc_url( home_url( '/viden/emne/kobsguide/' ) ); ?>">Købsguides</a>
+				<a href="<?php echo esc_url( playform_guide_url() ); ?>">Købsguides</a>
 				<a href="<?php echo esc_url( playform_tilbud_url() ); ?>" class="knowledge__sale">Tilbud</a>
 			</nav>
 			<button type="button" class="search-toggle" aria-expanded="false" aria-controls="site-search" aria-label="Søg"><?php echo playform_icon( 'search', 22, 1.6 ); // phpcs:ignore ?></button>

@@ -64,7 +64,7 @@ HTML,
 <h3>Vælg modstand efter, hvor du bor</h3>
 <p>Magnetisk modstand er den mest stille og kræver ingen vedligeholdelse. Luftmodstand føles naturlig og er populær til hård træning, men suser hørbart. Vandmodstand er et sted midt imellem – naturlig følelse og en behagelig lyd. Bor du i lejlighed, er magnet eller vand som regel det bedste valg. Se også vores guide <a href="/viden/romaskine-vand-luft-eller-magnet/">Romaskine med vand, luft eller magnet</a>.</p>
 <h3>Plads og opbevaring</h3>
-<p>En romaskine fylder typisk omkring to meter i længden. Har du ikke plads til, at den står fremme, så vælg en, der kan foldes eller stilles op ad væggen – se vores bud på <a href="/foldbar-romaskine/">den bedste foldbare romaskine</a>.</p>
+<p>En romaskine fylder typisk omkring to meter i længden. Har du ikke plads til, at den står fremme, så vælg en, der kan foldes eller stilles op ad væggen – se vores bud på <a href="/koebsguide/foldbar-romaskine/">den bedste foldbare romaskine</a>.</p>
 <h3>Strøm</h3>
 <p>Enkle romaskiner kører på batterier, og nogle laver selv strøm, mens du ror. Modeller med stor skærm og elektronisk modstand skal ofte i stikkontakten. Tænk over, hvor maskinen skal stå.</p>
 <h3>Højde, vægt og skinne</h3>

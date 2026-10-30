@@ -265,27 +265,52 @@ add_action(
  * Adresser fra det gamle fitbase.dk
  * ---------------------------------------------------------------------- */
 
-/** Indlæg, der ligger direkte under roden (/slug/), som på det gamle site. slug => post-ID. */
+/** Mappe for købsguides: /koebsguide/romaskine-med-vand/ (samme mappenavn som det gamle fitbase.dk). */
+const PLAYFORM_GUIDE_BASE = 'koebsguide';
+
+/**
+ * Købsguides fra det gamle fitbase.dk. slug => post-ID.
+ * (Lå før direkte under roden – /romaskine-med-vand/ – og viderestilles nu til /koebsguide/<slug>/.)
+ */
 function playform_root_posts(): array {
 	return (array) get_option( 'playform_root_posts', [] );
+}
+
+/** Adressen på en købsguide – eller oversigten, uden slug. */
+function playform_guide_url( string $slug = '' ): string {
+	return home_url( user_trailingslashit( PLAYFORM_GUIDE_BASE . ( '' !== $slug ? '/' . $slug : '' ) ) );
 }
 
 add_filter(
 	'post_link',
 	static function ( string $link, WP_Post $post ): string {
 		$root = playform_root_posts();
-		return isset( $root[ $post->post_name ] ) && (int) $root[ $post->post_name ] === (int) $post->ID ? home_url( user_trailingslashit( $post->post_name ) ) : $link;
+		return isset( $root[ $post->post_name ] ) && (int) $root[ $post->post_name ] === (int) $post->ID ? playform_guide_url( $post->post_name ) : $link;
 	},
 	10,
 	2
 );
 
+// Emnet Købsguides har sin oversigt på /koebsguide/ i stedet for /viden/emne/kobsguide/.
+add_filter(
+	'term_link',
+	static function ( string $link, WP_Term $term, string $taxonomy ): string {
+		return ( 'category' === $taxonomy && 'kobsguide' === $term->slug ) ? playform_guide_url() : $link;
+	},
+	10,
+	3
+);
+
 add_filter(
 	'rewrite_rules_array',
 	static function ( array $rules ): array {
-		$new = [];
+		$base = preg_quote( PLAYFORM_GUIDE_BASE, '#' );
+		$new  = [
+			'^' . $base . '/?$'                => 'index.php?category_name=kobsguide',
+			'^' . $base . '/page/([0-9]+)/?$' => 'index.php?category_name=kobsguide&paged=$matches[1]',
+		];
 		foreach ( playform_root_posts() as $slug => $id ) {
-			$new[ '^' . preg_quote( $slug, '#' ) . '/?$' ] = 'index.php?p=' . (int) $id;
+			$new[ '^' . $base . '/' . preg_quote( $slug, '#' ) . '/?$' ] = 'index.php?p=' . (int) $id;
 		}
 		return $new + $rules;
 	},
@@ -303,12 +328,11 @@ function playform_legacy_redirects(): array {
 		'kosttilskud-og-traening-optimer-din-praestation-og-restitution' => $home,
 		'cykling'                                                         => $home,
 		'annoncoerer'                                                     => $home,
-		'sammenklappeligt-loebebaand'                                     => home_url( '/foldbart-loebebaand/' ),
-		'curved-loebebaand'                                               => home_url( '/loebebaand-uden-motor/' ),
-		'mini-motionscykel'                                               => home_url( '/siddecykel/' ),
-		'koebsguide'                                                      => home_url( '/viden/emne/kobsguide/' ),
-		'koebsguide/fitness'                                              => home_url( '/viden/emne/kobsguide/' ),
-		'koebsguide/sport'                                                => home_url( '/viden/emne/kobsguide/' ),
+		'sammenklappeligt-loebebaand'                                     => playform_guide_url( 'foldbart-loebebaand' ),
+		'curved-loebebaand'                                               => playform_guide_url( 'loebebaand-uden-motor' ),
+		'mini-motionscykel'                                               => playform_guide_url( 'siddecykel' ),
+		'koebsguide/fitness'                                              => playform_guide_url(),
+		'koebsguide/sport'                                                => playform_guide_url(),
 		'koebsguide/traeningsmaskiner'                                    => home_url( '/traeningsmaskiner/' ),
 		'koebsguide/styrketraening'                                       => home_url( '/styrketraening/' ),
 		'koebsguide/traeningsudstyr'                                      => home_url( '/tilbehor/' ),
@@ -322,25 +346,32 @@ function playform_legacy_redirects(): array {
 add_action(
 	'template_redirect',
 	static function () {
-		// Én adresse pr. artikel: /viden/romaskine-med-vand/ → /romaskine-med-vand/
+		$path = trim( rawurldecode( (string) wp_parse_url( (string) ( $_SERVER['REQUEST_URI'] ?? '' ), PHP_URL_PATH ) ), '/' ); // phpcs:ignore
+		$root = playform_root_posts();
+		// Én adresse pr. købsguide: /romaskine-med-vand/ og /viden/romaskine-med-vand/ → /koebsguide/romaskine-med-vand/
 		if ( is_singular( 'post' ) ) {
 			$post = get_queried_object();
-			$root = playform_root_posts();
-			if ( $post instanceof WP_Post && (int) ( $root[ $post->post_name ] ?? 0 ) === (int) $post->ID ) {
-				$path = trim( (string) wp_parse_url( (string) ( $_SERVER['REQUEST_URI'] ?? '' ), PHP_URL_PATH ), '/' ); // phpcs:ignore
-				if ( $path !== $post->post_name ) {
-					wp_safe_redirect( get_permalink( $post ), 301 );
-					exit;
-				}
+			if ( $post instanceof WP_Post && (int) ( $root[ $post->post_name ] ?? 0 ) === (int) $post->ID && PLAYFORM_GUIDE_BASE . '/' . $post->post_name !== $path ) {
+				wp_safe_redirect( get_permalink( $post ), 301 );
+				exit;
 			}
 			return;
+		}
+		// Den gamle emneside for købsguides → /koebsguide/
+		if ( preg_match( '#^viden/emne/kobsguide(?:/page/(\d+))?$#', $path, $m ) ) {
+			wp_safe_redirect( ! empty( $m[1] ) ? playform_guide_url( 'page/' . $m[1] ) : playform_guide_url(), 301 );
+			exit;
 		}
 		if ( ! is_404() ) {
 			return;
 		}
-		$path = trim( rawurldecode( (string) wp_parse_url( (string) ( $_SERVER['REQUEST_URI'] ?? '' ), PHP_URL_PATH ) ), '/' ); // phpcs:ignore
 		$path = preg_replace( '#/(feed|amp)$#', '', $path );
-		$map  = playform_legacy_redirects();
+		// Købsguidernes gamle adresse direkte under roden (som på det gamle fitbase.dk)
+		if ( isset( $root[ $path ] ) ) {
+			wp_safe_redirect( playform_guide_url( $path ), 301 );
+			exit;
+		}
+		$map = playform_legacy_redirects();
 		if ( isset( $map[ $path ] ) ) {
 			wp_safe_redirect( $map[ $path ], 301 );
 			exit;

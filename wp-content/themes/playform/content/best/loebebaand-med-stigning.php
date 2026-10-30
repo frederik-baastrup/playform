@@ -78,7 +78,7 @@ HTML,
 <h3>App og programmer</h3>
 <p>Mange løbebånd med stigning kan styres af apps som Zwift eller Kinomap, hvor stigningen følger ruten. Det gør træningen langt mere varieret.</p>
 <h3>Hvor meget skal du give?</h3>
-<p>Løbebånd med elektronisk stigning koster fra ca. 5.000 kr. hos de danske butikker. Mellem 8.000 og 15.000 kr. får du typisk en kraftigere motor og større løbeflade; over 20.000 kr. er du i klassen af løbebånd til hård og hyppig løbetræning. Se alle <a href="/traeningsmaskiner/lobebaand/lobebaand-med-incline/">løbebånd med incline</a> med aktuelle priser, eller se vores bud på <a href="/foldbart-loebebaand/">det bedste foldbare løbebånd</a>.</p>
+<p>Løbebånd med elektronisk stigning koster fra ca. 5.000 kr. hos de danske butikker. Mellem 8.000 og 15.000 kr. får du typisk en kraftigere motor og større løbeflade; over 20.000 kr. er du i klassen af løbebånd til hård og hyppig løbetræning. Se alle <a href="/traeningsmaskiner/lobebaand/lobebaand-med-incline/">løbebånd med incline</a> med aktuelle priser, eller se vores bud på <a href="/koebsguide/foldbart-loebebaand/">det bedste foldbare løbebånd</a>.</p>
 HTML,
 	'faq'      => [
 		[ 'Hvad betyder incline på et løbebånd?', 'Incline er det engelske ord for stigning: løbefladen hælder fremad, så det føles som at gå eller løbe op ad bakke.' ],

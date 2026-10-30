@@ -60,7 +60,7 @@ HTML,
 <li><strong>Manuelle løbebånd er tunge at gå på</strong> og passer bedst til gang.</li>
 </ul>
 <h3>Curved eller manuelt?</h3>
-<p>Vil du sprinte og lave intervaller, er et curved løbebånd det rigtige. Vil du gå hurtigt og have et billigere løbebånd uden strøm, er et manuelt løbebånd nok. Vil du løbe lange ture i jævnt tempo, så vælg et almindeligt løbebånd med motor – se vores bud på <a href="/foldbart-loebebaand/">det bedste foldbare løbebånd</a> og <a href="/loebebaand-med-stigning/">løbebånd med stigning</a>.</p>
+<p>Vil du sprinte og lave intervaller, er et curved løbebånd det rigtige. Vil du gå hurtigt og have et billigere løbebånd uden strøm, er et manuelt løbebånd nok. Vil du løbe lange ture i jævnt tempo, så vælg et almindeligt løbebånd med motor – se vores bud på <a href="/koebsguide/foldbart-loebebaand/">det bedste foldbare løbebånd</a> og <a href="/koebsguide/loebebaand-med-stigning/">løbebånd med stigning</a>.</p>
 <h3>Hvor meget skal du give?</h3>
 <p>Manuelle løbebånd koster typisk fra få tusinde kroner, mens curved løbebånd til hjemmet sjældent koster under 30.000 kr. Se alle <a href="/traeningsmaskiner/lobebaand/">løbebånd</a> med aktuelle priser.</p>
 HTML,

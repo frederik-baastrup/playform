@@ -60,7 +60,7 @@ $head = static function ( string $title ) use ( $back ): void {
 
 			<span class="dr__label">Viden og hjælp</span>
 			<ul class="dr__list dr__list--small">
-				<li><a href="<?php echo esc_url( home_url( '/viden/emne/kobsguide/' ) ); ?>">Købsguides</a></li>
+				<li><a href="<?php echo esc_url( playform_guide_url() ); ?>">Købsguides</a></li>
 				<li><a href="<?php echo esc_url( home_url( '/viden/' ) ); ?>">Viden &amp; guides</a></li>
 				<li><a href="<?php echo esc_url( home_url( '/vores-butikker/' ) ); ?>">Vores butikker</a></li>
 				<li><a href="<?php echo esc_url( home_url( '/saadan-tjener-vi-penge/' ) ); ?>">Sådan tjener vi penge</a></li>

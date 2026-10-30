@@ -24,7 +24,7 @@
 			</div>
 			<div class="foot__col">
 				<span class="foot__title">Viden</span>
-				<a href="<?php echo esc_url( home_url( '/viden/emne/kobsguide/' ) ); ?>">Købsguides</a>
+				<a href="<?php echo esc_url( playform_guide_url() ); ?>">Købsguides</a>
 				<a href="<?php echo esc_url( home_url( '/viden/' ) ); ?>">Nyheder</a>
 			</div>
 			<div class="foot__col">
