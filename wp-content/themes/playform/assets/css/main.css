@@ -802,3 +802,50 @@ dl.guide__facts { display: flex; align-items: stretch; margin: 0; }
 .guide__body .pick-verdict { display: flex; flex-direction: column; gap: 6px; margin: 0 0 28px; padding: 16px 20px 18px; border: 1px solid var(--line-2); border-top: 0; border-radius: 0 0 var(--r-l) var(--r-l); background: var(--soft); font-size: 16px; line-height: 1.55; color: var(--ink); }
 .guide__body .pick-verdict b { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; color: var(--muted); }
 .guide__body .pick-verdict b::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+/* -------------------------------------------------------------------------
+ * Artikelhoved (gh): emnelinje, titel, intro, kompakt byline og billede
+ * ---------------------------------------------------------------------- */
+.gh { display: grid; gap: 32px; padding-top: var(--top-gap); }
+.gh__text { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; min-width: 0; }
+.gh .crumbs { margin-bottom: 6px; }
+.gh__topic { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; letter-spacing: .7px; text-transform: uppercase; color: var(--ink); }
+.gh__topic i { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px rgba(35,210,0,.15); }
+.gh__topic:hover { color: var(--muted-2); }
+.gh h1 { margin: 0; font-size: 48px; letter-spacing: -1.3px; line-height: 1.05; text-wrap: balance; }
+.gh__lead { margin: 0; font-size: 18px; line-height: 1.55; color: var(--ink-2); max-width: 640px; text-wrap: pretty; }
+.gh__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; margin-top: 6px; font-size: 13.5px; color: var(--muted-2); }
+.gh__by { display: inline-flex; align-items: center; gap: 10px; color: var(--muted-2); }
+.gh__by b { font-weight: 600; color: var(--ink); }
+.gh__by:hover b { text-decoration: underline; text-underline-offset: 3px; }
+.gh__facts { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px 0; }
+.gh__facts > span { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+.gh__facts > span + span::before { content: ""; width: 3px; height: 3px; margin: 0 10px; border-radius: 50%; background: currentColor; opacity: .5; }
+.gh__ok svg { color: var(--accent); }
+.gh__img { margin: 0; border-radius: var(--r-l); overflow: hidden; background: var(--tile); }
+.gh__img img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* Tekst til venstre, billede til højre (under hinanden på mobil) */
+.gh__img { aspect-ratio: 16 / 10; }
+@media (min-width: 900px) {
+	.gh.has-hero { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: center; gap: 56px; }
+	.gh.has-hero .gh__img { aspect-ratio: 4 / 3; }
+	.gh h1 { font-size: 44px; }
+}
+.gh:not(.has-hero) .gh__text { max-width: 860px; }
+
+@media (max-width: 760px) {
+	.gh { gap: 24px; }
+	.gh h1 { font-size: 32px; letter-spacing: -.7px; }
+	.gh__lead { font-size: 16.5px; }
+	.gh__meta { font-size: 13px; }
+	.gh__facts { gap: 4px 14px; }
+	.gh__facts > span + span::before { display: none; }
+}
+
+/* Mere luft mellem de enkelte produkter i købsguiderne */
+.guide__body h2[id^="valg-"] { margin-top: 88px; margin-bottom: 18px; }
+.guide__body h2#valg-1 { margin-top: 56px; }
+.guide__body .pick-fit { margin: 24px 0 0; gap: 14px; }
+.guide__body .pick__facts { padding: 0 !important; margin: 0 !important; }
+@media (max-width: 760px) { .guide__body h2[id^="valg-"] { margin-top: 64px; } .guide__body h2#valg-1 { margin-top: 44px; } }

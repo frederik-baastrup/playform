@@ -16,35 +16,37 @@ while ( have_posts() ) :
 	$author        = playform_author( (int) get_the_author_meta( 'ID' ) );
 	?>
 	<article class="guide">
-		<header class="wrap guide__head">
-			<?php
-			$is_best = (int) ( playform_root_posts()[ get_post_field( 'post_name' ) ] ?? 0 ) === get_the_ID();
-			playform_breadcrumbs( [ [ 'Forside', home_url( '/' ) ], $is_best ? [ 'Købsguides', playform_guide_url() ] : [ 'Viden & guides', $blog ], [ get_the_title(), '' ] ] );
-			?>
-			<h1><?php the_title(); ?></h1>
-			<?php if ( has_excerpt() ) : ?><p class="guide__lead"><?php echo esc_html( get_the_excerpt() ); ?></p><?php endif; ?>
-			<?php $checked = (string) get_post_meta( get_the_ID(), '_pf_checked', true ); ?>
-			<div class="guide__meta">
-				<a class="byline" href="<?php echo esc_url( $author['url'] ); ?>" rel="author">
-					<?php echo playform_author_avatar( $author, 44 ); // phpcs:ignore ?>
-					<span class="byline__txt"><b><?php echo esc_html( $author['name'] ); ?></b><em><?php echo esc_html( $author['role'] ); ?> hos Fitbase</em></span>
-				</a>
-				<dl class="guide__facts">
-					<?php if ( $cats ) : ?>
-						<div><dt>Emne</dt><dd><a class="guide__topic" href="<?php echo esc_url( get_category_link( $cats[0] ) ); ?>"><i aria-hidden="true"></i><?php echo esc_html( $tag ); ?></a></dd></div>
-					<?php endif; ?>
-					<div><dt>Opdateret</dt><dd><time datetime="<?php echo esc_attr( get_the_modified_date( 'c' ) ); ?>"><?php echo esc_html( get_the_modified_date( 'j. M Y' ) ); ?></time></dd></div>
-					<div><dt>Læsetid</dt><dd><?php echo (int) playform_read_minutes( $html ); ?> min.</dd></div>
-					<?php if ( $checked && playform_picks() ) : ?>
-						<div><dt>Produkter tjekket</dt><dd><?php echo esc_html( wp_date( 'j. M', strtotime( $checked ) ) ); ?></dd></div>
-					<?php endif; ?>
-				</dl>
+		<?php
+		$hero    = playform_post_image( get_the_ID(), 1200 );
+		$checked = (string) get_post_meta( get_the_ID(), '_pf_checked', true );
+		$is_best = (int) ( playform_root_posts()[ get_post_field( 'post_name' ) ] ?? 0 ) === get_the_ID();
+		?>
+		<header class="wrap gh<?php echo $hero ? ' has-hero' : ''; ?>">
+			<div class="gh__text">
+				<?php playform_breadcrumbs( [ [ 'Forside', home_url( '/' ) ], $is_best ? [ 'Købsguides', playform_guide_url() ] : [ 'Viden & guides', $blog ], [ get_the_title(), '' ] ] ); ?>
+				<?php if ( $cats ) : ?>
+					<a class="gh__topic" href="<?php echo esc_url( get_category_link( $cats[0] ) ); ?>"><i aria-hidden="true"></i><?php echo esc_html( $tag ); ?></a>
+				<?php endif; ?>
+				<h1><?php the_title(); ?></h1>
+				<?php if ( has_excerpt() ) : ?><p class="gh__lead"><?php echo esc_html( get_the_excerpt() ); ?></p><?php endif; ?>
+				<div class="gh__meta">
+					<a class="gh__by" href="<?php echo esc_url( $author['url'] ); ?>" rel="author">
+						<?php echo playform_author_avatar( $author, 32 ); // phpcs:ignore ?>
+						<span>Af <b><?php echo esc_html( $author['name'] ); ?></b></span>
+					</a>
+					<span class="gh__facts">
+						<span>Opdateret <time datetime="<?php echo esc_attr( get_the_modified_date( 'c' ) ); ?>"><?php echo esc_html( get_the_modified_date( 'j. M Y' ) ); ?></time></span>
+						<span><?php echo (int) playform_read_minutes( $html ); ?> min. læsning</span>
+						<?php if ( $checked && playform_picks() ) : ?>
+							<span class="gh__ok"><?php echo playform_icon( 'check', 13, 2 ); // phpcs:ignore ?>Produkter tjekket <?php echo esc_html( wp_date( 'j. M', strtotime( $checked ) ) ); ?></span>
+						<?php endif; ?>
+					</span>
+				</div>
 			</div>
+			<?php if ( $hero ) : ?>
+				<figure class="gh__img"><img src="<?php echo esc_url( $hero ); ?>" alt="" fetchpriority="high"></figure>
+			<?php endif; ?>
 		</header>
-		<?php $hero = playform_post_image( get_the_ID(), 1200 ); ?>
-		<?php if ( $hero ) : ?>
-			<div class="wrap"><div class="guide__hero"><img src="<?php echo esc_url( $hero ); ?>" alt="" fetchpriority="high"></div></div>
-		<?php endif; ?>
 		<div class="wrap guide__layout">
 			<aside class="guide__toc">
 				<?php if ( count( $toc ) > 1 ) : ?>
