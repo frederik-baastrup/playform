@@ -1,0 +1,23 @@
+name: Hent gamle fitbase.dk
+on:
+  push:
+    branches: [legacy-fetch]
+    paths: [tools/legacy_fetch.py]
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install beautifulsoup4
+      - run: python tools/legacy_fetch.py
+      - name: Gem på grenen legacy-result
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git checkout --orphan legacy-result
+          git rm -rq --cached .
+          git add -f out
+          git commit -qm "Gamle fitbase.dk"
+          git push -f origin legacy-result
