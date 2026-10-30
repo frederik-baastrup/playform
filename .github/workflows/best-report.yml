@@ -1,0 +1,36 @@
+name: Hent rapport over købsguides
+# Henter serverens ugentlige rapport (wp-content/uploads/playform/best-check.json) via FTP
+# og gemmer den på grenen best-report, hvor Claudes ugentlige gennemgang læser den.
+on:
+  workflow_dispatch:
+  push:
+    branches: [best-report-run]
+permissions:
+  contents: write
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - run: sudo apt-get -qq install -y lftp > /dev/null
+      - name: Hent rapport
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          mkdir -p out
+          for dir in fitbase.dk frederikb7.sg-host.com; do
+            lftp -e "set ftp:ssl-force true; set ssl:verify-certificate no; get -O out $dir/public_html/wp-content/uploads/playform/best-check.json; bye" -u "$FTP_USERNAME,$FTP_PASSWORD" "$FTP_SERVER" 2>&1 | grep -v -i "pass\|ftp://" || true
+            [ -s out/best-check.json ] && echo "$dir" > out/source.txt && break
+          done
+          ls -la out
+          exit 0
+      - name: Gem på grenen best-report
+        run: |
+          cd out
+          git init -q -b best-report
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add -A
+          git commit -qm "Rapport $(date -u +%F)" || exit 0
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" best-report

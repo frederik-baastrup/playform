@@ -21,15 +21,20 @@ while ( have_posts() ) :
 			<span class="kicker"><i aria-hidden="true"></i><?php echo esc_html( $tag ); ?></span>
 			<h1><?php the_title(); ?></h1>
 			<?php if ( has_excerpt() ) : ?><p class="guide__lead"><?php echo esc_html( get_the_excerpt() ); ?></p><?php endif; ?>
+			<?php $checked = (string) get_post_meta( get_the_ID(), '_pf_checked', true ); ?>
 			<div class="guide__meta">
-				<a class="guide__author" href="<?php echo esc_url( $author['url'] ); ?>" rel="author">
-					<?php echo playform_author_avatar( $author, 40 ); // phpcs:ignore ?>
-					<span><b><?php echo esc_html( $author['name'] ); ?></b><small><?php echo esc_html( $author['role'] ); ?></small></span>
+				<a class="byline" href="<?php echo esc_url( $author['url'] ); ?>" rel="author">
+					<?php echo playform_author_avatar( $author, 46 ); // phpcs:ignore ?>
+					<span class="byline__txt"><small>Skrevet af</small><b><?php echo esc_html( $author['name'] ); ?></b><em><?php echo esc_html( $author['role'] ); ?> hos Fitbase</em></span>
 				</a>
-				<span class="guide__facts">
-					<span><?php echo playform_icon( 'calendar', 15, 1.4 ); // phpcs:ignore ?>Opdateret <time datetime="<?php echo esc_attr( get_the_modified_date( 'c' ) ); ?>"><?php echo esc_html( $updated ); ?></time></span>
-					<span><?php echo playform_icon( 'clock', 15, 1.4 ); // phpcs:ignore ?><?php echo (int) playform_read_minutes( $html ); ?> min. læsning</span>
-				</span>
+				<ul class="guide__facts">
+					<li><?php echo playform_icon( 'calendar', 15, 1.4 ); // phpcs:ignore ?>Opdateret <time datetime="<?php echo esc_attr( get_the_modified_date( 'c' ) ); ?>"><?php echo esc_html( $updated ); ?></time></li>
+					<li><?php echo playform_icon( 'clock', 15, 1.4 ); // phpcs:ignore ?><?php echo (int) playform_read_minutes( $html ); ?> min. læsning</li>
+					<?php if ( $checked && playform_picks() ) : ?>
+						<li><?php echo playform_icon( 'refresh', 15, 1.4 ); // phpcs:ignore ?>Produkter tjekket <?php echo esc_html( wp_date( 'j. M', strtotime( $checked ) ) ); ?></li>
+					<?php endif; ?>
+				</ul>
+				<a class="guide__trust" href="<?php echo esc_url( home_url( '/saadan-tjener-vi-penge/' ) ); ?>"><?php echo playform_icon( 'check', 14, 1.8 ); // phpcs:ignore ?>Ingen betalte placeringer</a>
 			</div>
 		</header>
 		<?php $hero = playform_post_image( get_the_ID(), 1200 ); ?>
@@ -54,15 +59,32 @@ while ( have_posts() ) :
 				<p class="guide__note">Guiden indeholder links til butikker. Køber du via et link, kan vi få en provision – det koster ikke dig noget ekstra og påvirker ikke vores råd.</p>
 				<?php endif; ?>
 				<?php echo $html; // phpcs:ignore -- indholdet er allerede filtreret af the_content ?>
-				<aside class="author-box" aria-label="Om forfatteren">
-					<?php echo playform_author_avatar( $author, 64 ); // phpcs:ignore ?>
-					<div>
-						<span class="author-box__label">Skrevet af</span>
-						<a class="author-box__name" href="<?php echo esc_url( $author['url'] ); ?>" rel="author"><?php echo esc_html( $author['name'] ); ?></a>
-						<span class="author-box__role"><?php echo esc_html( $author['role'] ); ?></span>
-						<p><?php echo esc_html( $author['bio'] ); ?></p>
-						<a class="author-box__more" href="<?php echo esc_url( $author['url'] ); ?>">Om <?php echo esc_html( strtok( $author['name'], ' ' ) ); ?> og vores guides &rarr;</a>
+				<?php
+				$n_guides = (int) count_user_posts( $author['id'], 'post', true );
+				$n_prods  = (int) wp_count_posts( 'product' )->publish;
+				$n_shops  = count( playform_shop_names() );
+				?>
+				<aside class="author-card" aria-label="Om forfatteren">
+					<div class="author-card__head">
+						<?php echo playform_author_avatar( $author, 64 ); // phpcs:ignore ?>
+						<div class="author-card__who">
+							<span class="author-card__label">Skrevet af</span>
+							<a class="author-card__name" href="<?php echo esc_url( $author['url'] ); ?>" rel="author"><?php echo esc_html( $author['name'] ); ?></a>
+							<span class="author-card__role"><?php echo esc_html( $author['role'] ); ?> hos Fitbase</span>
+						</div>
+						<a class="author-card__profile" href="<?php echo esc_url( $author['url'] ); ?>">Se profil <?php echo playform_icon( 'arrow-right', 14, 1.6 ); // phpcs:ignore ?></a>
 					</div>
+					<p class="author-card__bio"><?php echo esc_html( $author['bio'] ); ?></p>
+					<ul class="author-card__stats">
+						<li><b><?php echo esc_html( number_format( $n_guides, 0, ',', '.' ) ); ?></b><span>guides skrevet</span></li>
+						<li><b><?php echo esc_html( number_format( $n_prods, 0, ',', '.' ) ); ?></b><span>produkter vi følger</span></li>
+						<li><b><?php echo esc_html( (string) $n_shops ); ?></b><span>danske butikker</span></li>
+					</ul>
+					<ul class="author-card__rules">
+						<li><?php echo playform_icon( 'check', 14, 1.8 ); // phpcs:ignore ?>Ingen betalte placeringer</li>
+						<li><?php echo playform_icon( 'check', 14, 1.8 ); // phpcs:ignore ?>Fakta fra butikkernes egne data</li>
+						<li><?php echo playform_icon( 'check', 14, 1.8 ); // phpcs:ignore ?>Priser opdateres to gange i døgnet</li>
+					</ul>
 				</aside>
 			</div>
 		</div>

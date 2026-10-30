@@ -46,6 +46,7 @@ final class Cron {
 
 	/** AI-sortering og nye produkttekster. Kører efter hver fuld import (både WP-cron og `wp playform import`). */
 	public static function after_import(): int {
+		do_action( 'playform_feeds_after_import' ); // fx temaets ugentlige tjek af købsguides
 		if ( ! Ai::enabled() ) {
 			return 0;
 		}

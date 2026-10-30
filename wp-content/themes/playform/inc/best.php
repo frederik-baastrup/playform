@@ -109,8 +109,22 @@ add_shortcode(
 		$picks = playform_picks();
 		$pick  = $picks[ $n - 1 ] ?? null;
 		$p     = $pick ? playform_pick_product( $pick ) : null;
+		// Udsolgt eller væk: vis et alternativ i samme kategori og prisklasse, indtil artiklen er opdateret.
+		$alt_html = '';
+		if ( ! $p || ! get_post_meta( $p->get_id(), '_pf_in_stock', true ) ) {
+			$used = array_filter( array_map( static fn( $pk ) => ( $x = playform_pick_product( $pk ) ) ? $x->get_id() : 0, $picks ) );
+			$alts = function_exists( 'playform_pick_alternatives' ) ? playform_pick_alternatives( playform_pick_category( $p, get_the_ID() ), $p ? (float) $p->get_price() : (float) ( $pick['price'] ?? 0 ), $used, 1 ) : [];
+			if ( $alts ) {
+				$a        = playform_card_data( $alts[0] );
+				$ao       = playform_pick_offer( $alts[0]->get_id() );
+				$alt_html = '<div class="pick-alt"><span class="pick-alt__label">' . ( $p ? 'Ikke på lager lige nu' : 'Ikke længere i butikkerne' ) . ' – et alternativ i samme prisklasse:</span>'
+					. '<a class="pick-alt__item" href="' . esc_url( $a['url'] ) . '">' . ( $a['image'] ? '<img src="' . esc_url( $a['image'] ) . '" alt="" loading="lazy">' : '' )
+					. '<span><b>' . esc_html( $a['name'] ) . '</b><small>' . esc_html( playform_kr( $a['price'] ) . ' · Hos ' . $a['shop'] ) . '</small></span></a>'
+					. ( $ao ? '<a class="pick-alt__cta" href="' . esc_url( $ao['url'] ) . '" rel="sponsored nofollow noopener" target="_blank">Se pris</a>' : '' ) . '</div>';
+			}
+		}
 		if ( ! $p ) {
-			return '<div class="pick pick--gone"><p>Produktet findes ikke længere hos vores butikker. Se de øvrige modeller længere nede.</p></div>';
+			return '<div class="pick pick--gone"><p>Produktet findes ikke længere hos vores butikker.</p>' . $alt_html . '</div>';
 		}
 		$id    = $p->get_id();
 		$d     = playform_card_data( $p );
@@ -158,6 +172,7 @@ add_shortcode(
 						<a class="pick__more" href="<?php echo esc_url( $d['url'] ); ?>">Se produktet</a>
 					<?php endif; ?>
 				</div>
+				<?php echo $alt_html; // phpcs:ignore -- bygget og escapet ovenfor ?>
 			</div>
 		</div>
 		<?php
@@ -383,6 +398,7 @@ function playform_seed_best(): void {
 			update_post_meta( $id, '_pf_seed_hash', md5( $saved ) );
 		}
 		update_post_meta( $id, '_pf_picks', $a['picks'] ?? [] );
+		update_post_meta( $id, '_pf_more_cat', (string) ( $a['more_cat'] ?? '' ) );
 		$root[ $a['slug'] ] = (int) $id;
 	}
 	update_option( 'playform_root_posts', $root, true );
