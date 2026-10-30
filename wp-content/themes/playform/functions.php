@@ -17,6 +17,7 @@ require_once __DIR__ . '/inc/seo.php';
 require_once __DIR__ . '/inc/legal.php';
 require_once __DIR__ . '/inc/guides.php';
 require_once __DIR__ . '/inc/authors.php';
+require_once __DIR__ . '/inc/best.php';
 
 add_action(
 	'after_setup_theme',

@@ -66,6 +66,12 @@ function playform_guide_prepare( string $html ): array {
 		'~<h2([^>]*)>(.*?)</h2>~is',
 		static function ( $m ) use ( &$toc, &$used ) {
 			$text = wp_strip_all_tags( $m[2] );
+			// Har overskriften allerede et id (fx #valg-1 i anbefalinger), bruges det.
+			if ( preg_match( '~\sid="([^"]+)"~', $m[1], $own ) ) {
+				$used[ $own[1] ] = true;
+				$toc[]           = [ $own[1], $text ];
+				return $m[0];
+			}
 			$id   = sanitize_title( $text );
 			$n    = 2;
 			$base = $id;

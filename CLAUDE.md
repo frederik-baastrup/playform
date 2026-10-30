@@ -29,6 +29,7 @@ Siden hed Playform. Synlige tekster og logo siger nu Fitbase (`playform_rebrand(
   - `inc/authors.php` – forfattere (E-E-A-T): navn i byline, forfatterside `/viden/forfatter/navn/`, forfatterboks under artikler, JSON-LD (Article, ProfilePage/Person). Ingen Gravatar – profilbillede via feltet `pf_photo`. Påstå aldrig kvalifikationer, ejeren ikke selv har skrevet i sin profil.
   - `template-parts/guides-index.php` – Viden & guides (`/viden/`) og emnesider (`/viden/emne/<emne>/`): emnefaner, fremhævet guide, gitter. Emner = WordPress-kategorier.
   - `assets/img/articles/<slug>.jpg` – artikelbilleder fra Pexels (fri licens, 1800 px). `playform_article_images()` sætter dem på indlæg uden billede eller med for lille billede. Brug aldrig produktbilleder som artikelbilleder.
+  - `inc/best.php` + `content/best/<slug>.php` – købsguides "Vores bud på de 3 bedste X" overført fra det gamle fitbase.dk. Ligger på rod-URL'en (`/romaskine-med-vand/`) som på det gamle site (`playform_root_posts()`). Top 3 med links til rigtige anmeldelser af præcis samme model, ellers markeret "vores vurdering". Aldrig påstand om egen test. Levende pris/lager via shortcodes. Gamle URL'er, der ikke findes mere, viderestilles i `playform_legacy_redirects()` (fravalgte emner → forsiden).
   - `inc/search.php` – søgeforslag (`/wp-json/playform/v1/search`).
 - `dev/setup-local.sh` – lokal WordPress med SQLite i `.local/` (ignoreres af git).
 

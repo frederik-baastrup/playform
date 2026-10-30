@@ -50,7 +50,9 @@ while ( have_posts() ) :
 				<?php endif; ?>
 			</aside>
 			<div class="guide__body prose">
+				<?php if ( ! playform_picks() ) : // anbefalinger har deres egen boks om metode og provision ?>
 				<p class="guide__note">Guiden indeholder links til butikker. Køber du via et link, kan vi få en provision – det koster ikke dig noget ekstra og påvirker ikke vores råd.</p>
+				<?php endif; ?>
 				<?php echo $html; // phpcs:ignore -- indholdet er allerede filtreret af the_content ?>
 				<aside class="author-box" aria-label="Om forfatteren">
 					<?php echo playform_author_avatar( $author, 64 ); // phpcs:ignore ?>

@@ -45,6 +45,7 @@ function playform_run_upgrades(): void {
 	playform_seed_articles();
 	playform_rebrand();
 	playform_fix_author_name();
+	playform_seed_best();
 	playform_article_images();
 	playform_guide_topics();
 	if ( class_exists( '\Playform\Feeds\Sales' ) ) {
@@ -193,6 +194,11 @@ function playform_guide_topics(): void {
 		'Træning'      => 'Træningstips og øvelser til dig, der træner derhjemme.',
 		'Hjemmekontor' => 'Gåbånd og mere bevægelse i arbejdsdagen, når du arbejder hjemme.',
 	];
+	$kg = get_term_by( 'slug', 'kobsguide', 'category' );
+	if ( $kg && $kg->name === 'Købsguide' ) {
+		wp_update_term( $kg->term_id, 'category', [ 'name' => 'Købsguides' ] );
+	}
+	$texts['Købsguides'] = 'Vores bud på de bedste modeller og guides til, hvad du skal kigge efter, før du køber løbebånd, romaskine, motionscykel og andet udstyr til hjemmet.';
 	foreach ( $texts as $name => $desc ) {
 		$t = get_term_by( 'name', $name, 'category' );
 		if ( $t && trim( $t->description ) === '' ) {
