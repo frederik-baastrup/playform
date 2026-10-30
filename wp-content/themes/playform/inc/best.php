@@ -75,7 +75,7 @@ add_shortcode(
 	static function (): string {
 		$money = esc_url( home_url( '/saadan-tjener-vi-penge/' ) );
 		return '<aside class="method"><span class="method__title">' . playform_icon( 'check', 16, 1.6 ) . 'Sådan har vi valgt</span>'
-			. '<p>Vi har ikke selv testet produkterne. Top 3 er vores bud ud fra anmeldelser fra andre medier og brugere, hvor de findes, samt specifikationer, pris og garanti fra butikkernes data. Hvor der ikke findes anmeldelser, står det tydeligt ved produktet.</p>'
+			. '<p>Vi har ikke selv testet produkterne. Udvalget er vores bud ud fra anmeldelser fra andre medier og brugere, hvor de findes, samt specifikationer, pris og garanti fra butikkernes data. Hvor der ikke findes anmeldelser, står det tydeligt ved produktet.</p>'
 			. '<p>Priser og lagerstatus opdateres to gange i døgnet. Vi får provision, hvis du køber via vores links – det påvirker ikke, hvilke produkter vi vælger. <a href="' . $money . '">Sådan tjener vi penge</a>.</p></aside>';
 	}
 );
@@ -97,7 +97,8 @@ add_shortcode(
 				. '<span class="tldr__txt"><small>' . esc_html( $pick['role'] ?? '' ) . '</small><b>' . esc_html( $d['name'] ) . '</b></span>'
 				. '<span class="tldr__price">' . ( $d['in_stock'] ? esc_html( playform_kr( $d['price'] ) ) : 'Ikke på lager' ) . '</span></a>';
 		}
-		return $out ? '<div class="tldr"><span class="tldr__title">Vores top 3 kort fortalt</span>' . $out . '</div>' : '';
+		$n = count( playform_picks() );
+		return $out ? '<div class="tldr"><span class="tldr__title">' . ( $n === 3 ? 'Vores top 3 kort fortalt' : 'Vores valg kort fortalt' ) . '</span>' . $out . '</div>' : '';
 	}
 );
 
@@ -303,6 +304,8 @@ function playform_legacy_redirects(): array {
 		'cykling'                                                         => $home,
 		'annoncoerer'                                                     => $home,
 		'sammenklappeligt-loebebaand'                                     => home_url( '/foldbart-loebebaand/' ),
+		'curved-loebebaand'                                               => home_url( '/loebebaand-uden-motor/' ),
+		'mini-motionscykel'                                               => home_url( '/siddecykel/' ),
 		'koebsguide'                                                      => home_url( '/viden/emne/kobsguide/' ),
 		'koebsguide/fitness'                                              => home_url( '/viden/emne/kobsguide/' ),
 		'koebsguide/sport'                                                => home_url( '/viden/emne/kobsguide/' ),
@@ -423,7 +426,9 @@ function playform_best_html( array $a ): string {
 					. '<div class="pick-fit__less"><b>Mindre godt til</b><ul><li>' . implode( '</li><li>', array_map( 'esc_html', $pk['less'] ?? [] ) ) . "</li></ul></div></div>\n";
 			}
 		}
-		$h .= "<h2>Sammenligning af vores top 3</h2>\n[fitbase_tabel]\n";
+		if ( count( $a['picks'] ) > 1 ) {
+			$h .= '<h2>Sammenligning af ' . ( count( $a['picks'] ) === 3 ? 'vores top 3' : 'vores valg' ) . "</h2>\n[fitbase_tabel]\n";
+		}
 	}
 	if ( ! empty( $a['more_cat'] ) ) {
 		$h .= '<h2>Flere populære modeller</h2>' . "\n" . '[fitbase_flere kategori="' . esc_attr( $a['more_cat'] ) . '" antal="6"]' . "\n";
