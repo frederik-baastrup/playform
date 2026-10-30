@@ -46,6 +46,9 @@ function playform_run_upgrades(): void {
 	playform_rebrand();
 	playform_fix_author_name();
 	playform_seed_best();
+	if ( function_exists( 'playform_best_check' ) && ! get_option( 'playform_best_checked' ) ) {
+		playform_best_check( false ); // første rapport med det samme
+	}
 	playform_article_images();
 	playform_guide_topics();
 	if ( class_exists( '\Playform\Feeds\Sales' ) ) {
